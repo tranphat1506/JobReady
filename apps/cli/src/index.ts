@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
-const pdf = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 import { AIParser, generatePdfFile, CVSchema } from '@cv-generator/core';
 
 // Nạp biến môi trường từ thư mục gốc
@@ -60,8 +60,10 @@ const main = async () => {
     if (fs.existsSync(cvPdfPath)) {
       console.log('Phát hiện file cv.pdf. Đang tiến hành bóc tách văn bản (parse PDF)...');
       const dataBuffer = fs.readFileSync(cvPdfPath);
-      const parsedData = await pdf(dataBuffer);
+      const pdfParser = new PDFParse({ data: dataBuffer });
+      const parsedData = await pdfParser.getText();
       rawCV = parsedData.text;
+      await pdfParser.destroy();
       console.log('✅ Đã đọc thành công nội dung CV cũ từ cv.pdf');
     } else if (fs.existsSync(cvTxtPath)) {
       rawCV = fs.readFileSync(cvTxtPath, 'utf-8');
