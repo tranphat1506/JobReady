@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, renderToFile, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, renderToFile, Font, Link } from '@react-pdf/renderer';
 import { CVSchema } from '../types/schema';
 import * as path from 'path';
 
@@ -42,17 +42,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#000',
-    paddingBottom: 2,
     marginBottom: 8,
-    marginTop: 15,
+    marginTop: 10,
   },
   itemContainer: {
-    marginBottom: 8,
+    marginBottom: 6,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -81,11 +80,25 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   skillCategory: {
-    marginBottom: 4,
     textAlign: 'justify',
   },
   skillTitle: {
     fontWeight: 'bold',
+  },
+  link: {
+    color: '#000',
+    textDecoration: 'none',
+  },
+  skillsLegendTitle: {
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    marginBottom: 2,
+    fontSize: 9,
+  },
+  skillsLegendText: {
+    fontStyle: 'italic',
+    marginBottom: 6,
+    fontSize: 9,
   }
 });
 
@@ -100,11 +113,19 @@ export const HarvardCV = ({ data }: HarvardCVProps) => (
       <View style={styles.header}>
         <Text style={styles.name}>{data.personal.fullName}</Text>
         <View style={styles.contactInfo}>
-          <Text>{data.personal.location} | {data.personal.phone} | {data.personal.email}</Text>
+          {data.personal.dob && <Text>DOB: {data.personal.dob} | </Text>}
+          <Text>{data.personal.location} | {data.personal.phone} | </Text>
+          <Link src={`mailto:${data.personal.email}`} style={styles.link}>{data.personal.email}</Link>
         </View>
         <View style={styles.contactInfo}>
+          {data.personal.portfolio && (
+            <Text><Link src={data.personal.portfolio} style={styles.link}>Portfolio</Link>{(data.personal.links && data.personal.links.length > 0) ? ' | ' : ''}</Text>
+          )}
           {data.personal.links && data.personal.links.map((link, i) => (
-            <Text key={i}>{link.name}: {link.url}</Text>
+            <Text key={i}>
+              <Link src={link.url} style={styles.link}>{link.name}</Link>
+              {i < data.personal.links.length - 1 ? ' | ' : ''}
+            </Text>
           ))}
         </View>
       </View>
@@ -151,7 +172,7 @@ export const HarvardCV = ({ data }: HarvardCVProps) => (
                 <View key={j} style={styles.bulletPoint}>
                   <Text style={styles.bulletDot}>•</Text>
                   <Text style={styles.bulletText}>{desc}</Text>
-               </View>
+                </View>
               ))}
             </View>
           ))}
@@ -162,13 +183,17 @@ export const HarvardCV = ({ data }: HarvardCVProps) => (
       {data.skills && data.skills.length > 0 && (
         <View>
           <Text style={styles.sectionTitle}>Skills</Text>
+          <View>
+            <Text style={styles.skillsLegendTitle}>SKILLS SUMMARY</Text>
+            <Text style={styles.skillsLegendText}>* Rank Legends: 1- Beginner (start to learn); 2- Novice (theory only, no experience); 3- Competent (be able to do well); 4- Proficient (skilled and experienced); 5- Expert (high level of knowledge and experience)</Text>
+          </View>
           {data.skills.map((skill, i) => (
-             <View key={i} style={styles.skillCategory}>
-               <Text>
-                 <Text style={styles.skillTitle}>{skill.category}: </Text>
-                 <Text>{skill.items.join(', ')}</Text>
-               </Text>
-             </View>
+            <View key={i} style={styles.skillCategory}>
+              <Text>
+                <Text style={styles.skillTitle}>{skill.category}: </Text>
+                <Text>{skill.items.join(', ')}</Text>
+              </Text>
+            </View>
           ))}
         </View>
       )}

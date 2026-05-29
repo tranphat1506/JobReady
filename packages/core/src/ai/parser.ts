@@ -37,9 +37,12 @@ export class AIParser {
       ${specificInstructions}
       
       - Translate the entire final CV into ${targetLanguage}.
+      - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools'). DO NOT use long descriptions.
+      - Evaluate candidate's skills and append a Rank (1-5) to each skill name like this: "ReactJS (4)". Use this exact legend for your evaluation:
+        1- Beginner (start to learn); 2- Novice (theory only, no experience); 3- Competent (be able to do well); 4- Proficient (skilled and experienced); 5- Expert (high level of knowledge and experience)
       - Output MUST be ONLY valid JSON matching this exact schema:
       {
-        "personal": { "fullName": "string", "email": "string", "phone": "string", "location": "string", "links": [{ "name": "string", "url": "string" }] },
+        "personal": { "fullName": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
         "summary": "string",
         "experience": [{ "company": "string", "position": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "education": [{ "institution": "string", "degree": "string", "startDate": "string", "endDate": "string" }],

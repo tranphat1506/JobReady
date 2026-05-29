@@ -5,9 +5,11 @@ export interface Link {
 
 export interface PersonalInfo {
   fullName: string;
+  dob?: string;
   email: string;
   phone: string;
   location: string;
+  portfolio?: string;
   links: Link[];
 }
 
