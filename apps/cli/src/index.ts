@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
-import pdf from 'pdf-parse';
+const pdf = require('pdf-parse');
 import { AIParser, generatePdfFile, CVSchema } from '@cv-generator/core';
 
 // Nạp biến môi trường từ thư mục gốc
