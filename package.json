@@ -1,0 +1,13 @@
+{
+  "name": "cv-generator-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "scripts": {
+    "start:cli": "pnpm --filter @cv-generator/cli run start",
+    "dev:cli": "pnpm --filter @cv-generator/cli run dev"
+  }
+}
