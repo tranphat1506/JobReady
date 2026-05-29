@@ -81,15 +81,11 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   skillCategory: {
-    flexDirection: 'row',
-    marginBottom: 2,
+    marginBottom: 4,
+    textAlign: 'justify',
   },
   skillTitle: {
     fontWeight: 'bold',
-    width: 120,
-  },
-  skillItems: {
-    flex: 1,
   }
 });
 
@@ -168,8 +164,10 @@ export const HarvardCV = ({ data }: HarvardCVProps) => (
           <Text style={styles.sectionTitle}>Skills</Text>
           {data.skills.map((skill, i) => (
              <View key={i} style={styles.skillCategory}>
-               <Text style={styles.skillTitle}>{skill.category}:</Text>
-               <Text style={styles.skillItems}>{skill.items.join(', ')}</Text>
+               <Text>
+                 <Text style={styles.skillTitle}>{skill.category}: </Text>
+                 <Text>{skill.items.join(', ')}</Text>
+               </Text>
              </View>
           ))}
         </View>
