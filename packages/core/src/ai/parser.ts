@@ -49,7 +49,7 @@ export class AIParser {
         "summary": "string",
         "experience": [{ "company": "string", "position": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "projects": [{ "name": "string", "link": "string", "role": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
-        "education": [{ "institution": "string", "location": "string", "degree": "string", "major": "string", "gpa": "string", "startDate": "string", "endDate": "string", "relevantCourses": ["string"] }],
+        "education": [{ "institution": "string", "degree": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "skills": [{ "category": "string", "items": ["string"] }]
       }
 

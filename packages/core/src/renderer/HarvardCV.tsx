@@ -165,24 +165,17 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
               <View key={i} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <Text style={{ textTransform: 'uppercase' }}>{edu.institution}</Text>
-                  <View style={{ textAlign: 'right' }}>
-                    {edu.location ? <Text>{edu.location}</Text> : null}
-                    <Text>{edu.startDate} - {edu.endDate}</Text>
-                  </View>
+                  <Text>{edu.startDate} - {edu.endDate}</Text>
                 </View>
                 <View style={styles.itemSubHeader}>
                   <Text style={{ textTransform: 'uppercase' }}>{edu.degree}</Text>
                 </View>
-                {edu.major || edu.gpa ? (
-                  <View style={{ marginBottom: 2 }}>
-                    <Text>{[edu.major ? `Major: ${edu.major}` : null, edu.gpa ? `GPA: ${edu.gpa}` : null].filter(Boolean).join(' | ')}</Text>
+                {edu.description ? edu.description.map((desc, j) => (
+                  <View key={j} style={styles.bulletPoint}>
+                    <Text style={styles.bulletDot}>•</Text>
+                    <Text style={styles.bulletText}>{desc}</Text>
                   </View>
-                ) : null}
-                {edu.relevantCourses && edu.relevantCourses.length > 0 ? (
-                  <View style={{ marginBottom: 2 }}>
-                    <Text>Relevant courses: {edu.relevantCourses.join(', ')}</Text>
-                  </View>
-                ) : null}
+                )) : null}
               </View>
             ))}
           </View>

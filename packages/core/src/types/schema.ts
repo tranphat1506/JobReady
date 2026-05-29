@@ -32,13 +32,10 @@ export interface Project {
 
 export interface Education {
   institution: string;
-  location?: string;
   degree: string;
-  major?: string;
-  gpa?: string;
   startDate: string;
   endDate: string;
-  relevantCourses?: string[];
+  description?: string[];
 }
 
 export interface SkillCategory {
