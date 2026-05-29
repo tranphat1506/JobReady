@@ -64,6 +64,15 @@ export class AIParser {
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig,
       });
+
+      // In thông số Token tiêu hao
+      if (result.response.usageMetadata) {
+        console.log('\n📊 THỐNG KÊ TOKEN SỬ DỤNG (Gemini):');
+        console.log(`- Prompt Tokens (đầu vào): ${result.response.usageMetadata.promptTokenCount}`);
+        console.log(`- Output Tokens (đầu ra):  ${result.response.usageMetadata.candidatesTokenCount}`);
+        console.log(`- Tổng Tokens:             ${result.response.usageMetadata.totalTokenCount}\n`);
+      }
+
       let responseText = result.response.text();
       
       // Dự phòng xóa markdown block nếu có
