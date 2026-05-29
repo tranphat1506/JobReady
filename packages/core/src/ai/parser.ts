@@ -42,6 +42,7 @@ export class AIParser {
       - Evaluate candidate's skills and append the text Rank to each skill name like this: "ReactJS (Expert)". Do NOT use numbers. Use this exact legend for your evaluation:
         Beginner (start to learn); Novice (theory only, no experience); Competent (be able to do well); Proficient (skilled and experienced); Expert (high level of knowledge and experience)
       - Separate pure working experience into 'experience' and standalone projects into 'projects'. Include 'link' (github/website) for projects if available.
+      - For education, ensure 'description' includes all critical details like Major, GPA, and Relevant Courses if available in the input.
       - Output MUST be ONLY valid JSON matching this exact schema:
       {
         "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string" },
