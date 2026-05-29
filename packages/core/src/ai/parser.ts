@@ -9,9 +9,10 @@ export class AIParser {
   }
 
   public async parseAndTailorCV(jobDescription: string, rawCV?: string, targetLanguage: string = 'English'): Promise<CVSchema> {
-    // Dùng đúng model name dựa theo curl command mẫu của user
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
-    
+    const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    const model = this.genAI.getGenerativeModel({ model: modelName });
+
+    console.log(`🤖 Đang sử dụng Model: ${modelName}`);
     let specificInstructions = '';
     let cvContext = '';
 
@@ -38,8 +39,8 @@ export class AIParser {
       
       - Translate the entire final CV into ${targetLanguage}.
       - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools'). DO NOT use long descriptions.
-      - Evaluate candidate's skills and append a Rank (1-5) to each skill name like this: "ReactJS (4)". Use this exact legend for your evaluation:
-        1- Beginner (start to learn); 2- Novice (theory only, no experience); 3- Competent (be able to do well); 4- Proficient (skilled and experienced); 5- Expert (high level of knowledge and experience)
+      - Evaluate candidate's skills and append the text Rank to each skill name like this: "ReactJS (Expert)". Do NOT use numbers. Use this exact legend for your evaluation:
+        Beginner (start to learn); Novice (theory only, no experience); Competent (be able to do well); Proficient (skilled and experienced); Expert (high level of knowledge and experience)
       - Output MUST be ONLY valid JSON matching this exact schema:
       {
         "personal": { "fullName": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
@@ -74,10 +75,10 @@ export class AIParser {
       }
 
       let responseText = result.response.text();
-      
+
       // Dự phòng xóa markdown block nếu có
       responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-      
+
       return JSON.parse(responseText) as CVSchema;
     } catch (error) {
       console.error('Error parsing CV with AI:', error);
