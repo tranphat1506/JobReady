@@ -96,19 +96,21 @@ interface HarvardCVProps {
 }
 
 export const HarvardCV = ({ data }: HarvardCVProps) => {
+  const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
+
   const contactInfo1 = [
-    data.personal.dob ? `DOB: ${data.personal.dob}` : null,
-    data.personal.location,
-    data.personal.phone,
+    isValid(data.personal.dob) ? `DOB: ${data.personal.dob}` : null,
+    isValid(data.personal.location) ? data.personal.location : null,
+    isValid(data.personal.phone) ? data.personal.phone : null,
   ].filter(Boolean);
 
   const linkItems: React.ReactNode[] = [];
-  if (data.personal.portfolio) {
-    linkItems.push(<Link src={data.personal.portfolio} style={styles.link}>Portfolio</Link>);
+  if (isValid(data.personal.portfolio)) {
+    linkItems.push(<Link src={data.personal.portfolio!} style={styles.link}>Portfolio</Link>);
   }
   if (data.personal.links) {
     data.personal.links.forEach(link => {
-      if (link.url && link.name) {
+      if (isValid(link.url) && isValid(link.name)) {
         linkItems.push(<Link src={link.url} style={styles.link}>{link.name}</Link>);
       }
     });
@@ -132,8 +134,8 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
           <View style={styles.contactInfo}>
             <Text>
               {contactInfo1.join(' | ')}
-              {contactInfo1.length > 0 && data.personal.email ? ' | ' : ''}
-              {data.personal.email ? <Link src={`mailto:${data.personal.email}`} style={styles.link}>{data.personal.email}</Link> : null}
+              {contactInfo1.length > 0 && isValid(data.personal.email) ? ' | ' : ''}
+              {isValid(data.personal.email) ? <Link src={`mailto:${data.personal.email}`} style={styles.link}>{data.personal.email}</Link> : null}
             </Text>
           </View>
           {linkItems.length > 0 && (
@@ -215,9 +217,9 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
                   <Text>{proj.name} {proj.role ? `(${proj.role})` : '(Project)'}</Text>
                   <Text>{proj.startDate} - {proj.endDate}</Text>
                 </View>
-                {proj.link ? (
+                {isValid(proj.link) ? (
                   <View style={styles.itemSubHeader}>
-                    <Text>Link: <Link src={proj.link} style={styles.link}>{proj.link.replace(/^https?:\/\//, '')}</Link></Text>
+                    <Text>Link: <Link src={proj.link!} style={styles.link}>{proj.link!.replace(/^https?:\/\//, '')}</Link></Text>
                   </View>
                 ) : null}
                 {proj.description ? proj.description.map((desc, j) => (
