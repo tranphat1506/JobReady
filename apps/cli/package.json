@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "start": "ts-node src/index.ts",
+    "start:cache": "ts-node src/index.ts --use-cache",
     "dev": "ts-node-dev --respawn src/index.ts"
   },
   "dependencies": {
