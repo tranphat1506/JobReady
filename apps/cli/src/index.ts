@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
+import pdf from 'pdf-parse';
 import { AIParser, generatePdfFile, CVSchema } from '@cv-generator/core';
 
 // Nạp biến môi trường từ thư mục gốc
@@ -37,7 +38,8 @@ const main = async () => {
     const parser = new AIParser(apiKey);
 
     const jdPath = path.join(__dirname, '../jd.txt');
-    const cvPath = path.join(__dirname, '../cv.txt');
+    const cvPdfPath = path.join(__dirname, '../cv.pdf');
+    const cvTxtPath = path.join(__dirname, '../cv.txt');
 
     let jobDescription = '';
     let rawCV = '';
@@ -55,11 +57,17 @@ const main = async () => {
       console.log('Đã tạo file jd.txt mẫu.');
     }
 
-    if (fs.existsSync(cvPath)) {
-      rawCV = fs.readFileSync(cvPath, 'utf-8');
+    if (fs.existsSync(cvPdfPath)) {
+      console.log('Phát hiện file cv.pdf. Đang tiến hành bóc tách văn bản (parse PDF)...');
+      const dataBuffer = fs.readFileSync(cvPdfPath);
+      const parsedData = await pdf(dataBuffer);
+      rawCV = parsedData.text;
+      console.log('✅ Đã đọc thành công nội dung CV cũ từ cv.pdf');
+    } else if (fs.existsSync(cvTxtPath)) {
+      rawCV = fs.readFileSync(cvTxtPath, 'utf-8');
       console.log('Đã đọc nội dung CV cũ từ cv.txt');
     } else {
-      console.log('Không tìm thấy cv.txt, hệ thống sẽ TỰ ĐỘNG SINH CV MẪU dựa trên JD!');
+      console.log('Không tìm thấy cv.pdf hay cv.txt, hệ thống sẽ TỰ ĐỘNG SINH CV MẪU dựa trên JD!');
     }
 
     console.log('Đang phân tích và xử lý bằng AI (Vui lòng đợi vài giây)...');
