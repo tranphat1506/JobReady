@@ -1,14 +1,19 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, renderToFile, Font } from '@react-pdf/renderer';
 import { CVSchema } from '../types/schema';
+import * as path from 'path';
 
-// Đăng ký font Tinos (Phiên bản mã nguồn mở của Times New Roman, hỗ trợ đầy đủ Tiếng Việt UTF-8)
+// Đăng ký font Tinos từ local asset thay vì tải từ mạng
+// __dirname trong thư mục dist/renderer sẽ lùi lại 2 cấp để vào thư mục assets
+const fontPath = path.resolve(__dirname, '../../assets/fonts/Tinos');
+
 Font.register({
   family: 'Tinos',
   fonts: [
-    { src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/tinos/Tinos-Regular.ttf' },
-    { src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/tinos/Tinos-Bold.ttf', fontWeight: 'bold' },
-    { src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/tinos/Tinos-Italic.ttf', fontStyle: 'italic' }
+    { src: path.join(fontPath, 'Tinos-Regular.ttf') },
+    { src: path.join(fontPath, 'Tinos-Bold.ttf'), fontWeight: 'bold' },
+    { src: path.join(fontPath, 'Tinos-Italic.ttf'), fontStyle: 'italic' },
+    { src: path.join(fontPath, 'Tinos-BoldItalic.ttf'), fontWeight: 'bold', fontStyle: 'italic' }
   ]
 });
 
