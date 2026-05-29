@@ -88,17 +88,6 @@ const styles = StyleSheet.create({
   link: {
     color: '#000',
     textDecoration: 'none',
-  },
-  skillsLegendTitle: {
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-    marginBottom: 2,
-    fontSize: 9,
-  },
-  skillsLegendText: {
-    fontStyle: 'italic',
-    marginBottom: 6,
-    fontSize: 9,
   }
 });
 
@@ -183,10 +172,6 @@ export const HarvardCV = ({ data }: HarvardCVProps) => (
       {data.skills && data.skills.length > 0 && (
         <View>
           <Text style={styles.sectionTitle}>Skills</Text>
-          <View>
-            <Text style={styles.skillsLegendTitle}>SKILLS SUMMARY</Text>
-            <Text style={styles.skillsLegendText}>* Rank Legends: 1- Beginner (start to learn); 2- Novice (theory only, no experience); 3- Competent (be able to do well); 4- Proficient (skilled and experienced); 5- Expert (high level of knowledge and experience)</Text>
-          </View>
           {data.skills.map((skill, i) => (
             <View key={i} style={styles.skillCategory}>
               <Text>
