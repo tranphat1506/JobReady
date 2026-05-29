@@ -106,12 +106,14 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
 
   const linkItems: React.ReactNode[] = [];
   if (isValid(data.personal.portfolio)) {
-    linkItems.push(<Link src={data.personal.portfolio!} style={styles.link}>Portfolio</Link>);
+    const cleanUrl = data.personal.portfolio!.replace(/^https?:\/\/(www\.)?/, '');
+    linkItems.push(<Link src={data.personal.portfolio!} style={styles.link}>Portfolio: {cleanUrl}</Link>);
   }
   if (data.personal.links) {
     data.personal.links.forEach(link => {
       if (isValid(link.url) && isValid(link.name)) {
-        linkItems.push(<Link src={link.url} style={styles.link}>{link.name}</Link>);
+        const cleanUrl = link.url.replace(/^https?:\/\/(www\.)?/, '');
+        linkItems.push(<Link src={link.url} style={styles.link}>{link.name}: {cleanUrl}</Link>);
       }
     });
   }
