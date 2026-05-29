@@ -7,8 +7,9 @@
     "pnpm": ">=8"
   },
   "scripts": {
-    "start:cli": "pnpm --filter @cv-generator/cli run start",
-    "start:cli:cache": "pnpm --filter @cv-generator/cli run start:cache",
+    "build:core": "pnpm --filter @cv-generator/core run build",
+    "start:cli": "pnpm run build:core && pnpm --filter @cv-generator/cli run start",
+    "start:cli:cache": "pnpm run build:core && pnpm --filter @cv-generator/cli run start:cache",
     "dev:cli": "pnpm --filter @cv-generator/cli run dev"
   }
 }
