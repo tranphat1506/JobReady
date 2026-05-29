@@ -151,32 +151,45 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
         </View>
 
         {/* Summary */}
-        {data.summary && (
+        {data.summary ? (
           <View style={styles.summary}>
             <Text>{data.summary}</Text>
           </View>
-        )}
+        ) : null}
 
         {/* Education */}
-        {data.education && data.education.length > 0 && (
+        {data.education && data.education.length > 0 ? (
           <View>
             <Text style={styles.sectionTitle}>{t.education}</Text>
             {data.education.map((edu, i) => (
               <View key={i} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
-                  <Text>{edu.institution}</Text>
-                  <Text>{edu.startDate} - {edu.endDate}</Text>
+                  <Text style={{ textTransform: 'uppercase' }}>{edu.institution}</Text>
+                  <View style={{ textAlign: 'right' }}>
+                    {edu.location ? <Text>{edu.location}</Text> : null}
+                    <Text>{edu.startDate} - {edu.endDate}</Text>
+                  </View>
                 </View>
                 <View style={styles.itemSubHeader}>
-                  <Text>{edu.degree}</Text>
+                  <Text style={{ textTransform: 'uppercase' }}>{edu.degree}</Text>
                 </View>
+                {edu.major || edu.gpa ? (
+                  <View style={{ marginBottom: 2 }}>
+                    <Text>{[edu.major ? `Major: ${edu.major}` : null, edu.gpa ? `GPA: ${edu.gpa}` : null].filter(Boolean).join(' | ')}</Text>
+                  </View>
+                ) : null}
+                {edu.relevantCourses && edu.relevantCourses.length > 0 ? (
+                  <View style={{ marginBottom: 2 }}>
+                    <Text>Relevant courses: {edu.relevantCourses.join(', ')}</Text>
+                  </View>
+                ) : null}
               </View>
             ))}
           </View>
-        )}
+        ) : null}
 
         {/* Experience */}
-        {data.experience && data.experience.length > 0 && (
+        {data.experience && data.experience.length > 0 ? (
           <View>
             <Text style={styles.sectionTitle}>{t.experience}</Text>
             {data.experience.map((exp, i) => (
@@ -188,19 +201,19 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
                 <View style={styles.itemSubHeader}>
                   <Text>{exp.position}</Text>
                 </View>
-                {exp.description && exp.description.map((desc, j) => (
+                {exp.description ? exp.description.map((desc, j) => (
                   <View key={j} style={styles.bulletPoint}>
                     <Text style={styles.bulletDot}>•</Text>
                     <Text style={styles.bulletText}>{desc}</Text>
                   </View>
-                ))}
+                )) : null}
               </View>
             ))}
           </View>
-        )}
+        ) : null}
 
         {/* Projects */}
-        {data.projects && data.projects.length > 0 && (
+        {data.projects && data.projects.length > 0 ? (
           <View>
             <Text style={styles.sectionTitle}>{t.projects}</Text>
             {data.projects.map((proj, i) => (
@@ -209,24 +222,24 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
                   <Text>{proj.name} {proj.role ? `(${proj.role})` : '(Project)'}</Text>
                   <Text>{proj.startDate} - {proj.endDate}</Text>
                 </View>
-                {proj.link && (
+                {proj.link ? (
                   <View style={styles.itemSubHeader}>
                     <Text>Link: <Link src={proj.link} style={styles.link}>{proj.link.replace(/^https?:\/\//, '')}</Link></Text>
                   </View>
-                )}
-                {proj.description && proj.description.map((desc, j) => (
+                ) : null}
+                {proj.description ? proj.description.map((desc, j) => (
                   <View key={j} style={styles.bulletPoint}>
                     <Text style={styles.bulletDot}>•</Text>
                     <Text style={styles.bulletText}>{desc}</Text>
                   </View>
-                ))}
+                )) : null}
               </View>
             ))}
           </View>
-        )}
+        ) : null}
 
         {/* Skills */}
-        {data.skills && data.skills.length > 0 && (
+        {data.skills && data.skills.length > 0 ? (
           <View>
             <Text style={styles.sectionTitle}>{t.skills}</Text>
             {data.skills.map((skill, i) => (
@@ -238,7 +251,7 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
               </View>
             ))}
           </View>
-        )}
+        ) : null}
       </Page>
     </Document>
   );

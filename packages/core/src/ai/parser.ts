@@ -37,7 +37,7 @@ export class AIParser {
       CRITICAL INSTRUCTIONS:
       ${specificInstructions}
       
-      - Translate ALL content, including the generated section titles ('sectionTitles'), strictly into ${targetLanguage}.
+      - Translate ALL content, including the generated section titles ('sectionTitles'), education institution names, degrees, and content strictly into ${targetLanguage}.
       - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools'). DO NOT use long descriptions.
       - Evaluate candidate's skills and append the text Rank to each skill name like this: "ReactJS (Expert)". Do NOT use numbers. Use this exact legend for your evaluation:
         Beginner (start to learn); Novice (theory only, no experience); Competent (be able to do well); Proficient (skilled and experienced); Expert (high level of knowledge and experience)
@@ -49,7 +49,7 @@ export class AIParser {
         "summary": "string",
         "experience": [{ "company": "string", "position": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "projects": [{ "name": "string", "link": "string", "role": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
-        "education": [{ "institution": "string", "degree": "string", "startDate": "string", "endDate": "string" }],
+        "education": [{ "institution": "string", "location": "string", "degree": "string", "major": "string", "gpa": "string", "startDate": "string", "endDate": "string", "relevantCourses": ["string"] }],
         "skills": [{ "category": "string", "items": ["string"] }]
       }
 
