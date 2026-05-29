@@ -1,0 +1,92 @@
+{
+  "personal": {
+    "fullName": "[Nguyễn Văn A]",
+    "email": "[nguyenvana@email.com]",
+    "phone": "[0901234567]",
+    "location": "[Thành phố Hồ Chí Minh, Việt Nam]",
+    "links": [
+      {
+        "name": "LinkedIn",
+        "url": "[https://linkedin.com/in/nguyenvana]"
+      },
+      {
+        "name": "GitHub",
+        "url": "[https://github.com/nguyenvana]"
+      }
+    ]
+  },
+  "summary": "Frontend Developer với hơn 2 năm kinh nghiệm thực chiến chuyên sâu về phát triển ứng dụng web hiệu năng cao bằng ReactJS và TypeScript. Thành thạo việc xây dựng kiến trúc component mô-đun hóa, dễ bảo trì và tối ưu hóa quản lý trạng thái phức tạp sử dụng Redux Toolkit và Zustand. Có tư duy giải quyết vấn đề tốt, kỹ năng làm việc nhóm hiệu quả trong môi trường Agile/Scrum và sử dụng thành thạo Git cho việc quản lý mã nguồn.",
+  "experience": [
+    {
+      "company": "[Công ty Công nghệ ABC]",
+      "position": "Frontend Developer (ReactJS)",
+      "startDate": "[06/2021]",
+      "endDate": "[Hiện tại]",
+      "description": [
+        "Phát triển và tối ưu hóa các ứng dụng web SPA quy mô lớn sử dụng ReactJS và TypeScript, giúp tăng 30% hiệu suất tải trang và cải thiện trải nghiệm người dùng (UX).",
+        "Thiết kế và tái cấu trúc hệ thống component theo hướng module hóa, tăng khả năng tái sử dụng mã nguồn lên 45% trên toàn bộ các dự án của công ty.",
+        "Thiết lập và quản lý luồng dữ liệu (State Management) phức tạp của hệ thống bằng cách sử dụng Redux Toolkit và Zustand, giúp giảm thiểu tối đa các lỗi đồng bộ dữ liệu.",
+        "Phối hợp chặt chẽ với các kỹ sư Backend để tích hợp hệ thống RESTful API mượt mà và bảo mật.",
+        "Sử dụng Git làm công cụ quản lý phiên bản chính, trực tiếp thực hiện Code Review, quản lý nhánh (branching) và giải quyết xung đột mã nguồn một cách hiệu quả."
+      ]
+    },
+    {
+      "company": "[Công ty Giải pháp Phần mềm XYZ]",
+      "position": "Junior Frontend Developer",
+      "startDate": "[08/2019]",
+      "endDate": "[05/2021]",
+      "description": [
+        "Tham gia phát triển giao diện người dùng cho các dự án thương mại điện tử bằng cách sử dụng HTML5, CSS3, JavaScript (ES6) và ReactJS.",
+        "Xây dựng các component UI tương thích tốt trên nhiều thiết bị (Responsive Design) và trình duyệt khác nhau.",
+        "Quản lý trạng thái ứng dụng sử dụng Redux và Context API cho các tính năng giỏ hàng và thanh toán.",
+        "Làm việc trực tiếp trong quy trình phát triển phần mềm Agile/Scrum, tham gia đầy đủ các buổi họp Sprint Planning và Daily Stand-up."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "[Trường Đại học Công nghệ Thông tin - ĐHQG TP.HCM]",
+      "degree": "Cử nhân Công nghệ Thông tin (Chuyên ngành Kỹ thuật Phần mềm)",
+      "startDate": "[2015]",
+      "endDate": "[2019]"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Kỹ năng lập trình cốt lõi (Core Skills)",
+      "items": [
+        "ReactJS",
+        "TypeScript",
+        "JavaScript (ES6+)",
+        "HTML5",
+        "CSS3 / SASS / Tailwind CSS"
+      ]
+    },
+    {
+      "category": "Quản lý trạng thái & Kiến trúc (State & Architecture)",
+      "items": [
+        "Redux (Redux Toolkit)",
+        "Zustand",
+        "React Context API",
+        "Component Architecture (Atomic Design)"
+      ]
+    },
+    {
+      "category": "Công cụ & Quy trình phát triển (Tools & Workflows)",
+      "items": [
+        "Git / GitHub / GitLab",
+        "Webpack / Vite",
+        "RESTful API / Axios",
+        "Agile / Scrum"
+      ]
+    },
+    {
+      "category": "Kỹ năng mềm (Soft Skills)",
+      "items": [
+        "Làm việc nhóm (Teamwork)",
+        "Giải quyết vấn đề (Problem Solving)",
+        "Giao tiếp hiệu quả (Communication)"
+      ]
+    }
+  ]
+}

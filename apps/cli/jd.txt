@@ -1,0 +1,4 @@
+Tuyển dụng Frontend Developer (ReactJS).
+      Yêu cầu: Tối thiểu 2 năm kinh nghiệm làm việc với ReactJS, TypeScript.
+      Hiểu biết sâu sắc về kiến trúc component, state management (Redux, Zustand).
+      Kỹ năng làm việc nhóm tốt, thành thạo Git.
