@@ -27,7 +27,7 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
   if (isValid(data.email)) contactItems.push({ label: l.email || 'Email', value: <Text>{data.email}</Text> });
   if (isValid(data.portfolio)) {
     const cleanUrl = data.portfolio!.replace(/^https?:\/\/(www\.)?/, '');
-    contactItems.push({ label: l.portfolio || 'Website', value: <Text>{cleanUrl}</Text> });
+    contactItems.push({ label: 'Portfolio', value: <Text>{cleanUrl}</Text> });
   }
   if (isValid(data.location)) contactItems.push({ label: l.location || 'Địa chỉ', value: data.location });
 

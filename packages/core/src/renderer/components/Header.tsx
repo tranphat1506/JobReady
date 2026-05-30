@@ -30,7 +30,7 @@ export const Header = ({ data, labels }: HeaderProps) => {
   if (isValid(data.portfolio)) {
     const cleanUrl = data.portfolio!.replace(/^https?:\/\/(www\.)?/, '');
     const validUrl = data.portfolio!.startsWith('http') ? data.portfolio! : `https://${data.portfolio!}`;
-    contactRow2.push(<Link src={validUrl} style={styles.link}>{l.portfolio}: {cleanUrl}</Link>);
+    contactRow2.push(<Link src={validUrl} style={styles.link}>Portfolio: {cleanUrl}</Link>);
   }
   
   if (data.links) {
