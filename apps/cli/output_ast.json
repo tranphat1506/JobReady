@@ -1,92 +1,191 @@
 {
+  "matchAnalysis": {
+    "matchScore": 65,
+    "isRelevant": true,
+    "missingSkills": [
+      "Tối thiểu 2 năm kinh nghiệm làm việc thực tế (Ứng viên hiện tại là sinh viên mới tốt nghiệp/Junior)",
+      "Kinh nghiệm làm việc thực tế sâu sắc với Zustand"
+    ],
+    "feedback": "Ứng viên có nền tảng kỹ thuật rất tốt về ReactJS, TypeScript và Redux Toolkit từ quá trình thực tập và thực hiện các dự án thực tế. Tuy nhiên điểm hạn chế lớn nhất là số năm kinh nghiệm chưa đáp ứng yêu cầu tối thiểu 2 năm của JD. Điểm mạnh là đã làm việc với Redux Toolkit và có tư duy thiết kế component tốt, phù hợp cho vị trí Junior/Middle ReactJS Developer."
+  },
+  "labels": {
+    "dob": "Ngày sinh",
+    "portfolio": "Danh mục dự án",
+    "link": "Liên kết",
+    "phone": "Số điện thoại",
+    "email": "Email",
+    "location": "Địa chỉ"
+  },
+  "sectionTitles": {
+    "summary": "Tóm tắt chuyên môn",
+    "experience": "Kinh nghiệm làm việc",
+    "projects": "Dự án tiêu biểu",
+    "education": "Học vấn",
+    "skills": "Kỹ năng chuyên môn",
+    "certifications": "Chứng chỉ",
+    "awards": "Giải thưởng & Thành tựu",
+    "activities": "Hoạt động",
+    "references": "Người tham chiếu",
+    "hobbies": "Sở thích"
+  },
   "personal": {
-    "fullName": "[Nguyễn Văn A]",
-    "email": "[nguyenvana@email.com]",
-    "phone": "[0901234567]",
-    "location": "[Thành phố Hồ Chí Minh, Việt Nam]",
+    "fullName": "LÊ CHÂU TRẦN PHÁT",
+    "jobTitle": "Lập trình viên Frontend / Full-Stack",
+    "gender": "",
+    "avatar": "",
+    "dob": "15/06/2004",
+    "email": "lechautranphat@gmail.com",
+    "phone": "+84 898486184",
+    "location": "52/1 đường Bông Sao, Phường 5, Quận 8, Thành phố Hồ Chí Minh, Việt Nam",
+    "portfolio": "https://github.com/tranphat1506",
     "links": [
       {
-        "name": "LinkedIn",
-        "url": "[https://linkedin.com/in/nguyenvana]"
-      },
-      {
         "name": "GitHub",
-        "url": "[https://github.com/nguyenvana]"
+        "url": "https://github.com/tranphat1506"
       }
     ]
   },
-  "summary": "Frontend Developer với hơn 2 năm kinh nghiệm thực chiến chuyên sâu về phát triển ứng dụng web hiệu năng cao bằng ReactJS và TypeScript. Thành thạo việc xây dựng kiến trúc component mô-đun hóa, dễ bảo trì và tối ưu hóa quản lý trạng thái phức tạp sử dụng Redux Toolkit và Zustand. Có tư duy giải quyết vấn đề tốt, kỹ năng làm việc nhóm hiệu quả trong môi trường Agile/Scrum và sử dụng thành thạo Git cho việc quản lý mã nguồn.",
+  "summary": "Lập trình viên phần mềm năng động với nền tảng vững chắc về phát triển giao diện người dùng bằng ReactJS, TypeScript và quản lý trạng thái ứng dụng bằng Redux Toolkit. Có kinh nghiệm thực tế trong việc thiết kế các thành phần giao diện (component) tối ưu, có khả năng tái sử dụng cao, đồng thời phối hợp làm việc nhóm hiệu quả qua Git. Mong muốn được cống hiến năng lực kỹ thuật và tư duy giải quyết vấn đề nhanh chóng vào vị trí Frontend Developer chuyên nghiệp.",
   "experience": [
     {
-      "company": "[Công ty Công nghệ ABC]",
-      "position": "Frontend Developer (ReactJS)",
-      "startDate": "[06/2021]",
-      "endDate": "[Hiện tại]",
+      "company": "Công ty TNHH Sen Việt",
+      "position": "Thực tập sinh Lập trình viên Full-Stack",
+      "startDate": "09/2025",
+      "endDate": "11/2025",
       "description": [
-        "Phát triển và tối ưu hóa các ứng dụng web SPA quy mô lớn sử dụng ReactJS và TypeScript, giúp tăng 30% hiệu suất tải trang và cải thiện trải nghiệm người dùng (UX).",
-        "Thiết kế và tái cấu trúc hệ thống component theo hướng module hóa, tăng khả năng tái sử dụng mã nguồn lên 45% trên toàn bộ các dự án của công ty.",
-        "Thiết lập và quản lý luồng dữ liệu (State Management) phức tạp của hệ thống bằng cách sử dụng Redux Toolkit và Zustand, giúp giảm thiểu tối đa các lỗi đồng bộ dữ liệu.",
-        "Phối hợp chặt chẽ với các kỹ sư Backend để tích hợp hệ thống RESTful API mượt mà và bảo mật.",
-        "Sử dụng Git làm công cụ quản lý phiên bản chính, trực tiếp thực hiện Code Review, quản lý nhánh (branching) và giải quyết xung đột mã nguồn một cách hiệu quả."
+        "Xây dựng và phát triển giao diện hệ thống Quản lý Tài sản CNTT (IT Asset Management System) tối ưu và tương thích đa thiết bị bằng ReactJS.",
+        "Thiết kế cấu trúc component linh hoạt, dễ bảo trì và tích hợp các luồng công việc quản lý tài sản phức tạp.",
+        "Sử dụng công cụ kiểm thử phần mềm và triển khai môi trường phát triển đồng bộ bằng Docker.",
+        "Thực hiện quản lý mã nguồn và phối hợp làm việc nhóm hiệu quả thông qua Git và GitHub."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "HỆ THỐNG QUẢN LÝ TÀI SẢN CNTT — Công ty TNHH Sen Việt",
+      "link": "https://github.com/tranphat1506",
+      "role": "Thực tập sinh Lập trình viên Full-Stack",
+      "startDate": "09/2025",
+      "endDate": "11/2025",
+      "description": [
+        "Phát triển giao diện bảng điều khiển (Dashboard) trực quan bằng ReactJS kết hợp Redux Toolkit, giúp tăng 30% hiệu suất nhập liệu và quản lý trạng thái đồng bộ.",
+        "Thiết kế các API RESTful bảo mật sử dụng Node.js/Express để quản lý hơn 500 tài sản kỹ thuật.",
+        "Triển khai cơ chế xác thực an toàn bằng JSON Web Token (JWT) với Refresh Token nhằm duy trì phiên làm việc tối ưu.",
+        "Tích hợp tính năng lập lịch bảo trì tự động giúp giảm thiểu 40% thao tác thủ công."
       ]
     },
     {
-      "company": "[Công ty Giải pháp Phần mềm XYZ]",
-      "position": "Junior Frontend Developer",
-      "startDate": "[08/2019]",
-      "endDate": "[05/2021]",
+      "name": "Hệ thống Quản lý Cơ sở Tri thức (KBMS) — Đồ án tốt nghiệp (Điểm số: 9.3/10)",
+      "link": "https://github.com/tranphat1506",
+      "role": "Lập trình viên Full-Stack",
+      "startDate": "09/2025",
+      "endDate": "04/2026",
       "description": [
-        "Tham gia phát triển giao diện người dùng cho các dự án thương mại điện tử bằng cách sử dụng HTML5, CSS3, JavaScript (ES6) và ReactJS.",
-        "Xây dựng các component UI tương thích tốt trên nhiều thiết bị (Responsive Design) và trình duyệt khác nhau.",
-        "Quản lý trạng thái ứng dụng sử dụng Redux và Context API cho các tính năng giỏ hàng và thanh toán.",
-        "Làm việc trực tiếp trong quy trình phát triển phần mềm Agile/Scrum, tham gia đầy đủ các buổi họp Sprint Planning và Daily Stand-up."
+        "Xây dựng kiến trúc lưu trữ tri thức 4 tầng sử dụng .NET 8, hỗ trợ các thực thể có cấu trúc dữ liệu phức tạp.",
+        "Đề xuất ngôn ngữ truy vấn tùy chỉnh KBQL và phát triển thành công bộ biên dịch hoàn chỉnh (Lexer, Parser, AST).",
+        "Thiết kế cơ chế lưu trữ sử dụng chỉ mục B+ Tree kết hợp Write-Ahead Logging (WAL) để tối ưu hóa hiệu suất truy vấn tri thức.",
+        "Tích hợp hệ thống phân quyền dựa trên vai trò (RBAC) chặt chẽ và cơ chế truy vết nguồn gốc suy luận."
+      ]
+    },
+    {
+      "name": "Trang Web Tiệm Xăm Anh Gia (Anh Gia Tattoo Studio)",
+      "link": "https://github.com/tranphat1506",
+      "role": "Lập trình viên Full-Stack",
+      "startDate": "12/2025",
+      "endDate": "01/2026",
+      "description": [
+        "Phát triển nền tảng web hướng SEO tối ưu hóa trải nghiệm người dùng, đạt mốc hơn 100 người dùng tự nhiên mỗi ngày.",
+        "Tích hợp Google Analytics và Google Ads để theo dõi hành vi người dùng trực quan.",
+        "Triển khai các cơ chế bảo mật quan trọng như Rate Limiting và IP blocking để đảm bảo hệ thống đặt lịch hoạt động ổn định.",
+        "Xây dựng trang quản trị tự động hóa quy trình gửi email, giảm thiểu hơn 50% thời gian xử lý thủ công."
       ]
     }
   ],
   "education": [
     {
-      "institution": "[Trường Đại học Công nghệ Thông tin - ĐHQG TP.HCM]",
-      "degree": "Cử nhân Công nghệ Thông tin (Chuyên ngành Kỹ thuật Phần mềm)",
-      "startDate": "[2015]",
-      "endDate": "[2019]"
+      "institution": "Trường Đại học Quốc tế Hồng Bàng",
+      "degree": "Cử nhân Khoa học Máy tính",
+      "startDate": "09/2022",
+      "endDate": "04/2026",
+      "description": [
+        "Chuyên ngành: Trí tuệ Nhân tạo & Phát triển Phần mềm",
+        "Điểm trung bình tích lũy (GPA): 2.82/4.0",
+        "Môn học tiêu biểu: Phát triển Ứng dụng Web (9.4), Trí tuệ Nhân tạo Nâng cao (9.3), Lý thuyết Đồ thị (9.1)"
+      ]
     }
   ],
   "skills": [
     {
-      "category": "Kỹ năng lập trình cốt lõi (Core Skills)",
+      "category": "Ngôn ngữ",
       "items": [
-        "ReactJS",
-        "TypeScript",
-        "JavaScript (ES6+)",
-        "HTML5",
-        "CSS3 / SASS / Tailwind CSS"
+        "JavaScript (ES6+) (Thành thạo)",
+        "TypeScript (Thành thạo)",
+        "C# (Trung cấp)"
       ]
     },
     {
-      "category": "Quản lý trạng thái & Kiến trúc (State & Architecture)",
+      "category": "Frontend",
       "items": [
-        "Redux (Redux Toolkit)",
-        "Zustand",
-        "React Context API",
-        "Component Architecture (Atomic Design)"
+        "ReactJS (Thành thạo)",
+        "Redux Toolkit (Thành thạo)",
+        "Next.js (Trung cấp)",
+        "HTML5 / CSS3 / Tailwind CSS (Thành thạo)",
+        "Material UI / Native Base (Trung cấp)",
+        "React Native (Tập sự)"
       ]
     },
     {
-      "category": "Công cụ & Quy trình phát triển (Tools & Workflows)",
+      "category": "Backend",
       "items": [
-        "Git / GitHub / GitLab",
-        "Webpack / Vite",
-        "RESTful API / Axios",
-        "Agile / Scrum"
+        "Express.js / Node.js (Thành thạo)",
+        "ASP.NET Core (Trung cấp)",
+        "Entity Framework Core (Trung cấp)"
       ]
     },
     {
-      "category": "Kỹ năng mềm (Soft Skills)",
+      "category": "Hệ thống",
       "items": [
-        "Làm việc nhóm (Teamwork)",
-        "Giải quyết vấn đề (Problem Solving)",
-        "Giao tiếp hiệu quả (Communication)"
+        "Git / GitHub (Thành thạo)",
+        "Docker (Trung cấp)",
+        "MongoDB (Thành thạo)",
+        "SQL Server / MySQL (Trung cấp)",
+        "Redis / RabbitMQ (Tập sự)",
+        "Nginx / Linux Server (Tập sự)"
+      ]
+    },
+    {
+      "category": "Kỹ năng mềm",
+      "items": [
+        "Giải quyết vấn đề (Thành thạo)",
+        "Làm việc nhóm (Thành thạo)",
+        "Quản lý thời gian (Trung cấp)",
+        "Khả năng thích ứng nhanh (Thành thạo)"
       ]
     }
+  ],
+  "certifications": [],
+  "awards": [
+    {
+      "title": "Giải Nhất - Cuộc thi Khởi nghiệp HIU (Dự án đồ ăn nhẹ dinh dưỡng lành mạnh)",
+      "issuer": "Trường Đại học Quốc tế Hồng Bàng",
+      "date": "06/2025"
+    },
+    {
+      "title": "Giải Khuyến khích - Cuộc thi Cải tiến Hiệu suất dựa trên AI (Giải pháp cân thông minh tích hợp AI)",
+      "issuer": "BOSCH",
+      "date": "07/2024"
+    },
+    {
+      "title": "Giải Khuyến khích - BUIDL Vietnam Hackathon (Hệ thống quản lý bản quyền âm nhạc kỹ thuật số trên Blockchain)",
+      "issuer": "BUIDL Vietnam",
+      "date": "06/2023"
+    }
+  ],
+  "activities": [],
+  "references": [],
+  "hobbies": [
+    "Công nghệ thông tin",
+    "Lập trình mã nguồn mở",
+    "Nghiên cứu công nghệ giao diện mới"
   ]
 }

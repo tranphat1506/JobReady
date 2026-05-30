@@ -43,6 +43,8 @@ export class AIParser {
         - 'missingSkills': an array of critical skills required by JD that the candidate lacks.
         - 'feedback': short advice for the candidate (in ${targetLanguage}).
       - Translate ALL content, including 'sectionTitles', 'labels' ('dob', 'portfolio', 'link'), education institution names, degrees, and content strictly into ${targetLanguage}.
+      - Extract all available sections from the CV, including certifications, awards, activities, references, and hobbies if present.
+      - Extract 'jobTitle', 'gender', and 'avatar' (URL if any) into personal if available.
       - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools') translated into ${targetLanguage}. DO NOT use long descriptions.
       - Evaluate candidate's skills and append the text Rank to each skill name. Do NOT use numbers. Evaluate using this legend: Beginner, Novice, Competent, Proficient, Expert. You MUST translate the Rank into ${targetLanguage} (e.g., if Vietnamese: "ReactJS (Chuyên gia)").
       - Separate pure working experience into 'experience' and standalone projects into 'projects'. Include 'link' (github/website) for projects if available.
@@ -50,14 +52,19 @@ export class AIParser {
       - Output MUST be ONLY valid JSON matching this exact schema:
       {
         "matchAnalysis": { "matchScore": 0, "isRelevant": true, "missingSkills": ["string"], "feedback": "string" },
-        "labels": { "dob": "string", "portfolio": "string", "link": "string" },
-        "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string" },
-        "personal": { "fullName": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
+        "labels": { "dob": "string", "portfolio": "string", "link": "string", "phone": "string", "email": "string", "location": "string" },
+        "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string", "certifications": "string", "awards": "string", "activities": "string", "references": "string", "hobbies": "string" },
+        "personal": { "fullName": "string", "jobTitle": "string", "gender": "string", "avatar": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
         "summary": "string",
         "experience": [{ "company": "string", "position": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "projects": [{ "name": "string", "link": "string", "role": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
         "education": [{ "institution": "string", "degree": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
-        "skills": [{ "category": "string", "items": ["string"] }]
+        "skills": [{ "category": "string", "items": ["string"] }],
+        "certifications": [{ "name": "string", "issuer": "string", "date": "string" }],
+        "awards": [{ "title": "string", "issuer": "string", "date": "string" }],
+        "activities": [{ "organization": "string", "role": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
+        "references": [{ "name": "string", "position": "string", "company": "string", "contactInfo": "string" }],
+        "hobbies": ["string"]
       }
 
       --- JOB DESCRIPTION ---

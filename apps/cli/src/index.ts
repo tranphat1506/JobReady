@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 const { PDFParse } = require('pdf-parse');
-import { AIParser, generatePdfFile, CVSchema } from '@cv-generator/core';
+import { AIParser, generatePdfFile, CVSchema, TemplateRegistry } from '@cv-generator/core';
 
 // Nạp biến môi trường từ thư mục gốc
 config({ path: path.resolve(__dirname, '../../../.env.development') });
@@ -12,7 +12,6 @@ const main = async () => {
   const args = process.argv.slice(2);
   const useCachedJson = args.includes('--use-cache');
 
-  const outPdfPath = path.join(__dirname, '../Result_Harvard_CV.pdf');
   const astJsonPath = path.join(__dirname, '../output_ast.json');
 
   let astJSON: CVSchema;
@@ -88,9 +87,39 @@ const main = async () => {
 
   // --- KẾT XUẤT PDF ---
   try {
-    console.log('Đang vẽ file PDF chuẩn Harvard...');
-    await generatePdfFile(astJSON, outPdfPath);
-    console.log(`✅ XONG! Mời bạn mở file PDF tại: ${outPdfPath}`);
+    // Ưu tiên sử dụng file avatar.png ở thư mục cli nếu user có để sẵn và AST không có avatar
+    if (!astJSON.personal.avatar) {
+      const defaultAvatarPath = path.join(__dirname, '../avatar.png');
+      if (fs.existsSync(defaultAvatarPath)) {
+        try {
+          const imageBuffer = fs.readFileSync(defaultAvatarPath);
+          const base64Image = imageBuffer.toString('base64');
+          
+          // Detect actual image format using magic bytes
+          let ext = 'png';
+          if (imageBuffer.length > 2 && imageBuffer[0] === 0xFF && imageBuffer[1] === 0xD8) {
+            ext = 'jpeg';
+          }
+          
+          astJSON.personal.avatar = `data:image/${ext};base64,${base64Image}`;
+          console.log(`Đã phát hiện và nhúng ảnh local: ${defaultAvatarPath} (Format: ${ext})`);
+        } catch (e) {
+          console.error('Không thể đọc file avatar.png:', e);
+        }
+      }
+    }
+
+    const availableTemplates = TemplateRegistry.getAvailableTemplates();
+    console.log(`Đã tìm thấy ${availableTemplates.length} templates: ${availableTemplates.join(', ')}`);
+    
+    for (const templateId of availableTemplates) {
+      const outPdfPath = path.join(__dirname, `../Result_${templateId}_CV.pdf`);
+      console.log(`Đang vẽ file PDF bằng template '${templateId}'...`);
+      await generatePdfFile(astJSON, outPdfPath, templateId);
+      console.log(`✅ Đã xuất file PDF tại: ${outPdfPath}`);
+    }
+    
+    console.log(`🎉 HOÀN TẤT! Đã kết xuất thành công ${availableTemplates.length} file PDF.`);
   } catch (error) {
     console.error('❌ Có lỗi xảy ra khi render PDF:', error);
   }
