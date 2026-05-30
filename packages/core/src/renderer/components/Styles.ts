@@ -37,14 +37,17 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
   },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+  sectionTitleContainer: {
     borderBottomWidth: 0.5,
     borderBottomColor: '#000',
     marginBottom: 8,
     marginTop: 10,
+  },
+  sectionTitleText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 4,
   },
   itemContainer: {
     marginBottom: 6,

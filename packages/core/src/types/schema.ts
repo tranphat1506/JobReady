@@ -118,3 +118,21 @@ export interface CVSchema {
   references?: Reference[];
   hobbies?: string[];
 }
+
+export interface RecipientInfo {
+  name?: string;
+  title?: string;
+  company?: string;
+  address?: string;
+}
+
+export interface CoverLetterSchema {
+  personal: PersonalInfo;
+  recipient: RecipientInfo;
+  date: string;
+  salutation: string;
+  opening: string;
+  bodyParagraphs: string[];
+  closing: string;
+  signOff: string;
+}

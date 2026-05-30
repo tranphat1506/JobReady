@@ -12,7 +12,7 @@ export const SkillsBlock = ({ title, data }: SkillsBlockProps) => {
   if (!data || data.length === 0) return null;
   return (
     <View>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionTitleContainer} wrap={false}><Text style={styles.sectionTitleText}>{title}</Text></View>
       {data.map((skill, i) => (
         <View key={i} style={styles.skillCategory} wrap={false}>
           <Text>

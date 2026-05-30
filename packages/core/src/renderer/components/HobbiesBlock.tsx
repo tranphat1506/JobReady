@@ -11,7 +11,7 @@ export const HobbiesBlock = ({ title, data }: HobbiesBlockProps) => {
   if (!data || data.length === 0) return null;
   return (
     <View wrap={false}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionTitleContainer} wrap={false}><Text style={styles.sectionTitleText}>{title}</Text></View>
       <Text style={styles.summary}>{data.join(', ')}</Text>
     </View>
   );

@@ -11,7 +11,7 @@ export const SummaryBlock = ({ title, data }: SummaryBlockProps) => {
   if (!data) return null;
   return (
     <View style={styles.summary} wrap={false}>
-      {title ? <Text style={styles.sectionTitle}>{title}</Text> : null}
+      {title ? <View style={styles.sectionTitleContainer} wrap={false}><Text style={styles.sectionTitleText}>{title}</Text></View> : null}
       <Text>{data}</Text>
     </View>
   );

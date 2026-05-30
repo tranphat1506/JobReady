@@ -12,7 +12,7 @@ export const AwardsBlock = ({ title, data }: AwardsBlockProps) => {
   if (!data || data.length === 0) return null;
   return (
     <View>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionTitleContainer} wrap={false}><Text style={styles.sectionTitleText}>{title}</Text></View>
       {data.map((award, i) => (
         <View key={i} style={styles.itemContainer} wrap={false}>
           <View style={styles.itemHeader}>

@@ -12,7 +12,7 @@ export const ReferencesBlock = ({ title, data }: ReferencesBlockProps) => {
   if (!data || data.length === 0) return null;
   return (
     <View>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionTitleContainer} wrap={false}><Text style={styles.sectionTitleText}>{title}</Text></View>
       {data.map((ref, i) => (
         <View key={i} style={styles.itemContainer} wrap={false}>
           <Text style={{ fontWeight: 'bold' }}>{ref.name}</Text>

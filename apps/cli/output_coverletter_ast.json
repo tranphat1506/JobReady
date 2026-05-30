@@ -1,0 +1,31 @@
+{
+  "personal": {
+    "fullName": "Lê Châu Trần Phát",
+    "jobTitle": "Full-Stack Software Engineer",
+    "email": "lechautranphat@gmail.com",
+    "phone": "+84 898486184",
+    "location": "52/1 Bong Sao Street, Ward 5, District 8, Ho Chi Minh City, Vietnam",
+    "portfolio": "https://github.com/tranphat1506",
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/tranphat1506"
+      }
+    ]
+  },
+  "recipient": {
+    "name": "Bộ phận Tuyển dụng",
+    "title": "Hiring Manager",
+    "company": "",
+    "address": ""
+  },
+  "date": "Ngày 24 tháng 5 năm 2024",
+  "salutation": "Kính gửi Bộ phận Tuyển dụng,",
+  "opening": "Tôi viết thư này để bày tỏ sự quan tâm sâu sắc đối với vị trí Frontend Developer (ReactJS) tại quý công ty. Với nền tảng kỹ thuật vững chắc về ReactJS, TypeScript cùng kinh nghiệm thực tế trong việc xây dựng các giao diện người dùng tối ưu, tôi tự tin sẽ đóng góp tích cực vào sự thành công của các dự án sắp tới của công ty.",
+  "bodyParagraphs": [
+    "Trong suốt quá trình làm việc và thực hiện các dự án thực tế, tôi đã tích lũy được kinh nghiệm chuyên sâu về ReactJS và TypeScript. Điển hình là tại Sen Viet Co., Ltd, tôi đã thiết kế và phát triển thành công hệ thống dashboard quản lý tài sản sử dụng React và Redux Toolkit, giúp cải thiện 30% hiệu suất nhập liệu của người dùng và tối ưu hóa trải nghiệm người dùng. Tôi hiểu rõ cách thiết kế kiến trúc component tối ưu, dễ bảo trì, có khả năng tái sử dụng cao và thành thạo trong việc quản lý state phức tạp.",
+    "Bên cạnh thế mạnh về kỹ năng frontend, tôi sở hữu tư duy giải quyết vấn đề tốt cùng khả năng làm việc nhóm hiệu quả, điều đã được chứng minh qua việc đạt giải Nhất tại HIU Startup Competition và giải Khuyến khích tại cuộc thi cải tiến của BOSCH. Tôi sử dụng thành thạo Git/GitHub cho việc quản lý phiên bản và phối hợp mã nguồn trong nhóm một cách trơn tru. Với tinh thần học hỏi nhanh và chủ động, tôi tự tin có thể nhanh chóng làm quen với các công nghệ quản lý state khác như Zustand cũng như quy trình làm việc của quý công ty."
+  ],
+  "closing": "Tôi rất mong có cơ hội được thảo luận trực tiếp trong một buổi phỏng vấn để trình bày chi tiết hơn về việc các kỹ năng và kinh nghiệm của tôi có thể đáp ứng tốt các yêu cầu phát triển sản phẩm của công ty. Xin chân thành cảm ơn quý công ty đã dành thời gian xem xét hồ sơ của tôi.",
+  "signOff": "Trân trọng,\nLê Châu Trần Phát"
+}

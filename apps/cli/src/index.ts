@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 const { PDFParse } = require('pdf-parse');
-import { AIParser, generatePdfFile, CVSchema, TemplateRegistry } from '@cv-generator/core';
+import { AIParser, generatePdfFile, CVSchema, TemplateRegistry, CoverLetterRegistry, generateCoverLetterPdfFile, CoverLetterSchema } from '@cv-generator/core';
 
 // Nạp biến môi trường từ thư mục gốc
 config({ path: path.resolve(__dirname, '../../../.env.development') });
@@ -13,18 +13,21 @@ const main = async () => {
   const useCachedJson = args.includes('--use-cache');
 
   const astJsonPath = path.join(__dirname, '../output_ast.json');
+  const clJsonPath = path.join(__dirname, '../output_coverletter_ast.json');
 
   let astJSON: CVSchema;
+  let clJSON: CoverLetterSchema;
 
   // --- TRƯỜNG HỢP 1: SỬ DỤNG LẠI JSON CÓ SẴN ĐỂ TIẾT KIỆM API QUOTA ---
   if (useCachedJson) {
-    if (!fs.existsSync(astJsonPath)) {
-      console.error('❌ LỖI: Không tìm thấy file output_ast.json. Bạn cần chạy lệnh bình thường ít nhất 1 lần để AI sinh ra file này!');
+    if (!fs.existsSync(astJsonPath) || !fs.existsSync(clJsonPath)) {
+      console.error('❌ LỖI: Không tìm thấy file JSON. Bạn cần chạy lệnh bình thường ít nhất 1 lần để AI sinh ra các file này!');
       process.exit(1);
     }
-    console.log('♻️ Đang đọc dữ liệu từ output_ast.json có sẵn...');
+    console.log('♻️ Đang đọc dữ liệu từ output_ast.json và output_coverletter_ast.json có sẵn...');
     console.log('💡 Bỏ qua gọi API Google Gemini để tiết kiệm Token/Chi phí.');
     astJSON = JSON.parse(fs.readFileSync(astJsonPath, 'utf-8')) as CVSchema;
+    clJSON = JSON.parse(fs.readFileSync(clJsonPath, 'utf-8')) as CoverLetterSchema;
   } 
   // --- TRƯỜNG HỢP 2: GỌI API GEMINI MỚI ---
   else {
@@ -75,10 +78,13 @@ const main = async () => {
     
     try {
       astJSON = await parser.parseAndTailorCV(jobDescription, rawCV, 'Vietnamese');
-      console.log('✅ AI đã sinh xong dữ liệu JSON AST thành công!');
-      
-      // Lưu file JSON ra ổ cứng để người dùng có thể xem hoặc tái sử dụng
+      console.log('✅ AI đã sinh xong dữ liệu CV JSON AST thành công!');
       fs.writeFileSync(astJsonPath, JSON.stringify(astJSON, null, 2));
+
+      console.log('Đang phân tích và xử lý Cover Letter bằng AI (Vui lòng đợi vài giây)...');
+      clJSON = await parser.parseAndTailorCoverLetter(jobDescription, rawCV, 'Vietnamese');
+      console.log('✅ AI đã sinh xong dữ liệu Cover Letter JSON AST thành công!');
+      fs.writeFileSync(clJsonPath, JSON.stringify(clJSON, null, 2));
     } catch (error) {
       console.error('❌ Có lỗi xảy ra khi gọi AI:', error);
       process.exit(1);
@@ -118,8 +124,19 @@ const main = async () => {
       await generatePdfFile(astJSON, outPdfPath, templateId);
       console.log(`✅ Đã xuất file PDF tại: ${outPdfPath}`);
     }
+
+    // Xuất Cover Letter PDF
+    const availableClTemplates = CoverLetterRegistry.getAvailableTemplates();
+    console.log(`Đã tìm thấy ${availableClTemplates.length} templates Cover Letter: ${availableClTemplates.join(', ')}`);
     
-    console.log(`🎉 HOÀN TẤT! Đã kết xuất thành công ${availableTemplates.length} file PDF.`);
+    for (const templateId of availableClTemplates) {
+      const outPdfPath = path.join(__dirname, `../Result_CoverLetter_${templateId}.pdf`);
+      console.log(`Đang vẽ file PDF Cover Letter bằng template '${templateId}'...`);
+      await generateCoverLetterPdfFile(clJSON, outPdfPath, templateId);
+      console.log(`✅ Đã xuất file PDF Cover Letter tại: ${outPdfPath}`);
+    }
+    
+    console.log(`🎉 HOÀN TẤT! Đã kết xuất thành công ${availableTemplates.length} CV và ${availableClTemplates.length} Cover Letter.`);
   } catch (error) {
     console.error('❌ Có lỗi xảy ra khi render PDF:', error);
   }
