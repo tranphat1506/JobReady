@@ -37,14 +37,20 @@ export class AIParser {
       CRITICAL INSTRUCTIONS:
       ${specificInstructions}
       
-      - Translate ALL content, including the generated section titles ('sectionTitles'), education institution names, degrees, and content strictly into ${targetLanguage}.
-      - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools'). DO NOT use long descriptions.
-      - Evaluate candidate's skills and append the text Rank to each skill name like this: "ReactJS (Expert)". Do NOT use numbers. Use this exact legend for your evaluation:
-        Beginner (start to learn); Novice (theory only, no experience); Competent (be able to do well); Proficient (skilled and experienced); Expert (high level of knowledge and experience)
+      - Analyze the fit between the Candidate's original CV and the Job Description to generate a 'matchAnalysis' object.
+        - 'matchScore': 0-100 score indicating how well the candidate fits the role.
+        - 'isRelevant': true if matchScore >= 40, false if the candidate is wildly unqualified or irrelevant.
+        - 'missingSkills': an array of critical skills required by JD that the candidate lacks.
+        - 'feedback': short advice for the candidate (in ${targetLanguage}).
+      - Translate ALL content, including 'sectionTitles', 'labels' ('dob', 'portfolio', 'link'), education institution names, degrees, and content strictly into ${targetLanguage}.
+      - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools') translated into ${targetLanguage}. DO NOT use long descriptions.
+      - Evaluate candidate's skills and append the text Rank to each skill name. Do NOT use numbers. Evaluate using this legend: Beginner, Novice, Competent, Proficient, Expert. You MUST translate the Rank into ${targetLanguage} (e.g., if Vietnamese: "ReactJS (Chuyên gia)").
       - Separate pure working experience into 'experience' and standalone projects into 'projects'. Include 'link' (github/website) for projects if available.
       - For education, ensure 'description' includes all critical details like Major, GPA, and Relevant Courses if available in the input.
       - Output MUST be ONLY valid JSON matching this exact schema:
       {
+        "matchAnalysis": { "matchScore": 0, "isRelevant": true, "missingSkills": ["string"], "feedback": "string" },
+        "labels": { "dob": "string", "portfolio": "string", "link": "string" },
         "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string" },
         "personal": { "fullName": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
         "summary": "string",

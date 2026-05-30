@@ -98,25 +98,49 @@ interface HarvardCVProps {
 export const HarvardCV = ({ data }: HarvardCVProps) => {
   const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
 
-  const contactInfo1 = [
-    isValid(data.personal.dob) ? `DOB: ${data.personal.dob}` : null,
-    isValid(data.personal.location) ? data.personal.location : null,
-    isValid(data.personal.phone) ? data.personal.phone : null,
+  const l = data.labels || {
+    dob: 'DOB',
+    portfolio: 'Portfolio',
+    link: 'Link'
+  };
+
+  const contactRow1: React.ReactNode[] = [
+    isValid(data.personal.location) ? <Text>{data.personal.location}</Text> : null,
+    isValid(data.personal.phone) ? <Text>{data.personal.phone}</Text> : null,
+    isValid(data.personal.email) ? <Link src={`mailto:${data.personal.email}`} style={styles.link}>{data.personal.email}</Link> : null,
   ].filter(Boolean);
 
-  const linkItems: React.ReactNode[] = [];
+  const contactRow2: React.ReactNode[] = [
+    isValid(data.personal.dob) ? <Text>{l.dob}: {data.personal.dob}</Text> : null,
+  ].filter(Boolean);
+
   if (isValid(data.personal.portfolio)) {
     const cleanUrl = data.personal.portfolio!.replace(/^https?:\/\/(www\.)?/, '');
-    linkItems.push(<Link src={data.personal.portfolio!} style={styles.link}>Portfolio: {cleanUrl}</Link>);
+    contactRow2.push(<Link src={data.personal.portfolio!} style={styles.link}>{l.portfolio}: {cleanUrl}</Link>);
   }
+  
   if (data.personal.links) {
     data.personal.links.forEach(link => {
       if (isValid(link.url) && isValid(link.name)) {
         const cleanUrl = link.url.replace(/^https?:\/\/(www\.)?/, '');
-        linkItems.push(<Link src={link.url} style={styles.link}>{link.name}: {cleanUrl}</Link>);
+        contactRow2.push(<Link src={link.url} style={styles.link}>{link.name}: {cleanUrl}</Link>);
       }
     });
   }
+
+  const renderRow = (row: React.ReactNode[]) => {
+    if (row.length === 0) return null;
+    return (
+      <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 3, fontSize: 10 }}>
+        {row.map((item, i) => (
+          <React.Fragment key={i}>
+            {item}
+            {i < row.length - 1 ? <Text style={{ marginHorizontal: 6 }}>•</Text> : null}
+          </React.Fragment>
+        ))}
+      </View>
+    );
+  };
 
   // Safe fallback for section titles
   const t = data.sectionTitles || {
@@ -133,25 +157,8 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
         {/* Header Info */}
         <View style={styles.header}>
           <Text style={styles.name}>{data.personal.fullName}</Text>
-          <View style={styles.contactInfo}>
-            <Text>
-              {contactInfo1.join(' | ')}
-              {contactInfo1.length > 0 && isValid(data.personal.email) ? ' | ' : ''}
-              {isValid(data.personal.email) ? <Link src={`mailto:${data.personal.email}`} style={styles.link}>{data.personal.email}</Link> : null}
-            </Text>
-          </View>
-          {linkItems.length > 0 && (
-            <View style={styles.contactInfo}>
-              <Text>
-                {linkItems.map((item, i) => (
-                  <React.Fragment key={i}>
-                    {item}
-                    {i < linkItems.length - 1 ? ' | ' : ''}
-                  </React.Fragment>
-                ))}
-              </Text>
-            </View>
-          )}
+          {renderRow(contactRow1)}
+          {renderRow(contactRow2)}
         </View>
 
         {/* Summary */}
@@ -166,7 +173,7 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
           <View>
             <Text style={styles.sectionTitle}>{t.education}</Text>
             {data.education.map((edu, i) => (
-              <View key={i} style={styles.itemContainer}>
+              <View key={i} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <Text style={{ textTransform: 'uppercase' }}>{edu.institution}</Text>
                   <Text>{edu.startDate} - {edu.endDate}</Text>
@@ -190,7 +197,7 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
           <View>
             <Text style={styles.sectionTitle}>{t.experience}</Text>
             {data.experience.map((exp, i) => (
-              <View key={i} style={styles.itemContainer}>
+              <View key={i} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <Text>{exp.company}</Text>
                   <Text>{exp.startDate} - {exp.endDate}</Text>
@@ -214,14 +221,14 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
           <View>
             <Text style={styles.sectionTitle}>{t.projects}</Text>
             {data.projects.map((proj, i) => (
-              <View key={i} style={styles.itemContainer}>
+              <View key={i} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <Text>{proj.name} {proj.role ? `(${proj.role})` : '(Project)'}</Text>
                   <Text>{proj.startDate} - {proj.endDate}</Text>
                 </View>
                 {isValid(proj.link) ? (
                   <View style={styles.itemSubHeader}>
-                    <Text>Link: <Link src={proj.link!} style={styles.link}>{proj.link!.replace(/^https?:\/\//, '')}</Link></Text>
+                    <Text>{l.link}: <Link src={proj.link!} style={styles.link}>{proj.link!.replace(/^https?:\/\//, '')}</Link></Text>
                   </View>
                 ) : null}
                 {proj.description ? proj.description.map((desc, j) => (
@@ -240,7 +247,7 @@ export const HarvardCV = ({ data }: HarvardCVProps) => {
           <View>
             <Text style={styles.sectionTitle}>{t.skills}</Text>
             {data.skills.map((skill, i) => (
-              <View key={i} style={styles.skillCategory}>
+              <View key={i} style={styles.skillCategory} wrap={false}>
                 <Text>
                   <Text style={styles.skillTitle}>{skill.category}: </Text>
                   <Text>{skill.items.join(', ')}</Text>

@@ -51,7 +51,22 @@ export interface SectionTitles {
   skills: string;
 }
 
+export interface MatchAnalysis {
+  matchScore: number;
+  isRelevant: boolean;
+  missingSkills: string[];
+  feedback: string;
+}
+
+export interface Labels {
+  dob: string;
+  portfolio: string;
+  link: string;
+}
+
 export interface CVSchema {
+  matchAnalysis?: MatchAnalysis;
+  labels: Labels;
   sectionTitles: SectionTitles;
   personal: PersonalInfo;
   summary: string;
