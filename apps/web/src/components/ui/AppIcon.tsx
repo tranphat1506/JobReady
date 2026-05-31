@@ -8,8 +8,8 @@ export function AppIcon({ className }: AppIconProps) {
   return (
     <div 
       className={cn(
-        "flex items-center justify-center rounded-lg bg-zinc-950 border border-zinc-800 shadow-sm",
-        "w-9 h-9 text-primary",
+        "flex items-center justify-center rounded-sm bg-primary shadow-sm",
+        "w-9 h-9 text-white",
         className
       )}
     >
