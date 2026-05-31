@@ -5,17 +5,17 @@ import { Upload, Sparkles, Download } from "lucide-react";
 
 const steps = [
   {
-    icon: <Upload className="w-6 h-6 text-primary" />,
+    icon: <Upload className="w-6 h-6 text-foreground" />,
     title: "1. Tải lên Thông Tin & JD",
     description: "Nhập thông tin cá nhân của bạn và dán Job Description của vị trí bạn muốn ứng tuyển."
   },
   {
-    icon: <Sparkles className="w-6 h-6 text-blue-500" />,
+    icon: <Sparkles className="w-6 h-6 text-foreground" />,
     title: "2. AI Xử Lý Thông Minh",
     description: "Gemini AI sẽ phân tích, tinh chỉnh kinh nghiệm của bạn để khớp nhất với yêu cầu công việc."
   },
   {
-    icon: <Download className="w-6 h-6 text-emerald-500" />,
+    icon: <Download className="w-6 h-6 text-foreground" />,
     title: "3. Tải PDF Sẵn Sàng",
     description: "Nhận ngay CV và Cover Letter chuẩn ATS, định dạng đẹp mắt chỉ sau vài giây."
   }
