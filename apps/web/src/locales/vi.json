@@ -1,72 +1,80 @@
 {
-  "landing": {
-    "hero": {
-      "badge": "CareerGo 2.0 đã ra mắt",
-      "title1": "Đừng gửi CV.",
-      "title2": "Hãy gửi một lời đề nghị không thể chối từ.",
-      "subtitle": "Thay vì dùng một bản CV duy nhất cho hàng chục công ty, CareerGo sử dụng AI để tự động may đo CV và Cover Letter của bạn khớp 100% với từng Job Description.",
-      "ctaPrimary": "Bắt đầu miễn phí",
-      "ctaSecondary": "Xem cách hoạt động",
-      "aiTyping": "AI đang phân tích JD..."
-    },
-    "features": {
-      "title": "Bức Tranh Toàn Cảnh",
-      "subtitle": "Không chỉ là một công cụ tạo CV. CareerGo là một cỗ máy tự động hóa quá trình ứng tuyển của bạn.",
-      "f1Title": "Khớp JD 100%",
-      "f1Desc": "AI tự động bóc tách từ khóa và cấu trúc lại kinh nghiệm của bạn để phù hợp hoàn hảo với yêu cầu.",
-      "f2Title": "Vượt Qua ATS",
-      "f2Desc": "Định dạng PDF tối giản, cấu trúc chuẩn hóa giúp 99% phần mềm tuyển dụng đọc được dữ liệu.",
-      "f3Title": "AI Cover Letter",
-      "f3Desc": "Tự động viết thư xin việc mang tính thuyết phục cao, bám sát văn hóa công ty.",
-      "f4Title": "Bảo Mật Tuyệt Đối",
-      "f4Desc": "Dữ liệu của bạn được mã hóa và không bao giờ được dùng để huấn luyện AI công cộng."
-    },
-    "howItWorks": {
-      "title": "Trải Nghiệm Hoàn Toàn Khác Biệt",
-      "subtitle": "Dễ Dàng Hơn Bao Giờ Hết",
-      "s1Title": "1. Khai báo 1 lần duy nhất",
-      "s1Desc": "Upload CV cũ hoặc điền form tay 1 lần để tạo Master Profile. Hệ thống sẽ lưu giữ kinh nghiệm, học vấn và kỹ năng của bạn trọn đời.",
-      "s2Title": "2. Dán Job Description",
-      "s2Desc": "Khi tìm thấy công việc ưng ý, chỉ cần sao chép và dán JD vào hệ thống. AI sẽ ngay lập tức đối chiếu và phân tích yêu cầu cốt lõi.",
-      "s3Title": "3. Nhận Kết Quả Hoàn Hảo",
-      "s3Desc": "Trong vòng 5 giây, AI sẽ sinh ra một bản CV hoàn toàn mới, nhấn mạnh đúng những kỹ năng mà nhà tuyển dụng đang tìm kiếm."
-    },
-    "faq": {
-      "title": "Câu Hỏi Thường Gặp",
-      "subtitle": "Giải đáp thắc mắc",
-      "q1": "CareerGo có miễn phí không?",
-      "a1": "Chúng tôi cung cấp gói miễn phí với 3 lần sử dụng mỗi tháng. Để sử dụng không giới hạn, bạn có thể mua các gói trả phí.",
-      "q2": "CV được tạo ra có chắc chắn vượt qua ATS?",
-      "a2": "CareerGo sử dụng định dạng được thiết kế chuyên biệt, tương thích 99% với các hệ thống ATS phổ biến nhất hiện nay như Taleo, Workday, Greenhouse.",
-      "q3": "Dữ liệu của tôi có được bảo mật?",
-      "a3": "Có. Hồ sơ của bạn được mã hóa và chỉ bạn mới có quyền truy cập. Chúng tôi cam kết không bán dữ liệu cho bên thứ ba."
-    },
-    "cta": {
-      "title": "Sẵn sàng chinh phục công việc mơ ước?",
-      "subtitle": "Hàng ngàn ứng viên đã thành công với CareerGo. Giờ đến lượt bạn.",
-      "button": "Bắt Đầu Ngay Hôm Nay"
-    }
-  },
   "layout": {
     "header": {
       "features": "Tính năng",
       "pricing": "Bảng giá",
-      "faq": "FAQ",
+      "faq": "Hỏi đáp",
       "login": "Đăng nhập",
-      "getStarted": "Bắt đầu ngay"
+      "getStarted": "Tạo CV Ngay"
     },
     "footer": {
-      "description": "Giải pháp tạo CV tự động hóa, giúp bạn chinh phục mọi nhà tuyển dụng một cách dễ dàng.",
-      "product": "Sản phẩm",
-      "features": "Tính năng",
-      "pricing": "Bảng giá",
-      "templates": "Mẫu CV",
-      "support": "Hỗ trợ",
-      "faq": "Câu hỏi thường gặp",
-      "contact": "Liên hệ",
-      "privacy": "Bảo mật",
-      "terms": "Điều khoản",
-      "privacyPolicy": "Chính sách bảo mật"
+      "description": "Nền tảng tạo CV xin việc và Cover Letter trực tuyến hàng đầu Việt Nam. Tối ưu hóa chuẩn ATS, giúp bạn dễ dàng chinh phục mọi nhà tuyển dụng khó tính nhất.",
+      "product": "Sản Phẩm",
+      "features": "Tính năng nổi bật",
+      "pricing": "Bảng giá dịch vụ",
+      "templates": "Mẫu CV đẹp",
+      "support": "Hỗ Trợ Ứng Viên",
+      "faq": "Câu hỏi thường gặp (FAQ)",
+      "contact": "Liên hệ hỗ trợ",
+      "blog": "Cẩm nang tìm việc",
+      "privacy": "Chính sách bảo mật",
+      "terms": "Điều khoản sử dụng",
+      "privacyPolicy": "Quy định chung",
+      "connect": "Kết nối với chúng tôi",
+      "copyright": "© 2026 CareerGo. Đã đăng ký bản quyền."
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "CÔNG CỤ TẠO CV SỐ 1 VIỆT NAM",
+      "title": "Tạo CV Chuẩn ATS & Cover Letter Chuyên Nghiệp Bằng AI",
+      "subtitle": "Chỉ với vài thao tác đơn giản, CareerGo giúp bạn sở hữu một bản hồ sơ xin việc hoàn hảo, khớp 100% với yêu cầu của nhà tuyển dụng. Nâng cao 80% cơ hội trúng tuyển ngay hôm nay.",
+      "ctaPrimary": "Tạo CV Miễn Phí",
+      "ctaSecondary": "Xem Hướng Dẫn",
+      "mockupTitle": "Tự động phân tích Job Description"
+    },
+    "stats": {
+      "stat1Num": "50,000+",
+      "stat1Label": "Ứng viên tin dùng",
+      "stat2Num": "99%",
+      "stat2Label": "Tương thích hệ thống ATS",
+      "stat3Num": "12,000+",
+      "stat3Label": "Nhà tuyển dụng tiếp cận"
+    },
+    "features": {
+      "title": "Tại sao hàng ngàn ứng viên chọn CareerGo?",
+      "subtitle": "Nền tảng của chúng tôi cung cấp giải pháp toàn diện giúp bạn vượt qua vòng hồ sơ một cách dễ dàng và ấn tượng nhất.",
+      "f1Title": "Tối Ưu Hóa CV Theo Job Description",
+      "f1Desc": "Công nghệ AI của chúng tôi tự động đọc hiểu bản mô tả công việc (JD), từ đó trích xuất các từ khóa quan trọng và tinh chỉnh hồ sơ của bạn sao cho khớp nhất với yêu cầu tuyển dụng.",
+      "f2Title": "Viết Cover Letter Tự Động Bằng Trí Tuệ Nhân Tạo",
+      "f2Desc": "Không còn đau đầu vì phải viết thư xin việc cho từng công ty. CareerGo tự động soạn thảo Cover Letter cá nhân hóa, thể hiện rõ thế mạnh của bạn dựa trên kinh nghiệm thực tế.",
+      "f3Title": "Định Dạng PDF Chuẩn ATS Khắc Khe Nhất",
+      "f3Desc": "Hệ thống ATS thường đánh trượt các mẫu CV quá màu mè hoặc định dạng sai. Chúng tôi cung cấp các mẫu thiết kế tối giản, thanh lịch, đảm bảo máy quét đọc được 100% dữ liệu."
+    },
+    "howItWorks": {
+      "title": "Hướng Dẫn Tạo CV Xin Việc Chỉ Với 3 Bước",
+      "subtitle": "Quy trình thiết kế CV chưa bao giờ đơn giản và nhanh chóng đến thế.",
+      "s1Title": "Bước 1: Khai báo thông tin cá nhân",
+      "s1Desc": "Điền các thông tin về học vấn, kinh nghiệm làm việc và kỹ năng của bạn một lần duy nhất để tạo hồ sơ gốc (Master Profile).",
+      "s2Title": "Bước 2: Phân tích mô tả công việc (JD)",
+      "s2Desc": "Dán nội dung tuyển dụng của công ty bạn muốn ứng tuyển vào hệ thống. AI sẽ ngay lập tức đối chiếu và đề xuất các chỉnh sửa phù hợp.",
+      "s3Title": "Bước 3: Tải xuống file PDF chuẩn ATS",
+      "s3Desc": "Nhận về bản CV và Thư xin việc (Cover Letter) đã được tối ưu hoàn chỉnh. Tải xuống định dạng PDF và sẵn sàng gửi cho nhà tuyển dụng."
+    },
+    "faq": {
+      "title": "Giải Đáp Thắc Mắc Thường Gặp (FAQ)",
+      "subtitle": "HỖ TRỢ ỨNG VIÊN",
+      "q1": "Tạo CV trên CareerGo có hoàn toàn miễn phí không?",
+      "a1": "Có. Chúng tôi cung cấp gói sử dụng miễn phí cho phép ứng viên tạo và tải xuống CV không giới hạn số lần cho bản cơ bản. Nếu bạn muốn sử dụng các tính năng AI nâng cao (như viết Cover Letter tự động), bạn có thể nâng cấp lên gói Pro.",
+      "q2": "CV chuẩn ATS là gì và tại sao lại quan trọng?",
+      "a2": "ATS (Applicant Tracking System) là phần mềm lọc hồ sơ tự động được 90% các công ty lớn sử dụng. Nếu CV của bạn có định dạng phức tạp (chứa nhiều hình ảnh, cột đôi phức tạp), ATS sẽ không đọc được chữ và tự động loại hồ sơ của bạn. CV tại CareerGo được thiết kế riêng để vượt qua bài kiểm tra này.",
+      "q3": "Dữ liệu cá nhân của tôi có được bảo mật không?",
+      "a3": "Tuyệt đối an toàn. Mọi dữ liệu cá nhân, thông tin liên hệ và lịch sử làm việc của bạn đều được mã hóa trên máy chủ đám mây chuẩn quốc tế. Chúng tôi cam kết không bán dữ liệu cho bất kỳ bên thứ ba nào."
+    },
+    "cta": {
+      "title": "Bắt đầu hành trình chinh phục công việc mơ ước",
+      "subtitle": "Hàng ngàn ứng viên đã tìm được công việc như ý nhờ sở hữu một bản CV chuyên nghiệp. Đừng để vuột mất cơ hội của bạn.",
+      "button": "Tạo CV Của Bạn Ngay Bây Giờ"
     }
   }
 }

@@ -1,56 +1,80 @@
 {
-  "landing": {
-    "hero": {
-      "badge": "AI-Powered CV Automation",
-      "title1": "Create ATS-Friendly CVs &",
-      "title2": "Automated Cover Letters",
-      "subtitle": "The smart CV builder that analyzes Job Descriptions, writes personalized Cover Letters, and generates professional PDFs in seconds.",
-      "ctaPrimary": "Generate CV Now",
-      "ctaSecondary": "Learn More"
-    },
-    "features": {
-      "title": "Key Features",
-      "subtitle": "Equipped with everything you need to catch the recruiter's eye.",
-      "f1Title": "Smart JD Analysis",
-      "f1Desc": "Our AI automatically extracts keywords and skills from the Job Description, ensuring your CV passes ATS screenings effortlessly.",
-      "f2Title": "Automated Cover Letters",
-      "f2Desc": "Generate highly personalized Cover Letters tailored specifically to your experience and the job's requirements.",
-      "f3Title": "ATS-Optimized Formatting",
-      "f3Desc": "Export PDFs with clean, standard layouts designed to maximize your success rate with recruitment software.",
-      "f4Title": "Fast & Convenient",
-      "f4Desc": "Skip hours of formatting. Get a complete, professional application package with just a few clicks."
-    },
-    "howItWorks": {
-      "title": "How It Works",
-      "subtitle": "Get a professional CV in 3 simple steps.",
-      "s1Title": "1. Upload Info & JD",
-      "s1Desc": "Provide your work experience and paste the Job Description.",
-      "s2Title": "2. AI Analysis & Optimization",
-      "s2Desc": "Our AI system automatically tweaks and highlights the skills that best match the job requirements.",
-      "s3Title": "3. Download PDF",
-      "s3Desc": "Instantly receive your ATS-friendly CV and Cover Letter, ready to be sent to recruiters."
-    }
-  },
   "layout": {
     "header": {
       "features": "Features",
       "pricing": "Pricing",
       "faq": "FAQ",
       "login": "Login",
-      "getStarted": "Get Started"
+      "getStarted": "Create CV Now"
     },
     "footer": {
-      "description": "The automated CV builder that helps you conquer any recruiter with ease.",
+      "description": "The leading online platform for creating CVs and Cover Letters in Vietnam. ATS-optimized to help you easily conquer the most demanding employers.",
       "product": "Product",
-      "features": "Features",
-      "pricing": "Pricing",
+      "features": "Key Features",
+      "pricing": "Pricing Plans",
       "templates": "CV Templates",
-      "support": "Support",
-      "faq": "FAQ",
-      "contact": "Contact",
-      "privacy": "Privacy",
+      "support": "Candidate Support",
+      "faq": "Frequently Asked Questions",
+      "contact": "Contact Support",
+      "blog": "Career Blog",
+      "privacy": "Privacy Policy",
       "terms": "Terms of Service",
-      "privacyPolicy": "Privacy Policy"
+      "privacyPolicy": "General Policy",
+      "connect": "Connect With Us",
+      "copyright": "© 2026 CareerGo. All rights reserved."
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "VIETNAM'S #1 CV BUILDER",
+      "title": "Create ATS-Friendly CVs & Professional Cover Letters with AI",
+      "subtitle": "With just a few simple steps, CareerGo helps you own a perfect job application, matching 100% with the employer's requirements. Increase your hiring chances by 80% today.",
+      "ctaPrimary": "Create Free CV",
+      "ctaSecondary": "Watch Tutorial",
+      "mockupTitle": "Automatically analyzing Job Description"
+    },
+    "stats": {
+      "stat1Num": "50,000+",
+      "stat1Label": "Trusted Candidates",
+      "stat2Num": "99%",
+      "stat2Label": "ATS Compatibility",
+      "stat3Num": "12,000+",
+      "stat3Label": "Hiring Managers Reached"
+    },
+    "features": {
+      "title": "Why do thousands of candidates choose CareerGo?",
+      "subtitle": "Our platform provides comprehensive solutions to help you pass the screening round easily and impressively.",
+      "f1Title": "CV Optimization based on Job Description",
+      "f1Desc": "Our AI technology automatically understands the Job Description (JD), extracts important keywords, and fine-tunes your profile to best match the job requirements.",
+      "f2Title": "Automated Cover Letter Generation via AI",
+      "f2Desc": "No more headaches writing cover letters for every single company. CareerGo automatically generates highly personalized cover letters, clearly highlighting your strengths based on your actual experience.",
+      "f3Title": "Strict ATS PDF Formatting",
+      "f3Desc": "ATS systems often reject CV templates that are too colorful or poorly formatted. We provide minimalist, elegant designs, ensuring 100% data readability by screening machines."
+    },
+    "howItWorks": {
+      "title": "How to Create a Professional CV in 3 Steps",
+      "subtitle": "The CV design process has never been simpler and faster.",
+      "s1Title": "Step 1: Declare your personal information",
+      "s1Desc": "Fill in your education, work experience, and skills just once to create a Master Profile.",
+      "s2Title": "Step 2: Analyze Job Description (JD)",
+      "s2Desc": "Paste the job posting of the company you want to apply to into the system. The AI will immediately compare and suggest appropriate adjustments.",
+      "s3Title": "Step 3: Download ATS-friendly PDF",
+      "s3Desc": "Receive your fully optimized CV and Cover Letter. Download the PDF format and you're ready to send it to employers."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions (FAQ)",
+      "subtitle": "CANDIDATE SUPPORT",
+      "q1": "Is creating a CV on CareerGo completely free?",
+      "a1": "Yes. We offer a free plan that allows candidates to create and download standard CVs unlimited times. If you want to use advanced AI features (like automatic cover letter generation), you can upgrade to the Pro plan.",
+      "q2": "What is an ATS-friendly CV and why is it important?",
+      "a2": "ATS (Applicant Tracking System) is automated screening software used by 90% of large companies. If your CV has complex formatting (contains many images, complex dual columns), the ATS cannot read the text and automatically rejects your profile. CVs at CareerGo are specifically designed to pass this test.",
+      "q3": "Is my personal data secure?",
+      "a3": "Absolutely safe. All your personal data, contact information, and work history are encrypted on international standard cloud servers. We promise never to sell data to any third party."
+    },
+    "cta": {
+      "title": "Start your journey to conquering your dream job",
+      "subtitle": "Thousands of candidates have found their ideal jobs thanks to having a professional CV. Don't let your opportunity slip away.",
+      "button": "Create Your CV Right Now"
     }
   }
 }

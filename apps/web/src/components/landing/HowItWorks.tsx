@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
-import { UploadCloud, Cpu, Download } from "lucide-react";
+import { UserPlus, Search, DownloadCloud } from "lucide-react";
 
 export default function HowItWorks() {
   const { t } = useTranslation();
@@ -11,79 +10,62 @@ export default function HowItWorks() {
     {
       title: t('landing.howItWorks.s1Title'),
       desc: t('landing.howItWorks.s1Desc'),
-      icon: UploadCloud,
+      icon: UserPlus,
     },
     {
       title: t('landing.howItWorks.s2Title'),
       desc: t('landing.howItWorks.s2Desc'),
-      icon: Cpu,
+      icon: Search,
     },
     {
       title: t('landing.howItWorks.s3Title'),
       desc: t('landing.howItWorks.s3Desc'),
-      icon: Download,
+      icon: DownloadCloud,
     },
   ];
 
   return (
-    <section className="py-24 bg-white relative">
+    <section id="how-it-works" className="py-24 bg-zinc-50 border-t border-zinc-200">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
-          
-          {/* Left Column: Sticky Title */}
-          <div className="lg:w-1/3">
-            <div className="lg:sticky lg:top-32">
-              <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 mb-6 tracking-tight">
-                {t('landing.howItWorks.title')}
-              </h2>
-              <p className="text-xl text-zinc-500 leading-relaxed mb-8">
-                {t('landing.howItWorks.subtitle')}
-              </p>
-              
-              {/* Optional Decoration on left side */}
-              <div className="hidden lg:flex w-24 h-1 bg-zinc-900 mb-8 rounded-full"></div>
-            </div>
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6">
+            {t('landing.howItWorks.title')}
+          </h2>
+          <p className="text-lg text-zinc-600 leading-relaxed">
+            {t('landing.howItWorks.subtitle')}
+          </p>
+        </div>
+
+        <div className="relative">
+          {/* Connecting Line (Desktop) */}
+          <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-zinc-200 z-0"></div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <div key={index} className="flex flex-col items-center text-center">
+                  
+                  {/* Icon Circle */}
+                  <div className="w-24 h-24 bg-white border-4 border-zinc-50 rounded-full flex items-center justify-center shadow-lg shadow-zinc-200/50 mb-6 relative">
+                    <Icon className="w-10 h-10 text-primary" />
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm">
+                      {index + 1}
+                    </div>
+                  </div>
+
+                  {/* Text Content */}
+                  <h3 className="text-xl font-bold text-zinc-900 mb-4">
+                    {step.title}
+                  </h3>
+                  <p className="text-zinc-600 leading-relaxed max-w-sm">
+                    {step.desc}
+                  </p>
+                  
+                </div>
+              );
+            })}
           </div>
-
-          {/* Right Column: Scrolling Steps */}
-          <div className="lg:w-2/3">
-            <div className="relative">
-              {/* Timeline Line */}
-              <div className="absolute left-8 top-8 bottom-8 w-px bg-zinc-200 hidden md:block"></div>
-
-              <div className="space-y-12">
-                {steps.map((step, index) => {
-                  const Icon = step.icon;
-                  return (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 0.5 }}
-                      className="relative flex flex-col md:flex-row gap-6 md:gap-12"
-                    >
-                      {/* Step Indicator */}
-                      <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-200 flex-shrink-0">
-                        <Icon className="w-6 h-6 text-zinc-700" />
-                      </div>
-
-                      {/* Step Content */}
-                      <div className="flex-1 bg-zinc-50 border border-zinc-100 rounded-3xl p-8 md:p-10 hover:shadow-xl hover:shadow-zinc-200/40 transition-shadow duration-500">
-                        <h3 className="text-2xl font-bold text-zinc-900 mb-4">
-                          {step.title}
-                        </h3>
-                        <p className="text-lg text-zinc-600 leading-relaxed">
-                          {step.desc}
-                        </p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </section>

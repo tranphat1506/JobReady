@@ -13,7 +13,7 @@ export function AppIcon({ className }: AppIconProps) {
         className
       )}
     >
-      <i className="fi fi-sr-briefcase text-[1.1rem]"></i>
+      <i className="fi fi-sr-briefcase text-2xl"></i>
     </div>
   );
 }

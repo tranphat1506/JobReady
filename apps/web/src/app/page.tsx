@@ -1,7 +1,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/landing/HeroSection";
-import AtsMarquee from "@/components/landing/AtsMarquee";
+import StatsSection from "@/components/landing/StatsSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import HowItWorks from "@/components/landing/HowItWorks";
 import FaqSection from "@/components/landing/FaqSection";
@@ -14,7 +14,7 @@ export default function Home() {
       
       <main className="flex-1 pt-16">
         <HeroSection />
-        <AtsMarquee />
+        <StatsSection />
         <FeaturesSection />
         <HowItWorks />
         <FaqSection />
