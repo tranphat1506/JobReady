@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${lora.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${lora.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
