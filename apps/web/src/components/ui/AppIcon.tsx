@@ -8,7 +8,7 @@ export function AppIcon({ className }: AppIconProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center bg-zinc-900",
+        "flex items-center justify-center bg-primary",
         "w-8 h-8 text-white flex-shrink-0",
         className
       )}
