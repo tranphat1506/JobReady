@@ -33,6 +33,8 @@
       "subtitle": "Chỉ với vài thao tác đơn giản, CareerGo giúp bạn sở hữu một bản hồ sơ xin việc hoàn hảo, khớp 100% với yêu cầu của nhà tuyển dụng. Nâng cao 80% cơ hội trúng tuyển ngay hôm nay.",
       "ctaPrimary": "Tạo CV Miễn Phí",
       "ctaSecondary": "Xem Hướng Dẫn",
+      "noCreditCard": "Không cần thẻ tín dụng",
+      "freePdf": "Tải PDF miễn phí",
       "mockupTitle": "Tự động phân tích Job Description",
       "mockCv": {
         "experience": "Kinh nghiệm làm việc",
@@ -96,7 +98,7 @@
       "title": "Bảng Giá Dịch Vụ",
       "subtitle": "Lựa chọn gói giải pháp phù hợp với hành trình sự nghiệp của bạn.",
       "free": {
-        "name": "Cơ Bản",
+        "name": "Miễn Phí",
         "price": "0đ",
         "period": "/tháng",
         "desc": "Gói miễn phí vĩnh viễn, lý tưởng cho sinh viên và người mới ra trường.",
@@ -105,6 +107,17 @@
         "f2": "AI viết Cover Letter (3 lần/tháng)",
         "f3": "Lưu trữ dữ liệu an toàn",
         "f4": "Hỗ trợ qua email"
+      },
+      "basic": {
+        "name": "Cơ Bản",
+        "price": "49.000đ",
+        "period": "/tháng",
+        "desc": "Phù hợp cho ứng viên cần tạo nhiều mẫu CV đa dạng.",
+        "button": "Nâng Cấp Cơ Bản",
+        "f1": "Truy cập kho mẫu CV Standard",
+        "f2": "AI viết Cover Letter (10 lần/tháng)",
+        "f3": "Lưu trữ dữ liệu an toàn",
+        "f4": "Hỗ trợ qua email (phản hồi 24h)"
       },
       "pro": {
         "name": "Chuyên Nghiệp",

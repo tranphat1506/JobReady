@@ -33,6 +33,8 @@
       "subtitle": "With just a few simple steps, CareerGo helps you own a perfect job application, matching 100% with the employer's requirements. Increase your hiring chances by 80% today.",
       "ctaPrimary": "Create Free CV",
       "ctaSecondary": "Watch Tutorial",
+      "noCreditCard": "No credit card required",
+      "freePdf": "Free PDF download",
       "mockupTitle": "Automatically analyzing Job Description",
       "mockCv": {
         "experience": "Work Experience",
@@ -105,6 +107,17 @@
         "f2": "AI Cover Letter (3 times/month)",
         "f3": "Secure data storage",
         "f4": "Email support"
+      },
+      "basic": {
+        "name": "Basic",
+        "price": "$2",
+        "period": "/month",
+        "desc": "Perfect for job seekers who need multiple templates.",
+        "button": "Upgrade to Basic",
+        "f1": "Access to Standard CV templates",
+        "f2": "AI Cover Letter (10 times/month)",
+        "f3": "Secure data storage",
+        "f4": "Email support within 24h"
       },
       "pro": {
         "name": "Professional",

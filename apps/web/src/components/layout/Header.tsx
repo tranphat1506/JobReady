@@ -46,7 +46,7 @@ export default function Header() {
           </Link>
           
           <Link href="/dashboard">
-            <Button className="px-6 font-semibold rounded-md text-[15px] h-10 bg-primary hover:bg-emerald-600 text-white shadow-md shadow-primary/20">
+            <Button className="cursor-pointer px-6 font-semibold rounded-md text-[15px] h-10 bg-primary hover:bg-emerald-700 text-white hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200">
               {t('layout.header.getStarted')}
             </Button>
           </Link>

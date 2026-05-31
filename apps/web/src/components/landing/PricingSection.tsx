@@ -20,7 +20,7 @@ export default function PricingSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Free Plan */}
           <div className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col">
             <h3 className="text-2xl font-bold text-zinc-900 mb-2">{t('landing.pricing.free.name')}</h3>
@@ -50,8 +50,43 @@ export default function PricingSection() {
             </ul>
 
             <Link href="/dashboard" className="mt-auto">
-              <Button variant="outline" className="w-full h-12 text-base font-semibold border-zinc-300 text-zinc-700 hover:bg-zinc-50">
+              <Button variant="outline" className="cursor-pointer w-full h-12 text-base font-semibold border-zinc-300 text-zinc-700 hover:bg-zinc-50">
                 {t('landing.pricing.free.button')}
+              </Button>
+            </Link>
+          </div>
+
+          {/* Basic Plan */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col">
+            <h3 className="text-2xl font-bold text-zinc-900 mb-2">{t('landing.pricing.basic.name')}</h3>
+            <p className="text-zinc-500 mb-6 h-12">{t('landing.pricing.basic.desc')}</p>
+            <div className="mb-8">
+              <span className="text-5xl font-extrabold text-zinc-900">{t('landing.pricing.basic.price')}</span>
+              <span className="text-zinc-500 font-medium">{t('landing.pricing.basic.period')}</span>
+            </div>
+            
+            <ul className="space-y-4 mb-8 flex-1">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span className="text-zinc-600">{t('landing.pricing.basic.f1')}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span className="text-zinc-600">{t('landing.pricing.basic.f2')}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span className="text-zinc-600">{t('landing.pricing.basic.f3')}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span className="text-zinc-600">{t('landing.pricing.basic.f4')}</span>
+              </li>
+            </ul>
+
+            <Link href="/dashboard" className="mt-auto">
+              <Button variant="outline" className="cursor-pointer w-full h-12 text-base font-semibold border-zinc-300 text-zinc-700 hover:bg-zinc-50">
+                {t('landing.pricing.basic.button')}
               </Button>
             </Link>
           </div>
@@ -89,7 +124,7 @@ export default function PricingSection() {
             </ul>
 
             <Link href="/dashboard" className="mt-auto">
-              <Button className="w-full h-12 text-base font-bold bg-primary hover:bg-emerald-600 text-white shadow-lg shadow-primary/20">
+              <Button className="cursor-pointer w-full h-12 text-base font-bold bg-primary hover:bg-emerald-700 text-white hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200">
                 {t('landing.pricing.pro.button')}
               </Button>
             </Link>
