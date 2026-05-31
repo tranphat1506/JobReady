@@ -8,10 +8,10 @@ export default function FeaturesSection() {
   const { t } = useTranslation();
 
   const features = [
-    { icon: <BrainCircuit className="w-6 h-6" />, title: t('landing.features.f1Title'), description: t('landing.features.f1Desc') },
-    { icon: <FileSignature className="w-6 h-6" />, title: t('landing.features.f2Title'), description: t('landing.features.f2Desc') },
-    { icon: <Target className="w-6 h-6" />, title: t('landing.features.f3Title'), description: t('landing.features.f3Desc') },
-    { icon: <Zap className="w-6 h-6" />, title: t('landing.features.f4Title'), description: t('landing.features.f4Desc') }
+    { icon: <BrainCircuit className="w-6 h-6 text-cyan-500" />, title: t('landing.features.f1Title'), description: t('landing.features.f1Desc') },
+    { icon: <FileSignature className="w-6 h-6 text-violet-500" />, title: t('landing.features.f2Title'), description: t('landing.features.f2Desc') },
+    { icon: <Target className="w-6 h-6 text-emerald-500" />, title: t('landing.features.f3Title'), description: t('landing.features.f3Desc') },
+    { icon: <Zap className="w-6 h-6 text-amber-500" />, title: t('landing.features.f4Title'), description: t('landing.features.f4Desc') }
   ];
 
   return (

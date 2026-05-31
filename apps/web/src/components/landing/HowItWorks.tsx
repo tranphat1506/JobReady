@@ -8,9 +8,9 @@ export default function HowItWorks() {
   const { t } = useTranslation();
 
   const steps = [
-    { icon: <Upload className="w-5 h-5" />, step: '01', title: t('landing.howItWorks.s1Title'), description: t('landing.howItWorks.s1Desc') },
-    { icon: <Sparkles className="w-5 h-5" />, step: '02', title: t('landing.howItWorks.s2Title'), description: t('landing.howItWorks.s2Desc') },
-    { icon: <Download className="w-5 h-5" />, step: '03', title: t('landing.howItWorks.s3Title'), description: t('landing.howItWorks.s3Desc') }
+    { icon: <Upload className="w-5 h-5 text-cyan-500" />, step: '01', title: t('landing.howItWorks.s1Title'), description: t('landing.howItWorks.s1Desc') },
+    { icon: <Sparkles className="w-5 h-5 text-violet-500" />, step: '02', title: t('landing.howItWorks.s2Title'), description: t('landing.howItWorks.s2Desc') },
+    { icon: <Download className="w-5 h-5 text-emerald-500" />, step: '03', title: t('landing.howItWorks.s3Title'), description: t('landing.howItWorks.s3Desc') }
   ];
 
   return (

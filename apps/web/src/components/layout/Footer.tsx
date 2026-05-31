@@ -14,7 +14,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight mb-4">
               <AppIcon />
-              <span className="font-bold tracking-tight">CVGen</span>
+              <span className="font-bold tracking-tight">CareerGo</span>
             </Link>
             <p className="text-muted-foreground max-w-sm">
               {t('layout.footer.description')}
@@ -41,7 +41,7 @@ export default function Footer() {
         </div>
         
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center">
-          <p>© {new Date().getFullYear()} CVGen. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} CareerGo. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
             <Link href="/terms" className="hover:text-foreground">{t('layout.footer.terms')}</Link>
             <Link href="/privacy" className="hover:text-foreground">{t('layout.footer.privacyPolicy')}</Link>

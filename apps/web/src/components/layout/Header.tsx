@@ -20,7 +20,7 @@ export default function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
           <AppIcon />
-          <span className="font-bold tracking-tight">CVGen</span>
+          <span className="font-bold tracking-tight">CareerGo</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">

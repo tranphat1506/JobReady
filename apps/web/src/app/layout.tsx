@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CVGen - AI-Powered CV Generator",
-  description: "Tạo CV và Cover Letter tự động bằng Trí tuệ nhân tạo (Gemini AI).",
+  title: "CareerGo - AI-Powered CV & Cover Letter Generator",
+  description: "Tạo CV và Cover Letter chuyên nghiệp bằng AI. Tối ưu cho ATS, phù hợp với từng Job Description.",
 };
 
 export default function RootLayout({
