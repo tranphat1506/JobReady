@@ -12,7 +12,7 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-background pt-24 pb-32">
       {/* Background decoration */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-100 via-background to-background"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <motion.div
@@ -21,14 +21,14 @@ export default function HeroSection() {
           transition={{ duration: 0.5 }}
           className="max-w-4xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary mb-8 text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200 bg-zinc-50 text-zinc-600 mb-8 text-sm font-medium tracking-wide">
             <Sparkles className="w-4 h-4" />
             <span>{t('landing.hero.badge')}</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-foreground">
             {t('landing.hero.title1')} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
+            <span className="">
               {t('landing.hero.title2')}
             </span>
           </h1>
@@ -39,14 +39,14 @@ export default function HeroSection() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/dashboard">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 shadow-lg hover:shadow-primary/25 transition-all font-bold">
+              <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base gap-2 font-semibold rounded-md transition-colors">
                 <FileText className="w-5 h-5" />
                 {t('landing.hero.ctaPrimary')}
               </Button>
             </Link>
             
             <Link href="#features">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 bg-background/50 backdrop-blur-sm">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base gap-2 rounded-md font-semibold">
                 {t('landing.hero.ctaSecondary')}
                 <ArrowRight className="w-5 h-5" />
               </Button>

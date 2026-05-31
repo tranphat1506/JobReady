@@ -8,30 +8,14 @@ export default function FeaturesSection() {
   const { t } = useTranslation();
 
   const features = [
-    {
-      icon: <BrainCircuit className="w-8 h-8 text-cyan-400" />,
-      title: t('landing.features.f1Title'),
-      description: t('landing.features.f1Desc')
-    },
-    {
-      icon: <FileSignature className="w-8 h-8 text-purple-400" />,
-      title: t('landing.features.f2Title'),
-      description: t('landing.features.f2Desc')
-    },
-    {
-      icon: <Target className="w-8 h-8 text-emerald-400" />,
-      title: t('landing.features.f3Title'),
-      description: t('landing.features.f3Desc')
-    },
-    {
-      icon: <Zap className="w-8 h-8 text-amber-400" />,
-      title: t('landing.features.f4Title'),
-      description: t('landing.features.f4Desc')
-    }
+    { icon: <BrainCircuit className="w-6 h-6" />, title: t('landing.features.f1Title'), description: t('landing.features.f1Desc') },
+    { icon: <FileSignature className="w-6 h-6" />, title: t('landing.features.f2Title'), description: t('landing.features.f2Desc') },
+    { icon: <Target className="w-6 h-6" />, title: t('landing.features.f3Title'), description: t('landing.features.f3Desc') },
+    { icon: <Zap className="w-6 h-6" />, title: t('landing.features.f4Title'), description: t('landing.features.f4Desc') }
   ];
 
   return (
-    <section id="features" className="py-24 bg-muted/30">
+    <section id="features" className="py-24 bg-zinc-50 border-t border-zinc-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.features.title')}</h2>
@@ -48,15 +32,13 @@ export default function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-card p-8 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white p-6 rounded-xl border border-zinc-200 hover:border-zinc-300 transition-colors"
             >
-              <div className="mb-6 p-4 bg-muted rounded-xl inline-block">
+              <div className="mb-5 w-10 h-10 bg-zinc-100 rounded-lg flex items-center justify-center">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
+              <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </div>

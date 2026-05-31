@@ -20,7 +20,7 @@ export default function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
           <AppIcon />
-          <span>CV<span className="text-primary">Gen</span></span>
+          <span className="font-bold tracking-tight">CVGen</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -30,17 +30,16 @@ export default function Header() {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={toggleLanguage} className="rounded-full" title="Toggle Language">
-            <Globe className="w-5 h-5" />
-            <span className="sr-only">Toggle Language</span>
-            <span className="ml-2 text-xs font-bold uppercase">{language}</span>
+          <Button variant="ghost" size="sm" onClick={toggleLanguage} className="text-xs font-bold uppercase gap-1.5 px-3">
+            <Globe className="w-4 h-4" />
+            <span>{language.toUpperCase()}</span>
           </Button>
 
-          <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors hidden sm:block">
+          <Link href="/login" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block">
             {t('layout.header.login')}
           </Link>
           <Link href="/dashboard">
-            <Button className="rounded-full px-6 font-bold">{t('layout.header.getStarted')}</Button>
+            <Button className="px-5 font-semibold rounded-md text-sm h-9">{t('layout.header.getStarted')}</Button>
           </Link>
         </div>
       </div>
