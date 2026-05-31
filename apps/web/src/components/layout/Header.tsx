@@ -29,6 +29,8 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium text-zinc-600">
           <Link href="#features" className="hover:text-primary transition-colors">{t('layout.header.features')}</Link>
           <Link href="#pricing" className="hover:text-primary transition-colors">{t('layout.header.pricing')}</Link>
+          <Link href="/templates" className="hover:text-primary transition-colors">{t('layout.header.templates')}</Link>
+          <Link href="/blog" className="hover:text-primary transition-colors">{t('layout.header.blog')}</Link>
           <Link href="#faq" className="hover:text-primary transition-colors">{t('layout.header.faq')}</Link>
         </nav>
         

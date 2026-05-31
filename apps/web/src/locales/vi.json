@@ -3,6 +3,8 @@
     "header": {
       "features": "Tính năng",
       "pricing": "Bảng giá",
+      "templates": "Mẫu CV",
+      "blog": "Cẩm nang",
       "faq": "Hỏi đáp",
       "login": "Đăng nhập",
       "getStarted": "Tạo CV Ngay"
@@ -26,7 +28,7 @@
   },
   "landing": {
     "hero": {
-      "badge": "CÔNG CỤ TẠO CV SỐ 1 VIỆT NAM",
+      "badge": "NỀN TẢNG TẠO CV CHUẨN ATS",
       "title": "Tạo CV Chuẩn ATS & Cover Letter Chuyên Nghiệp Bằng AI",
       "subtitle": "Chỉ với vài thao tác đơn giản, CareerGo giúp bạn sở hữu một bản hồ sơ xin việc hoàn hảo, khớp 100% với yêu cầu của nhà tuyển dụng. Nâng cao 80% cơ hội trúng tuyển ngay hôm nay.",
       "ctaPrimary": "Tạo CV Miễn Phí",
@@ -34,22 +36,50 @@
       "mockupTitle": "Tự động phân tích Job Description"
     },
     "stats": {
-      "stat1Num": "50,000+",
-      "stat1Label": "Ứng viên tin dùng",
-      "stat2Num": "99%",
-      "stat2Label": "Tương thích hệ thống ATS",
-      "stat3Num": "12,000+",
-      "stat3Label": "Nhà tuyển dụng tiếp cận"
+      "stat1Num": "100%",
+      "stat1Label": "Bảo mật dữ liệu",
+      "stat2Num": "< 5s",
+      "stat2Label": "Thời gian tạo CV tự động",
+      "stat3Num": "99%",
+      "stat3Label": "Tương thích chuẩn ATS"
+    },
+    "pricing": {
+      "title": "Bảng Giá Dịch Vụ",
+      "subtitle": "Lựa chọn gói giải pháp phù hợp với hành trình sự nghiệp của bạn.",
+      "free": {
+        "name": "Cơ Bản",
+        "price": "0đ",
+        "period": "/tháng",
+        "desc": "Gói miễn phí vĩnh viễn, lý tưởng cho sinh viên và người mới ra trường.",
+        "button": "Bắt Đầu Miễn Phí",
+        "f1": "Sử dụng 1 mẫu CV chuẩn ATS cơ bản",
+        "f2": "AI viết Cover Letter (3 lần/tháng)",
+        "f3": "Lưu trữ dữ liệu an toàn",
+        "f4": "Hỗ trợ qua email"
+      },
+      "pro": {
+        "name": "Chuyên Nghiệp",
+        "price": "99.000đ",
+        "period": "/tháng",
+        "desc": "Trang bị đầy đủ sức mạnh AI để vượt qua mọi vòng hồ sơ khó nhất.",
+        "button": "Nâng Cấp Ngay",
+        "f1": "Truy cập không giới hạn kho mẫu CV Premium",
+        "f2": "AI viết Cover Letter không giới hạn",
+        "f3": "AI phân tích và khớp từ khóa JD tự động",
+        "f4": "Hỗ trợ ưu tiên giải quyết trong 2h"
+      }
     },
     "features": {
-      "title": "Tại sao hàng ngàn ứng viên chọn CareerGo?",
-      "subtitle": "Nền tảng của chúng tôi cung cấp giải pháp toàn diện giúp bạn vượt qua vòng hồ sơ một cách dễ dàng và ấn tượng nhất.",
-      "f1Title": "Tối Ưu Hóa CV Theo Job Description",
-      "f1Desc": "Công nghệ AI của chúng tôi tự động đọc hiểu bản mô tả công việc (JD), từ đó trích xuất các từ khóa quan trọng và tinh chỉnh hồ sơ của bạn sao cho khớp nhất với yêu cầu tuyển dụng.",
-      "f2Title": "Viết Cover Letter Tự Động Bằng Trí Tuệ Nhân Tạo",
-      "f2Desc": "Không còn đau đầu vì phải viết thư xin việc cho từng công ty. CareerGo tự động soạn thảo Cover Letter cá nhân hóa, thể hiện rõ thế mạnh của bạn dựa trên kinh nghiệm thực tế.",
-      "f3Title": "Định Dạng PDF Chuẩn ATS Khắc Khe Nhất",
-      "f3Desc": "Hệ thống ATS thường đánh trượt các mẫu CV quá màu mè hoặc định dạng sai. Chúng tôi cung cấp các mẫu thiết kế tối giản, thanh lịch, đảm bảo máy quét đọc được 100% dữ liệu."
+      "title": "Giải Pháp Toàn Diện Cho Hồ Sơ Xin Việc Của Bạn",
+      "subtitle": "Chúng tôi cung cấp bộ công cụ thông minh giúp bạn tự tin vượt qua mọi vòng kiểm duyệt hồ sơ khắt khe nhất.",
+      "f1Title": "Tối Ưu Hóa & Khớp JD",
+      "f1Desc": "AI tự động đọc hiểu bản mô tả công việc (JD), trích xuất từ khóa quan trọng và tinh chỉnh hồ sơ của bạn sao cho khớp nhất với yêu cầu.",
+      "f2Title": "Chấm Điểm Chuẩn ATS",
+      "f2Desc": "Hệ thống sẽ quét và mô phỏng lại cách các bộ lọc ATS hoạt động để chấm điểm CV của bạn, đồng thời chỉ ra các lỗi cần khắc phục ngay lập tức.",
+      "f3Title": "Viết Cover Letter Tự Động",
+      "f3Desc": "CareerGo tự động soạn thảo Cover Letter cá nhân hóa cho từng công ty, thể hiện rõ thế mạnh của bạn dựa trên kinh nghiệm thực tế.",
+      "f4Title": "Dịch Thuật Đa Ngôn Ngữ",
+      "f4Desc": "Dễ dàng chuyển đổi toàn bộ nội dung CV của bạn sang Tiếng Anh, Tiếng Việt hoặc các ngôn ngữ khác chỉ với một cú click chuột."
     },
     "howItWorks": {
       "title": "Hướng Dẫn Tạo CV Xin Việc Chỉ Với 3 Bước",

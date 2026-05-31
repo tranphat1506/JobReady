@@ -4,6 +4,7 @@ import HeroSection from "@/components/landing/HeroSection";
 import StatsSection from "@/components/landing/StatsSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import HowItWorks from "@/components/landing/HowItWorks";
+import PricingSection from "@/components/landing/PricingSection";
 import FaqSection from "@/components/landing/FaqSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <StatsSection />
         <FeaturesSection />
         <HowItWorks />
+        <PricingSection />
         <FaqSection />
         <FinalCTA />
       </main>

@@ -3,6 +3,8 @@
     "header": {
       "features": "Features",
       "pricing": "Pricing",
+      "templates": "Templates",
+      "blog": "Blog",
       "faq": "FAQ",
       "login": "Login",
       "getStarted": "Create CV Now"
@@ -26,7 +28,7 @@
   },
   "landing": {
     "hero": {
-      "badge": "VIETNAM'S #1 CV BUILDER",
+      "badge": "ATS-FRIENDLY CV PLATFORM",
       "title": "Create ATS-Friendly CVs & Professional Cover Letters with AI",
       "subtitle": "With just a few simple steps, CareerGo helps you own a perfect job application, matching 100% with the employer's requirements. Increase your hiring chances by 80% today.",
       "ctaPrimary": "Create Free CV",
@@ -34,22 +36,50 @@
       "mockupTitle": "Automatically analyzing Job Description"
     },
     "stats": {
-      "stat1Num": "50,000+",
-      "stat1Label": "Trusted Candidates",
-      "stat2Num": "99%",
-      "stat2Label": "ATS Compatibility",
-      "stat3Num": "12,000+",
-      "stat3Label": "Hiring Managers Reached"
+      "stat1Num": "100%",
+      "stat1Label": "Data Privacy",
+      "stat2Num": "< 5s",
+      "stat2Label": "Time to Generate CV",
+      "stat3Num": "99%",
+      "stat3Label": "ATS Compatibility"
+    },
+    "pricing": {
+      "title": "Pricing Plans",
+      "subtitle": "Choose the right plan for your career journey.",
+      "free": {
+        "name": "Basic",
+        "price": "$0",
+        "period": "/month",
+        "desc": "Free forever, ideal for students and fresh graduates.",
+        "button": "Start for Free",
+        "f1": "Use 1 basic ATS CV template",
+        "f2": "AI Cover Letter (3 times/month)",
+        "f3": "Secure data storage",
+        "f4": "Email support"
+      },
+      "pro": {
+        "name": "Professional",
+        "price": "$5",
+        "period": "/month",
+        "desc": "Equipped with full AI power to pass any tough screening.",
+        "button": "Upgrade Now",
+        "f1": "Unlimited access to Premium CV templates",
+        "f2": "Unlimited AI Cover Letters",
+        "f3": "AI Job Description keyword matching",
+        "f4": "Priority support (2h response)"
+      }
     },
     "features": {
-      "title": "Why do thousands of candidates choose CareerGo?",
-      "subtitle": "Our platform provides comprehensive solutions to help you pass the screening round easily and impressively.",
-      "f1Title": "CV Optimization based on Job Description",
-      "f1Desc": "Our AI technology automatically understands the Job Description (JD), extracts important keywords, and fine-tunes your profile to best match the job requirements.",
-      "f2Title": "Automated Cover Letter Generation via AI",
-      "f2Desc": "No more headaches writing cover letters for every single company. CareerGo automatically generates highly personalized cover letters, clearly highlighting your strengths based on your actual experience.",
-      "f3Title": "Strict ATS PDF Formatting",
-      "f3Desc": "ATS systems often reject CV templates that are too colorful or poorly formatted. We provide minimalist, elegant designs, ensuring 100% data readability by screening machines."
+      "title": "Comprehensive Solutions for Your Job Application",
+      "subtitle": "We provide smart tools to help you confidently pass even the most rigorous resume screening rounds.",
+      "f1Title": "JD Analysis & Matching",
+      "f1Desc": "AI automatically understands the Job Description (JD), extracts important keywords, and fine-tunes your profile to perfectly match the requirements.",
+      "f2Title": "ATS Scoring & Checking",
+      "f2Desc": "The system simulates how ATS filters work to score your CV, pointing out formatting issues and missing keywords that need immediate fixing.",
+      "f3Title": "Automated Cover Letters",
+      "f3Desc": "CareerGo automatically generates highly personalized cover letters for each company, clearly highlighting your strengths.",
+      "f4Title": "Multi-Language Translation",
+      "f4Desc": "Easily translate your entire CV content to English, Vietnamese, or other languages with just a single click."
     },
     "howItWorks": {
       "title": "How to Create a Professional CV in 3 Steps",
