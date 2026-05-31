@@ -2,107 +2,89 @@
 
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
-
-const steps = [
-  {
-    number: "01",
-    icon: "fi fi-rr-file-edit",
-    color: "bg-cyan-50 text-cyan-600 border-cyan-100",
-    dotColor: "bg-cyan-500",
-  },
-  {
-    number: "02",
-    icon: "fi fi-rr-magic-wand",
-    color: "bg-violet-50 text-violet-600 border-violet-100",
-    dotColor: "bg-violet-500",
-  },
-  {
-    number: "03",
-    icon: "fi fi-rr-cloud-download",
-    color: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    dotColor: "bg-emerald-500",
-  },
-];
+import { UploadCloud, Cpu, Download } from "lucide-react";
 
 export default function HowItWorks() {
   const { t } = useTranslation();
 
-  const titles = [
-    t('landing.howItWorks.s1Title'),
-    t('landing.howItWorks.s2Title'),
-    t('landing.howItWorks.s3Title'),
-  ];
-  const descs = [
-    t('landing.howItWorks.s1Desc'),
-    t('landing.howItWorks.s2Desc'),
-    t('landing.howItWorks.s3Desc'),
+  const steps = [
+    {
+      title: t('landing.howItWorks.s1Title'),
+      desc: t('landing.howItWorks.s1Desc'),
+      icon: UploadCloud,
+    },
+    {
+      title: t('landing.howItWorks.s2Title'),
+      desc: t('landing.howItWorks.s2Desc'),
+      icon: Cpu,
+    },
+    {
+      title: t('landing.howItWorks.s3Title'),
+      desc: t('landing.howItWorks.s3Desc'),
+      icon: Download,
+    },
   ];
 
   return (
-    <section className="py-28 bg-white border-t border-zinc-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-        {/* Heading */}
-        <div className="text-center mb-20">
-          <p className="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase mb-3">
-            {t('landing.howItWorks.subtitle')}
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-zinc-900">
-            {t('landing.howItWorks.title')}
-          </h2>
-        </div>
-
-        {/* Steps */}
-        <div className="relative">
-          {/* Connector line (desktop) */}
-          <div className="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-zinc-200 z-0" />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6">
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="flex flex-col items-center text-center relative z-10"
-              >
-                {/* Icon circle */}
-                <div className={`w-20 h-20 rounded-2xl border-2 flex items-center justify-center mb-6 ${step.color}`}>
-                  <i className={`${step.icon} text-3xl`} />
-                </div>
-
-                {/* Step number */}
-                <span className="text-[11px] font-bold tracking-[0.18em] text-zinc-400 uppercase mb-2">
-                  STEP {step.number}
-                </span>
-
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">
-                  {titles[index]}
-                </h3>
-                <p className="text-sm text-zinc-500 leading-relaxed max-w-[220px]">
-                  {descs[index]}
-                </p>
-              </motion.div>
-            ))}
+    <section className="py-24 bg-white relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
+          
+          {/* Left Column: Sticky Title */}
+          <div className="lg:w-1/3">
+            <div className="lg:sticky lg:top-32">
+              <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 mb-6 tracking-tight">
+                {t('landing.howItWorks.title')}
+              </h2>
+              <p className="text-xl text-zinc-500 leading-relaxed mb-8">
+                {t('landing.howItWorks.subtitle')}
+              </p>
+              
+              {/* Optional Decoration on left side */}
+              <div className="hidden lg:flex w-24 h-1 bg-zinc-900 mb-8 rounded-full"></div>
+            </div>
           </div>
-        </div>
 
-        {/* CTA inline */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-16 flex justify-center"
-        >
-          <a
-            href="/dashboard"
-            className="inline-flex items-center gap-2 bg-zinc-900 text-white text-sm font-semibold px-6 py-3 rounded-md hover:bg-zinc-700 transition-colors"
-          >
-            <i className="fi fi-rr-rocket-lunch text-base leading-none" />
-            {t('landing.hero.ctaPrimary')}
-          </a>
-        </motion.div>
+          {/* Right Column: Scrolling Steps */}
+          <div className="lg:w-2/3">
+            <div className="relative">
+              {/* Timeline Line */}
+              <div className="absolute left-8 top-8 bottom-8 w-px bg-zinc-200 hidden md:block"></div>
+
+              <div className="space-y-12">
+                {steps.map((step, index) => {
+                  const Icon = step.icon;
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.5 }}
+                      className="relative flex flex-col md:flex-row gap-6 md:gap-12"
+                    >
+                      {/* Step Indicator */}
+                      <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-200 flex-shrink-0">
+                        <Icon className="w-6 h-6 text-zinc-700" />
+                      </div>
+
+                      {/* Step Content */}
+                      <div className="flex-1 bg-zinc-50 border border-zinc-100 rounded-3xl p-8 md:p-10 hover:shadow-xl hover:shadow-zinc-200/40 transition-shadow duration-500">
+                        <h3 className="text-2xl font-bold text-zinc-900 mb-4">
+                          {step.title}
+                        </h3>
+                        <p className="text-lg text-zinc-600 leading-relaxed">
+                          {step.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
   );
