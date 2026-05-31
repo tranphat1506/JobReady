@@ -5,22 +5,22 @@ import { BrainCircuit, FileSignature, Target, Zap } from "lucide-react";
 
 const features = [
   {
-    icon: <BrainCircuit className="w-8 h-8 text-foreground" />,
+    icon: <BrainCircuit className="w-8 h-8 text-primary" />,
     title: "Phân Tích JD Thông Minh",
     description: "AI tự động trích xuất từ khóa và kỹ năng từ Job Description, giúp CV của bạn vượt qua vòng quét ATS dễ dàng."
   },
   {
-    icon: <FileSignature className="w-8 h-8 text-foreground" />,
+    icon: <FileSignature className="w-8 h-8 text-primary" />,
     title: "Tự Động Viết Cover Letter",
     description: "Sinh ra thư xin việc được cá nhân hóa cao độ, phù hợp hoàn hảo với kinh nghiệm của bạn và yêu cầu công việc."
   },
   {
-    icon: <Target className="w-8 h-8 text-foreground" />,
+    icon: <Target className="w-8 h-8 text-primary" />,
     title: "Chuẩn ATS Quốc Tế",
     description: "Xuất file PDF với định dạng và cấu trúc được tối ưu hóa cho các hệ thống quét hồ sơ (ATS) phổ biến nhất."
   },
   {
-    icon: <Zap className="w-8 h-8 text-foreground" />,
+    icon: <Zap className="w-8 h-8 text-primary" />,
     title: "Tốc Độ Siêu Tốc",
     description: "Chỉ tốn vài giây để từ một JD trống trơn có ngay trọn bộ hồ sơ ứng tuyển chuyên nghiệp."
   }
