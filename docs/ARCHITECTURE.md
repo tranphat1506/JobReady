@@ -1,37 +1,53 @@
-# Kiến trúc Hệ thống
+# Kiến trúc Hệ thống SaaS
 
-Dự án sử dụng phương pháp **Monorepo** để đảm bảo khả năng tái sử dụng code cốt lõi khi nâng cấp từ một công cụ chạy trên máy tính (Local MVP) lên một hệ thống Website SaaS.
+Dự án sử dụng phương pháp **Lego-style Monorepo** để đảm bảo khả năng tái sử dụng code tốt nhất, hỗ trợ Next.js App Router (phân chia Server/Client rõ ràng) và tránh các lỗi Tree-Shaking.
 
-## 1. Cấu trúc Thư mục (Dự kiến)
+## 1. Cấu trúc Thư mục
 
 ```text
 CV-Generator/
-├── packages/
-│   └── core/            # Lõi hệ thống (Không chứa logic UI hay API Server)
-│       ├── types/       # Định nghĩa AST Schema (Interfaces)
-│       ├── ai/          # Logic gọi Google Gemini API
-│       └── renderer/    # Các component React vẽ file PDF (@react-pdf)
+├── packages/              # Lõi hệ thống (Tách thành các khối Lego)
+│   ├── schema/            # Định nghĩa AST Schema (Zod/Interfaces). Độc lập hoàn toàn.
+│   ├── ai/                # Logic gọi Google Gemini API (Chỉ chạy trên Server). Phụ thuộc schema.
+│   └── renderer/          # Các component React vẽ file PDF (@react-pdf). Phụ thuộc schema.
 ├── apps/
-│   └── cli/             # App Node.js gọi 'core' để chạy test ở môi trường Local
-└── docs/                # Tài liệu hệ thống
+│   ├── cli/               # App Node.js gọi các packages để chạy test ở môi trường Local.
+│   └── web/               # Next.js Web App SaaS UI (App Router, shadcn/ui).
+└── docs/                  # Tài liệu hệ thống
 ```
 
-## 2. Sơ đồ Luồng (Data Flow) - Giai đoạn MVP
+## 2. Sơ đồ Luồng (Data Flow) - Kiến trúc SaaS
 
 ```mermaid
 flowchart TD
-    subgraph LocalEnv ["Local Environment"]
-        A["Input: JD & CV Text (.txt)"] --> B("apps/cli")
-        
-        subgraph Core ["packages/core (Trái tim của dự án)"]
-            C["AI Parser (Gọi Gemini API)"] --> D["JSON AST (Dữ liệu chuẩn)"]
-            D --> E["PDF Engine (React-PDF)"]
-        end
-        
-        B -->|"1. Truyền Text"| C
-        E -->|"2. Xuất PDF File"| F["Output: cv_result.pdf"]
+    subgraph Client ["Next.js Client (Browser)"]
+        UI["UI (Form / Dashboard)"]
+        Preview["PDF Viewer Preview"]
     end
+    
+    subgraph Server ["Next.js Server / API Routes"]
+        AI_Pkg["@cv-generator/ai (Gemini)"]
+        Schema["@cv-generator/schema"]
+    end
+    
+    subgraph Renderer ["@cv-generator/renderer"]
+        PDF["React-PDF Engine"]
+    end
+    
+    UI -->|"1. User Input (Profile/JD)"| Server
+    Server -->|"2. Parse / Tailor (Gemini)"| AI_Pkg
+    AI_Pkg -->|"3. Dữ liệu chuẩn"| Schema
+    Schema -->|"4. Trả JSON AST"| UI
+    
+    UI -->|"5. Truyền JSON AST"| Renderer
+    Renderer -->|"6. Vẽ Component PDF"| PDF
+    PDF -->|"7. Hiển thị/Tải xuống"| Preview
 ```
 
-## 3. Kiến trúc Mở rộng (Tương lai)
-Khi nâng cấp lên Web App, ta chỉ cần tạo thêm thư mục `apps/web` (Next.js/Vite) và import trực tiếp thư mục `packages/core` để sử dụng lại toàn bộ engine mà không cần code lại.
+## 3. Lý do Tách Gói (Lego-style)
+Kiến trúc nguyên khối `packages/core` (cũ) gặp vấn đề khi Next.js cố gắng compile các thư viện Backend (như `@google/generative-ai` hoặc `fs`, `path`) vào Client bundle khi sử dụng chung với `@react-pdf/renderer` (chạy trên Client).
+
+Bằng cách tách thành 3 gói riêng biệt:
+- Giao diện Client chỉ việc import `@cv-generator/schema` (nhẹ) và `@cv-generator/renderer` (chỉ phụ thuộc React).
+- API Server sẽ import `@cv-generator/schema` và `@cv-generator/ai` để gọi Gemini một cách an toàn.
+- Ngăn chặn hoàn toàn lỗi môi trường và rò rỉ API Keys.
