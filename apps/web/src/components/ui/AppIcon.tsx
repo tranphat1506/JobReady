@@ -8,12 +8,12 @@ export function AppIcon({ className }: AppIconProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center bg-primary",
-        "w-8 h-8 text-white flex-shrink-0",
+        "flex items-center justify-center rounded-sm bg-primary",
+        "w-8.5 h-8.5 text-white",
         className
       )}
     >
-      <i className="fi fi-rr-suitcase text-white text-lg leading-none flex items-center justify-center" />
+      <i className="fi fi-sr-briefcase" style={{ color: "white", fontSize: "1.1rem", lineHeight: 1 }}></i>
     </div>
   );
 }
