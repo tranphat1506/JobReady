@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { FileText, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTranslation } from "@/hooks/useTranslation";
+import { AppIcon } from "@/components/ui/AppIcon";
 
 export default function Header() {
   const { language, setLanguage } = useSettingsStore();
@@ -18,9 +19,7 @@ export default function Header() {
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
-          <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
-            <FileText className="w-5 h-5" />
-          </div>
+          <AppIcon />
           <span>CV<span className="text-primary">Gen</span></span>
         </Link>
         
@@ -41,7 +40,7 @@ export default function Header() {
             {t('layout.header.login')}
           </Link>
           <Link href="/dashboard">
-            <Button className="rounded-full px-6">{t('layout.header.getStarted')}</Button>
+            <Button className="rounded-full px-6 font-bold">{t('layout.header.getStarted')}</Button>
           </Link>
         </div>
       </div>

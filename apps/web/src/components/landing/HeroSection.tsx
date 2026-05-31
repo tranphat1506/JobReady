@@ -39,7 +39,7 @@ export default function HeroSection() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/dashboard">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 shadow-lg hover:shadow-primary/25 transition-all">
+              <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 shadow-lg hover:shadow-primary/25 transition-all font-bold">
                 <FileText className="w-5 h-5" />
                 {t('landing.hero.ctaPrimary')}
               </Button>

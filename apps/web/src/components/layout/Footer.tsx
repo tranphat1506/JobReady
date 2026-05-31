@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FileText } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { AppIcon } from "@/components/ui/AppIcon";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -13,9 +13,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight mb-4">
-              <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
-                <FileText className="w-5 h-5" />
-              </div>
+              <AppIcon />
               <span>CV<span className="text-primary">Gen</span></span>
             </Link>
             <p className="text-muted-foreground max-w-sm">
