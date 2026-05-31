@@ -2,7 +2,9 @@ import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 const { PDFParse } = require('pdf-parse');
-import { AIParser, generatePdfFile, CVSchema, TemplateRegistry, CoverLetterRegistry, generateCoverLetterPdfFile, CoverLetterSchema } from '@cv-generator/core';
+import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
+import { AIParser } from '@cv-generator/ai';
+import { TemplateRegistry, CoverLetterRegistry, generatePdfFile, generateCoverLetterPdfFile } from '@cv-generator/renderer';
 
 // Nạp biến môi trường từ thư mục gốc
 config({ path: path.resolve(__dirname, '../../../.env.development') });

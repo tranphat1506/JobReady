@@ -9,7 +9,9 @@
     "dev": "ts-node-dev --respawn src/index.ts"
   },
   "dependencies": {
-    "@cv-generator/core": "workspace:*",
+    "@cv-generator/schema": "workspace:*",
+    "@cv-generator/ai": "workspace:*",
+    "@cv-generator/renderer": "workspace:*",
     "dotenv": "^16.4.5",
     "pdf-parse": "^2.4.5"
   },
