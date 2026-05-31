@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FileText, Globe } from "lucide-react";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Header() {
   const { language, setLanguage } = useSettingsStore();
+  const { t } = useTranslation();
 
   const toggleLanguage = () => {
     setLanguage(language === 'vi' ? 'en' : 'vi');
@@ -23,9 +25,9 @@ export default function Header() {
         </Link>
         
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-          <Link href="#features" className="hover:text-foreground transition-colors">Tính năng</Link>
-          <Link href="#pricing" className="hover:text-foreground transition-colors">Bảng giá</Link>
-          <Link href="#faq" className="hover:text-foreground transition-colors">FAQ</Link>
+          <Link href="#features" className="hover:text-foreground transition-colors">{t('layout.header.features')}</Link>
+          <Link href="#pricing" className="hover:text-foreground transition-colors">{t('layout.header.pricing')}</Link>
+          <Link href="#faq" className="hover:text-foreground transition-colors">{t('layout.header.faq')}</Link>
         </nav>
         
         <div className="flex items-center gap-4">
@@ -36,10 +38,10 @@ export default function Header() {
           </Button>
 
           <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors hidden sm:block">
-            {language === 'vi' ? 'Đăng nhập' : 'Login'}
+            {t('layout.header.login')}
           </Link>
           <Link href="/dashboard">
-            <Button className="rounded-full px-6">{language === 'vi' ? 'Bắt đầu ngay' : 'Get Started'}</Button>
+            <Button className="rounded-full px-6">{t('layout.header.getStarted')}</Button>
           </Link>
         </div>
       </div>

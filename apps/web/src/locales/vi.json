@@ -1,34 +1,56 @@
 {
   "landing": {
     "hero": {
-      "badge": "Hệ Thống Trích Xuất Dữ Liệu Tự Động",
-      "title1": "Tạo CV Định Dạng ATS &",
-      "title2": "Thư Ứng Tuyển Tự Động",
-      "subtitle": "Hệ thống phân tích yêu cầu tuyển dụng chuyên sâu. Trích xuất năng lực cốt lõi, tự động hóa quy trình soạn thảo thư ứng tuyển và kết xuất định dạng PDF chuẩn mực.",
+      "badge": "Tự động hóa CV với AI",
+      "title1": "Tạo CV chuẩn ATS &",
+      "title2": "Cover Letter tự động",
+      "subtitle": "Công cụ tạo CV thông minh giúp bạn phân tích Job Description, tự động viết Cover Letter và xuất file PDF chuyên nghiệp chỉ trong vài giây.",
       "ctaPrimary": "Tạo CV Ngay",
       "ctaSecondary": "Tìm hiểu thêm"
     },
     "features": {
-      "title": "Đặc Điểm Kỹ Thuật",
-      "subtitle": "Giải pháp toàn diện hỗ trợ chuẩn hóa quy trình ứng tuyển, đáp ứng các tiêu chuẩn khắt khe nhất của quy trình tuyển dụng hiện đại.",
-      "f1Title": "Phân Tích Dữ Liệu Tuyển Dụng",
-      "f1Desc": "Hệ thống tự động trích xuất các từ khóa chuyên môn và nhóm kỹ năng từ bản mô tả công việc, đảm bảo hồ sơ tương thích hoàn toàn với cơ chế ATS.",
-      "f2Title": "Tự Động Hóa Thư Ứng Tuyển",
-      "f2Desc": "Thiết lập cấu trúc thư xin việc mang tính cá nhân hóa cao, đối chiếu trực tiếp năng lực thực tiễn với yêu cầu nghiệp vụ cốt lõi.",
-      "f3Title": "Tối Ưu Hóa Định Dạng ATS",
-      "f3Desc": "Kết xuất văn bản định dạng PDF tuân thủ nghiêm ngặt các quy chuẩn về cấu trúc dữ liệu, tối ưu tỷ lệ nhận diện trên các hệ thống quét hồ sơ.",
-      "f4Title": "Xử Lý Thông Tin Tức Thời",
-      "f4Desc": "Tối giản hóa toàn bộ quy trình biên soạn. Hoàn thiện bộ hồ sơ ứng tuyển chuyên nghiệp trong thời gian tối thiểu."
+      "title": "Tính Năng Nổi Bật",
+      "subtitle": "Trang bị đầy đủ những công cụ cần thiết để hồ sơ của bạn lọt vào mắt xanh của nhà tuyển dụng.",
+      "f1Title": "Phân Tích JD Thông Minh",
+      "f1Desc": "AI tự động bóc tách từ khóa và kỹ năng từ Job Description, giúp CV của bạn dễ dàng vượt qua vòng quét của hệ thống ATS.",
+      "f2Title": "Tạo Cover Letter Tự Động",
+      "f2Desc": "Tạo ra Cover Letter được cá nhân hóa cao, bám sát kinh nghiệm của bạn và yêu cầu thực tế của công việc.",
+      "f3Title": "Tối Ưu Định Dạng ATS",
+      "f3Desc": "Xuất file PDF với bố cục và định dạng chuẩn mực, tối đa hóa tỷ lệ đỗ khi quét qua các phần mềm tuyển dụng.",
+      "f4Title": "Nhanh Chóng & Tiện Lợi",
+      "f4Desc": "Bỏ qua hàng giờ đồng hồ ngồi chỉnh sửa. Có ngay bộ hồ sơ xin việc hoàn chỉnh chỉ với vài cú click chuột."
     },
     "howItWorks": {
-      "title": "Quy Trình Vận Hành",
-      "subtitle": "Ba bước tiêu chuẩn để hệ thống phân tích và hoàn thiện bộ hồ sơ ứng tuyển chất lượng cao.",
-      "s1Title": "1. Cung Cấp Dữ Liệu Nền Tảng",
-      "s1Desc": "Nhập thông tin năng lực cá nhân và đính kèm văn bản mô tả công việc (Job Description) tương ứng.",
-      "s2Title": "2. Đối Chiếu Chuyên Môn",
-      "s2Desc": "Hệ thống tiến hành phân tích ngữ nghĩa, tinh chỉnh và đồng bộ hóa kinh nghiệm thực tiễn với tiêu chí tuyển dụng.",
-      "s3Title": "3. Kết Xuất Văn Bản",
-      "s3Desc": "Nhận bản PDF hoàn chỉnh bao gồm sơ yếu lý lịch và thư ứng tuyển, tuân thủ định dạng chuẩn mực."
+      "title": "Cách Thức Hoạt Động",
+      "subtitle": "Sở hữu CV chuyên nghiệp chỉ với 3 bước cực kỳ đơn giản.",
+      "s1Title": "1. Tải lên Thông Tin & JD",
+      "s1Desc": "Cung cấp kinh nghiệm làm việc của bạn và dán nội dung Job Description.",
+      "s2Title": "2. AI Phân Tích & Tối Ưu",
+      "s2Desc": "Hệ thống AI sẽ tự động điều chỉnh, làm nổi bật các kỹ năng khớp với yêu cầu tuyển dụng nhất.",
+      "s3Title": "3. Tải Xuống PDF",
+      "s3Desc": "Nhận ngay CV và Cover Letter định dạng chuẩn ATS, sẵn sàng để nộp cho nhà tuyển dụng."
+    }
+  },
+  "layout": {
+    "header": {
+      "features": "Tính năng",
+      "pricing": "Bảng giá",
+      "faq": "FAQ",
+      "login": "Đăng nhập",
+      "getStarted": "Bắt đầu ngay"
+    },
+    "footer": {
+      "description": "Giải pháp tạo CV tự động hóa, giúp bạn chinh phục mọi nhà tuyển dụng một cách dễ dàng.",
+      "product": "Sản phẩm",
+      "features": "Tính năng",
+      "pricing": "Bảng giá",
+      "templates": "Mẫu CV",
+      "support": "Hỗ trợ",
+      "faq": "Câu hỏi thường gặp",
+      "contact": "Liên hệ",
+      "privacy": "Bảo mật",
+      "terms": "Điều khoản",
+      "privacyPolicy": "Chính sách bảo mật"
     }
   }
 }

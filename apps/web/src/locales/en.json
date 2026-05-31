@@ -1,34 +1,56 @@
 {
   "landing": {
     "hero": {
-      "badge": "Automated Data Extraction System",
-      "title1": "Create ATS-Optimized CV &",
-      "title2": "Automated Cover Letter",
-      "subtitle": "In-depth recruitment requirements analysis system. Extract core competencies, automate the cover letter drafting process, and render standardized PDF formats.",
+      "badge": "AI-Powered CV Automation",
+      "title1": "Create ATS-Friendly CVs &",
+      "title2": "Automated Cover Letters",
+      "subtitle": "The smart CV builder that analyzes Job Descriptions, writes personalized Cover Letters, and generates professional PDFs in seconds.",
       "ctaPrimary": "Generate CV Now",
       "ctaSecondary": "Learn More"
     },
     "features": {
-      "title": "Technical Specifications",
-      "subtitle": "A comprehensive solution to standardize the application process, meeting the most rigorous standards of modern recruitment.",
-      "f1Title": "Recruitment Data Analysis",
-      "f1Desc": "The system automatically extracts professional keywords and skill sets from job descriptions, ensuring full compatibility with ATS mechanisms.",
-      "f2Title": "Cover Letter Automation",
-      "f2Desc": "Establish highly personalized cover letter structures, directly aligning practical competencies with core business requirements.",
-      "f3Title": "ATS Format Optimization",
-      "f3Desc": "Render PDF documents strictly complying with data structure standards, optimizing recognition rates on resume scanning systems.",
-      "f4Title": "Real-time Information Processing",
-      "f4Desc": "Streamline the entire drafting process. Complete a professional application portfolio in minimal time."
+      "title": "Key Features",
+      "subtitle": "Equipped with everything you need to catch the recruiter's eye.",
+      "f1Title": "Smart JD Analysis",
+      "f1Desc": "Our AI automatically extracts keywords and skills from the Job Description, ensuring your CV passes ATS screenings effortlessly.",
+      "f2Title": "Automated Cover Letters",
+      "f2Desc": "Generate highly personalized Cover Letters tailored specifically to your experience and the job's requirements.",
+      "f3Title": "ATS-Optimized Formatting",
+      "f3Desc": "Export PDFs with clean, standard layouts designed to maximize your success rate with recruitment software.",
+      "f4Title": "Fast & Convenient",
+      "f4Desc": "Skip hours of formatting. Get a complete, professional application package with just a few clicks."
     },
     "howItWorks": {
-      "title": "Operational Workflow",
-      "subtitle": "Three standard steps for the system to analyze and finalize a high-quality application portfolio.",
-      "s1Title": "1. Provide Baseline Data",
-      "s1Desc": "Input personal competency information and attach the corresponding Job Description.",
-      "s2Title": "2. Professional Benchmarking",
-      "s2Desc": "The system conducts semantic analysis, refining and synchronizing practical experience with recruitment criteria.",
-      "s3Title": "3. Document Generation",
-      "s3Desc": "Receive a complete PDF including resume and cover letter, adhering to standard formats."
+      "title": "How It Works",
+      "subtitle": "Get a professional CV in 3 simple steps.",
+      "s1Title": "1. Upload Info & JD",
+      "s1Desc": "Provide your work experience and paste the Job Description.",
+      "s2Title": "2. AI Analysis & Optimization",
+      "s2Desc": "Our AI system automatically tweaks and highlights the skills that best match the job requirements.",
+      "s3Title": "3. Download PDF",
+      "s3Desc": "Instantly receive your ATS-friendly CV and Cover Letter, ready to be sent to recruiters."
+    }
+  },
+  "layout": {
+    "header": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "login": "Login",
+      "getStarted": "Get Started"
+    },
+    "footer": {
+      "description": "The automated CV builder that helps you conquer any recruiter with ease.",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "templates": "CV Templates",
+      "support": "Support",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms of Service",
+      "privacyPolicy": "Privacy Policy"
     }
   }
 }
