@@ -25,7 +25,7 @@ export default function HeroSection() {
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-foreground">
             Tạo CV Chuẩn ATS & <br />
-            <span className="text-foreground">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
               Cover Letter Tự Động
             </span>
           </h1>
