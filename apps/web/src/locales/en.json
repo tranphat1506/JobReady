@@ -1,0 +1,34 @@
+{
+  "landing": {
+    "hero": {
+      "badge": "Automated Data Extraction System",
+      "title1": "Create ATS-Optimized CV &",
+      "title2": "Automated Cover Letter",
+      "subtitle": "In-depth recruitment requirements analysis system. Extract core competencies, automate the cover letter drafting process, and render standardized PDF formats.",
+      "ctaPrimary": "Generate CV Now",
+      "ctaSecondary": "Learn More"
+    },
+    "features": {
+      "title": "Technical Specifications",
+      "subtitle": "A comprehensive solution to standardize the application process, meeting the most rigorous standards of modern recruitment.",
+      "f1Title": "Recruitment Data Analysis",
+      "f1Desc": "The system automatically extracts professional keywords and skill sets from job descriptions, ensuring full compatibility with ATS mechanisms.",
+      "f2Title": "Cover Letter Automation",
+      "f2Desc": "Establish highly personalized cover letter structures, directly aligning practical competencies with core business requirements.",
+      "f3Title": "ATS Format Optimization",
+      "f3Desc": "Render PDF documents strictly complying with data structure standards, optimizing recognition rates on resume scanning systems.",
+      "f4Title": "Real-time Information Processing",
+      "f4Desc": "Streamline the entire drafting process. Complete a professional application portfolio in minimal time."
+    },
+    "howItWorks": {
+      "title": "Operational Workflow",
+      "subtitle": "Three standard steps for the system to analyze and finalize a high-quality application portfolio.",
+      "s1Title": "1. Provide Baseline Data",
+      "s1Desc": "Input personal competency information and attach the corresponding Job Description.",
+      "s2Title": "2. Professional Benchmarking",
+      "s2Desc": "The system conducts semantic analysis, refining and synchronizing practical experience with recruitment criteria.",
+      "s3Title": "3. Document Generation",
+      "s3Desc": "Receive a complete PDF including resume and cover letter, adhering to standard formats."
+    }
+  }
+}

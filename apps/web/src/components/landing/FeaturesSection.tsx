@@ -2,38 +2,41 @@
 
 import { motion } from "framer-motion";
 import { BrainCircuit, FileSignature, Target, Zap } from "lucide-react";
-
-const features = [
-  {
-    icon: <BrainCircuit className="w-8 h-8 text-cyan-400" />,
-    title: "Phân Tích JD Thông Minh",
-    description: "AI tự động trích xuất từ khóa và kỹ năng từ Job Description, giúp CV của bạn vượt qua vòng quét ATS dễ dàng."
-  },
-  {
-    icon: <FileSignature className="w-8 h-8 text-purple-400" />,
-    title: "Tự Động Viết Cover Letter",
-    description: "Sinh ra thư xin việc được cá nhân hóa cao độ, phù hợp hoàn hảo với kinh nghiệm của bạn và yêu cầu công việc."
-  },
-  {
-    icon: <Target className="w-8 h-8 text-emerald-400" />,
-    title: "Chuẩn ATS Quốc Tế",
-    description: "Xuất file PDF với định dạng và cấu trúc được tối ưu hóa cho các hệ thống quét hồ sơ (ATS) phổ biến nhất."
-  },
-  {
-    icon: <Zap className="w-8 h-8 text-amber-400" />,
-    title: "Tốc Độ Siêu Tốc",
-    description: "Chỉ tốn vài giây để từ một JD trống trơn có ngay trọn bộ hồ sơ ứng tuyển chuyên nghiệp."
-  }
-];
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FeaturesSection() {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: <BrainCircuit className="w-8 h-8 text-cyan-400" />,
+      title: t('landing.features.f1Title'),
+      description: t('landing.features.f1Desc')
+    },
+    {
+      icon: <FileSignature className="w-8 h-8 text-purple-400" />,
+      title: t('landing.features.f2Title'),
+      description: t('landing.features.f2Desc')
+    },
+    {
+      icon: <Target className="w-8 h-8 text-emerald-400" />,
+      title: t('landing.features.f3Title'),
+      description: t('landing.features.f3Desc')
+    },
+    {
+      icon: <Zap className="w-8 h-8 text-amber-400" />,
+      title: t('landing.features.f4Title'),
+      description: t('landing.features.f4Desc')
+    }
+  ];
+
   return (
     <section id="features" className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Tính Năng Ưu Việt</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.features.title')}</h2>
           <p className="text-muted-foreground text-lg">
-            Sức mạnh của trí tuệ nhân tạo được gói gọn trong một công cụ, giúp bạn chinh phục mọi nhà tuyển dụng khó tính nhất.
+            {t('landing.features.subtitle')}
           </p>
         </div>
 

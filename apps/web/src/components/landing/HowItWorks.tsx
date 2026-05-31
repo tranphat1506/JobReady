@@ -2,33 +2,36 @@
 
 import { motion } from "framer-motion";
 import { Upload, Sparkles, Download } from "lucide-react";
-
-const steps = [
-  {
-    icon: <Upload className="w-6 h-6 text-cyan-400" />,
-    title: "1. Tải lên Thông Tin & JD",
-    description: "Nhập thông tin cá nhân của bạn và dán Job Description của vị trí bạn muốn ứng tuyển."
-  },
-  {
-    icon: <Sparkles className="w-6 h-6 text-purple-400" />,
-    title: "2. AI Xử Lý Thông Minh",
-    description: "Gemini AI sẽ phân tích, tinh chỉnh kinh nghiệm của bạn để khớp nhất với yêu cầu công việc."
-  },
-  {
-    icon: <Download className="w-6 h-6 text-emerald-400" />,
-    title: "3. Tải PDF Sẵn Sàng",
-    description: "Nhận ngay CV và Cover Letter chuẩn ATS, định dạng đẹp mắt chỉ sau vài giây."
-  }
-];
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function HowItWorks() {
+  const { t } = useTranslation();
+
+  const steps = [
+    {
+      icon: <Upload className="w-6 h-6 text-cyan-400" />,
+      title: t('landing.howItWorks.s1Title'),
+      description: t('landing.howItWorks.s1Desc')
+    },
+    {
+      icon: <Sparkles className="w-6 h-6 text-purple-400" />,
+      title: t('landing.howItWorks.s2Title'),
+      description: t('landing.howItWorks.s2Desc')
+    },
+    {
+      icon: <Download className="w-6 h-6 text-emerald-400" />,
+      title: t('landing.howItWorks.s3Title'),
+      description: t('landing.howItWorks.s3Desc')
+    }
+  ];
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Hoạt Động Như Thế Nào?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.howItWorks.title')}</h2>
           <p className="text-muted-foreground text-lg">
-            3 bước đơn giản để có một bộ hồ sơ xin việc hoàn hảo.
+            {t('landing.howItWorks.subtitle')}
           </p>
         </div>
 

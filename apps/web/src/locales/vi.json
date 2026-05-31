@@ -1,0 +1,34 @@
+{
+  "landing": {
+    "hero": {
+      "badge": "Hệ Thống Trích Xuất Dữ Liệu Tự Động",
+      "title1": "Tạo CV Định Dạng ATS &",
+      "title2": "Thư Ứng Tuyển Tự Động",
+      "subtitle": "Hệ thống phân tích yêu cầu tuyển dụng chuyên sâu. Trích xuất năng lực cốt lõi, tự động hóa quy trình soạn thảo thư ứng tuyển và kết xuất định dạng PDF chuẩn mực.",
+      "ctaPrimary": "Tạo CV Ngay",
+      "ctaSecondary": "Tìm hiểu thêm"
+    },
+    "features": {
+      "title": "Đặc Điểm Kỹ Thuật",
+      "subtitle": "Giải pháp toàn diện hỗ trợ chuẩn hóa quy trình ứng tuyển, đáp ứng các tiêu chuẩn khắt khe nhất của quy trình tuyển dụng hiện đại.",
+      "f1Title": "Phân Tích Dữ Liệu Tuyển Dụng",
+      "f1Desc": "Hệ thống tự động trích xuất các từ khóa chuyên môn và nhóm kỹ năng từ bản mô tả công việc, đảm bảo hồ sơ tương thích hoàn toàn với cơ chế ATS.",
+      "f2Title": "Tự Động Hóa Thư Ứng Tuyển",
+      "f2Desc": "Thiết lập cấu trúc thư xin việc mang tính cá nhân hóa cao, đối chiếu trực tiếp năng lực thực tiễn với yêu cầu nghiệp vụ cốt lõi.",
+      "f3Title": "Tối Ưu Hóa Định Dạng ATS",
+      "f3Desc": "Kết xuất văn bản định dạng PDF tuân thủ nghiêm ngặt các quy chuẩn về cấu trúc dữ liệu, tối ưu tỷ lệ nhận diện trên các hệ thống quét hồ sơ.",
+      "f4Title": "Xử Lý Thông Tin Tức Thời",
+      "f4Desc": "Tối giản hóa toàn bộ quy trình biên soạn. Hoàn thiện bộ hồ sơ ứng tuyển chuyên nghiệp trong thời gian tối thiểu."
+    },
+    "howItWorks": {
+      "title": "Quy Trình Vận Hành",
+      "subtitle": "Ba bước tiêu chuẩn để hệ thống phân tích và hoàn thiện bộ hồ sơ ứng tuyển chất lượng cao.",
+      "s1Title": "1. Cung Cấp Dữ Liệu Nền Tảng",
+      "s1Desc": "Nhập thông tin năng lực cá nhân và đính kèm văn bản mô tả công việc (Job Description) tương ứng.",
+      "s2Title": "2. Đối Chiếu Chuyên Môn",
+      "s2Desc": "Hệ thống tiến hành phân tích ngữ nghĩa, tinh chỉnh và đồng bộ hóa kinh nghiệm thực tiễn với tiêu chí tuyển dụng.",
+      "s3Title": "3. Kết Xuất Văn Bản",
+      "s3Desc": "Nhận bản PDF hoàn chỉnh bao gồm sơ yếu lý lịch và thư ứng tuyển, tuân thủ định dạng chuẩn mực."
+    }
+  }
+}

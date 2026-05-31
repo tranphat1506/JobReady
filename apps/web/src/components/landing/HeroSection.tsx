@@ -4,8 +4,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { FileText, Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative overflow-hidden bg-background pt-24 pb-32">
       {/* Background decoration */}
@@ -20,31 +23,31 @@ export default function HeroSection() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary mb-8 text-sm font-medium">
             <Sparkles className="w-4 h-4" />
-            <span>AI-Powered CV Generator</span>
+            <span>{t('landing.hero.badge')}</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-foreground">
-            Tạo CV Chuẩn ATS & <br />
+            {t('landing.hero.title1')} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
-              Cover Letter Tự Động
+              {t('landing.hero.title2')}
             </span>
           </h1>
           
           <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Nâng tầm hồ sơ ứng tuyển của bạn với sức mạnh từ Google Gemini. Phân tích JD, tự động viết Cover Letter và xuất PDF tuyệt đẹp chỉ trong vài giây.
+            {t('landing.hero.subtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/dashboard">
               <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 shadow-lg hover:shadow-primary/25 transition-all">
                 <FileText className="w-5 h-5" />
-                Tạo CV Ngay
+                {t('landing.hero.ctaPrimary')}
               </Button>
             </Link>
             
             <Link href="#features">
               <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full gap-2 bg-background/50 backdrop-blur-sm">
-                Tìm hiểu thêm
+                {t('landing.hero.ctaSecondary')}
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
