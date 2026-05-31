@@ -13,7 +13,7 @@ export function AppIcon({ className }: AppIconProps) {
         className
       )}
     >
-      <i className="fi fi-sr-briefcase" style={{ color: "white", fontSize: "1.1rem", lineHeight: 1 }}></i>
+      <i className="fi fi-sr-briefcase text-white text-lg flex items-center justify-center leading-none mt-[2px]"></i>
     </div>
   );
 }
