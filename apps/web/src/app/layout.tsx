@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Tinos, Geist_Mono } from "next/font/google";
+import { Lora, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const tinos = Tinos({
-  variable: "--font-tinos",
-  weight: ["400", "700"],
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["vietnamese", "latin"],
 });
 
@@ -26,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${tinos.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${lora.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
