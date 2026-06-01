@@ -219,9 +219,15 @@
     "sections": {
       "personal": "Personal Information",
       "experience": "Work Experience",
+      "projects": "Projects",
       "education": "Education",
       "skills": "Skills",
-      "languages": "Languages"
+      "languages": "Languages",
+      "certifications": "Certifications",
+      "awards": "Awards",
+      "activities": "Activities",
+      "references": "References",
+      "hobbies": "Hobbies"
     },
     "fields": {
       "fullName": "Full Name",
@@ -230,26 +236,44 @@
       "location": "Location",
       "linkedin": "LinkedIn URL",
       "portfolio": "Portfolio URL",
+      "jobTitle": "Job Title",
+      "dob": "Date of Birth",
+      "careerGoals": "Career Goals",
       "summary": "Professional Summary",
       "company": "Company Name",
-      "role": "Job Title / Role",
+      "role": "Role",
+      "position": "Position / Role",
       "startDate": "Start Date",
       "endDate": "End Date",
       "current": "I currently work here",
       "description": "Detailed Description",
-      "school": "School / University",
+      "tags": "Tags / Categories",
+      "institution": "Institution / School",
       "degree": "Degree",
-      "field": "Field of Study",
       "category": "Skill Category (e.g., Programming, Design)",
       "items": "Skills (comma separated)",
       "language": "Language",
-      "proficiency": "Proficiency"
+      "proficiency": "Proficiency",
+      "projectName": "Project Name",
+      "link": "URL Link",
+      "certName": "Certification Name",
+      "issuer": "Issuing Organization",
+      "date": "Date",
+      "awardTitle": "Award Title",
+      "organization": "Organization",
+      "refName": "Reference Name",
+      "contactInfo": "Contact Info"
     },
     "actions": {
       "addExperience": "+ Add Experience",
+      "addProject": "+ Add Project",
       "addEducation": "+ Add Education",
       "addSkill": "+ Add Skill Category",
       "addLanguage": "+ Add Language",
+      "addCertification": "+ Add Certification",
+      "addAward": "+ Add Award",
+      "addActivity": "+ Add Activity",
+      "addReference": "+ Add Reference",
       "remove": "Remove"
     },
     "empty": {
@@ -264,10 +288,28 @@
       "uploadPdf": "Upload PDF",
       "orPaste": "OR PASTE CONTENT",
       "pastePlaceholder": "Paste your CV text or LinkedIn information here...",
-      "analyzeBtn": "✨ Analyze with AI",
+      "analyzeBtn": "Analyze",
       "analyzing": "Analyzing...",
       "success": "Analysis successful! Please review the information below before saving.",
       "error": "Analysis failed: "
+    }
+  },
+  "error": {
+    "system": {
+      "internal": "An unexpected error occurred.",
+      "bad_request": "Invalid request data."
+    },
+    "api": {
+      "gemini": {
+        "service_unavailable": "The AI service is currently overloaded. Please try again later.",
+        "rate_limit_exceeded": "You have exceeded the allowed number of requests. Please wait a moment.",
+        "unauthorized": "Invalid API Key or unauthorized.",
+        "unknown": "An unknown error occurred while parsing the AI data."
+      }
+    },
+    "auth": {
+      "unauthorized": "You must be logged in to perform this action.",
+      "forbidden": "You do not have permission to perform this action."
     }
   }
 }

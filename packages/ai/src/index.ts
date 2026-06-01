@@ -173,46 +173,92 @@ export class AIParser {
 
     const prompt = `You are an expert HR assistant. Your task is to extract information from the following CV/Profile text and format it STRICTLY as a JSON object that matches this exact TypeScript interface:
     {
-      personalInfo: {
+      personal: {
         fullName: string,
+        jobTitle?: string,
+        gender?: string,
+        avatar?: string,
+        dob?: string,
         email: string,
         phone?: string,
         location?: string,
-        linkedin?: string,
         portfolio?: string,
-        summary?: string
+        links?: Array<{ name: string, url: string }>
       },
+      careerGoals?: string,
+      skills: Array<{ name: string }>, // MASTER SKILL POOL: Extract ALL skills mentioned anywhere into this array
       experience: Array<{
-        company: string,
-        role: string,
+        companyName: string,
+        roles: Array<{
+          title: string,
+          startDate?: string,
+          endDate?: string,
+          current?: boolean,
+          description?: string
+        }>, // If the person had multiple roles at the same company, group them here
+        appliedSkills?: string[], // Cross-reference skills from the MASTER POOL used in this company
+        domainTags?: string[] // e.g. ["IT", "Backend", "Finance"]
+      }>,
+      projects?: Array<{
+        name: string,
+        role?: string,
+        link?: string,
         startDate?: string,
         endDate?: string,
-        current?: boolean,
-        description?: string
+        description?: string,
+        appliedSkills?: string[], // Cross-reference skills from the MASTER POOL used in this project
+        domainTags?: string[]
       }>,
       education: Array<{
-        school: string,
+        institution: string,
         degree: string,
-        field?: string,
         startDate?: string,
         endDate?: string,
-        description?: string
+        description?: string,
+        domainTags?: string[]
       }>,
-      skills: Array<{
-        category: string, // e.g. "Programming Languages", "Tools", "Soft Skills"
-        items: string // Comma-separated string of skills
-      }>,
-      languages: Array<{
+      languages?: Array<{
         language: string,
-        proficiency?: string
-      }>
+        proficiency?: string,
+        tags?: string[]
+      }>,
+      certifications?: Array<{
+        name: string,
+        issuer?: string,
+        date?: string,
+        domainTags?: string[]
+      }>,
+      awards?: Array<{
+        title: string,
+        issuer?: string,
+        date?: string,
+        domainTags?: string[]
+      }>,
+      activities?: Array<{
+        organization: string,
+        role?: string,
+        startDate?: string,
+        endDate?: string,
+        description?: string,
+        domainTags?: string[]
+      }>,
+      references?: Array<{
+        name: string,
+        position?: string,
+        company?: string,
+        contactInfo?: string,
+        tags?: string[]
+      }>,
+      hobbies?: string
     }
 
     CRITICAL INSTRUCTIONS:
     - Return ONLY the raw JSON object.
     - Do not include markdown code blocks like \`\`\`json or \`\`\`.
+    - RELATIONAL DATA MODEL: You must extract ALL skills found in the document into the global 'skills' array. Then, for each 'experience' and 'project', figure out which of those skills were used and list their names exactly in the 'appliedSkills' array of that specific experience/project.
+    - GROUPING: If a person had multiple roles/promotions at the SAME company, do NOT create separate experience entries. Create ONE experience entry for the company, and put all the roles into the 'roles' array.
+    - Automatically analyze the context of each item and generate intelligent "domainTags" (industry, technical domain). Keep tags broad (e.g. "IT", "Accounting").
     - If some information is missing, leave it as an empty string or omit optional fields.
-    - Organize skills into logical categories (e.g., Programming, Tools, Soft Skills).
     
     Here is the CV text to parse:
     ---

@@ -219,9 +219,15 @@
     "sections": {
       "personal": "Thông Tin Cá Nhân",
       "experience": "Kinh Nghiệm Làm Việc",
+      "projects": "Dự Án",
       "education": "Học Vấn",
       "skills": "Kỹ Năng",
-      "languages": "Ngoại Ngữ"
+      "languages": "Ngoại Ngữ",
+      "certifications": "Chứng Chỉ",
+      "awards": "Giải Thưởng",
+      "activities": "Hoạt Động Ngoại Khóa",
+      "references": "Người Tham Chiếu",
+      "hobbies": "Sở Thích"
     },
     "fields": {
       "fullName": "Họ và tên",
@@ -230,26 +236,44 @@
       "location": "Địa chỉ",
       "linkedin": "LinkedIn URL",
       "portfolio": "Portfolio URL",
+      "jobTitle": "Vị trí công việc",
+      "dob": "Ngày sinh",
+      "careerGoals": "Định hướng nghề nghiệp",
       "summary": "Giới thiệu bản thân",
       "company": "Tên công ty",
-      "role": "Vị trí / Chức vụ",
+      "role": "Vai trò",
+      "position": "Vị trí / Chức vụ",
       "startDate": "Ngày bắt đầu",
       "endDate": "Ngày kết thúc",
-      "current": "Đang làm việc tại đây",
+      "current": "Công việc hiện tại",
       "description": "Mô tả chi tiết",
-      "school": "Trường học",
+      "tags": "Tags phân loại",
+      "institution": "Trường học / Tổ chức",
       "degree": "Bằng cấp",
-      "field": "Chuyên ngành",
       "category": "Nhóm kỹ năng (VD: Lập trình, Thiết kế)",
       "items": "Các kỹ năng (cách nhau bởi dấu phẩy)",
       "language": "Ngôn ngữ",
-      "proficiency": "Trình độ"
+      "proficiency": "Trình độ",
+      "projectName": "Tên dự án",
+      "link": "Đường dẫn (Link)",
+      "certName": "Tên chứng chỉ",
+      "issuer": "Tổ chức cấp",
+      "date": "Ngày",
+      "awardTitle": "Tên giải thưởng",
+      "organization": "Tổ chức",
+      "refName": "Họ tên người tham chiếu",
+      "contactInfo": "Thông tin liên hệ"
     },
     "actions": {
       "addExperience": "+ Thêm kinh nghiệm",
+      "addProject": "+ Thêm dự án",
       "addEducation": "+ Thêm học vấn",
       "addSkill": "+ Thêm nhóm kỹ năng",
       "addLanguage": "+ Thêm ngôn ngữ",
+      "addCertification": "+ Thêm chứng chỉ",
+      "addAward": "+ Thêm giải thưởng",
+      "addActivity": "+ Thêm hoạt động",
+      "addReference": "+ Thêm người tham chiếu",
       "remove": "Xóa"
     },
     "empty": {
@@ -259,15 +283,33 @@
       "languages": "Chưa có ngoại ngữ nào. Nhấn nút bên dưới để thêm."
     },
     "importAi": {
-      "title": "Nhập Liệu Nhanh Bằng AI",
+      "title": "Nhập Nhanh Bằng AI",
       "subtitle": "Tải lên CV cũ (PDF) hoặc dán văn bản để AI tự động trích xuất thông tin.",
       "uploadPdf": "Tải lên PDF",
       "orPaste": "HOẶC DÁN NỘI DUNG",
       "pastePlaceholder": "Dán văn bản CV hoặc thông tin từ LinkedIn của bạn vào đây...",
-      "analyzeBtn": "✨ Phân Tích Bằng AI",
+      "analyzeBtn": "Phân Tích",
       "analyzing": "Đang phân tích...",
       "success": "Phân tích thành công! Vui lòng kiểm tra lại thông tin bên dưới trước khi Lưu.",
       "error": "Lỗi phân tích: "
+    }
+  },
+  "error": {
+    "system": {
+      "internal": "Đã xảy ra lỗi không xác định trên hệ thống.",
+      "bad_request": "Dữ liệu yêu cầu không hợp lệ."
+    },
+    "api": {
+      "gemini": {
+        "service_unavailable": "Hệ thống AI hiện đang bị quá tải. Vui lòng thử lại sau ít phút.",
+        "rate_limit_exceeded": "Bạn đã vượt quá số lần phân tích cho phép. Vui lòng chờ một chút.",
+        "unauthorized": "API Key không hợp lệ hoặc không có quyền truy cập.",
+        "unknown": "Đã xảy ra lỗi khi phân tích dữ liệu AI."
+      }
+    },
+    "auth": {
+      "unauthorized": "Bạn cần đăng nhập để thực hiện hành động này.",
+      "forbidden": "Bạn không có quyền thực hiện hành động này."
     }
   }
 }

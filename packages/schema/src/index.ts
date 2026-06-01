@@ -102,6 +102,11 @@ export interface Labels {
   location?: string;
 }
 
+export interface Language {
+  language: string;
+  proficiency?: string;
+}
+
 export interface CVSchema {
   matchAnalysis?: MatchAnalysis;
   labels: Labels;
@@ -112,6 +117,7 @@ export interface CVSchema {
   projects?: Project[];
   education: Education[];
   skills: SkillCategory[];
+  languages?: Language[];
   certifications?: Certification[];
   awards?: Award[];
   activities?: Activity[];
@@ -134,5 +140,92 @@ export interface CoverLetterSchema {
   opening: string;
   bodyParagraphs: string[];
   closing: string;
-  signOff: string;
+}
+
+export interface MasterSkill {
+  id?: string;
+  name: string;
+}
+
+export interface LinkedRole {
+  id?: string;
+  title: string;
+  startDate?: string;
+  endDate?: string;
+  current?: boolean;
+  description?: string;
+}
+
+export interface LinkedExperience {
+  id?: string;
+  companyName: string;
+  roles: LinkedRole[];
+  appliedSkills?: string[];
+  domainTags?: string[];
+}
+
+export interface LinkedProject {
+  id?: string;
+  name: string;
+  role?: string;
+  link?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  appliedSkills?: string[];
+  domainTags?: string[];
+}
+
+export interface LinkedEducation {
+  id?: string;
+  institution: string;
+  degree: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  domainTags?: string[];
+}
+
+export interface LinkedCertification {
+  id?: string;
+  name: string;
+  issuer?: string;
+  date?: string;
+  domainTags?: string[];
+}
+
+export interface LinkedAward {
+  id?: string;
+  title: string;
+  issuer?: string;
+  date?: string;
+  domainTags?: string[];
+}
+
+export interface LinkedActivity {
+  id?: string;
+  organization: string;
+  role?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  domainTags?: string[];
+}
+
+export interface TaggedLanguage extends Language { id?: string; tags?: string[]; }
+export interface TaggedReference extends Reference { id?: string; tags?: string[]; }
+
+export interface MasterProfileData {
+  personal: PersonalInfo;
+  careerGoals?: string;
+  skills: MasterSkill[];
+  experience?: LinkedExperience[];
+  projects?: LinkedProject[];
+  education?: LinkedEducation[];
+  languages?: TaggedLanguage[];
+  certifications?: LinkedCertification[];
+  awards?: LinkedAward[];
+  activities?: LinkedActivity[];
+  references?: TaggedReference[];
+  hobbies?: string;
 }
