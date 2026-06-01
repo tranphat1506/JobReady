@@ -1,4 +1,45 @@
 {
+  "auth": {
+    "loginTitle": "Đăng nhập",
+    "loginSubtitle": "Đăng nhập để tạo và quản lý hồ sơ ATS của bạn",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Quên mật khẩu?",
+    "loginButton": "Đăng nhập",
+    "orLoginWith": "hoặc đăng nhập với",
+    "noAccount": "Chưa có tài khoản?",
+    "register": "Đăng ký ngay",
+    "registerTitle": "Tạo tài khoản",
+    "registerSubtitle": "Bắt đầu xây dựng hồ sơ ATS chuyên nghiệp của bạn",
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nguyễn Văn A",
+    "registerButton": "Đăng ký",
+    "hasAccount": "Đã có tài khoản?",
+    "loginNow": "Đăng nhập ngay"
+  },
+  "dashboard": {
+    "nav": {
+      "createCv": "Tạo CV bằng AI",
+      "masterProfile": "Hồ sơ gốc",
+      "manageFiles": "Quản lý File",
+      "billing": "Credits & Lịch sử"
+    },
+    "user": {
+      "currentPlan": "Gói hiện tại:",
+      "logout": "Đăng xuất",
+      "free": "MIỄN PHÍ"
+    },
+    "createCv": {
+      "title": "Tạo CV bằng AI",
+      "description": "Hãy dán Job Description vào để AI giúp bạn tối ưu CV chuẩn ATS nhé.",
+      "noJdTitle": "Chưa có Job Description",
+      "noJdDesc": "Bắt đầu bằng cách dán mô tả công việc (JD) vào đây để hệ thống phân tích từ khóa.",
+      "addJdBtn": "Nhập JD Mới",
+      "previewPlaceholder": "Bản xem trước CV sẽ hiển thị ở đây"
+    }
+  },
   "layout": {
     "header": {
       "features": "Tính năng",
@@ -167,6 +208,66 @@
       "title": "Bắt đầu hành trình chinh phục công việc mơ ước",
       "subtitle": "Hàng ngàn ứng viên đã tìm được công việc như ý nhờ sở hữu một bản CV chuyên nghiệp. Đừng để vuột mất cơ hội của bạn.",
       "button": "Tạo CV Của Bạn Ngay Bây Giờ"
+    }
+  },
+  "profile": {
+    "title": "Hồ Sơ",
+    "subtitle": "Thông tin đầy đủ của bạn. AI sẽ dùng đây để tạo CV.",
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "success": "Đã lưu hồ sơ thành công.",
+    "sections": {
+      "personal": "Thông Tin Cá Nhân",
+      "experience": "Kinh Nghiệm Làm Việc",
+      "education": "Học Vấn",
+      "skills": "Kỹ Năng",
+      "languages": "Ngoại Ngữ"
+    },
+    "fields": {
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "location": "Địa chỉ",
+      "linkedin": "LinkedIn URL",
+      "portfolio": "Portfolio URL",
+      "summary": "Giới thiệu bản thân",
+      "company": "Tên công ty",
+      "role": "Vị trí / Chức vụ",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "current": "Đang làm việc tại đây",
+      "description": "Mô tả chi tiết",
+      "school": "Trường học",
+      "degree": "Bằng cấp",
+      "field": "Chuyên ngành",
+      "category": "Nhóm kỹ năng (VD: Lập trình, Thiết kế)",
+      "items": "Các kỹ năng (cách nhau bởi dấu phẩy)",
+      "language": "Ngôn ngữ",
+      "proficiency": "Trình độ"
+    },
+    "actions": {
+      "addExperience": "+ Thêm kinh nghiệm",
+      "addEducation": "+ Thêm học vấn",
+      "addSkill": "+ Thêm nhóm kỹ năng",
+      "addLanguage": "+ Thêm ngôn ngữ",
+      "remove": "Xóa"
+    },
+    "empty": {
+      "experience": "Chưa có kinh nghiệm nào. Nhấn nút bên dưới để thêm.",
+      "education": "Chưa có học vấn nào. Nhấn nút bên dưới để thêm.",
+      "skills": "Chưa có kỹ năng nào. Nhấn nút bên dưới để thêm.",
+      "languages": "Chưa có ngoại ngữ nào. Nhấn nút bên dưới để thêm."
+    },
+    "importAi": {
+      "title": "Nhập Liệu Nhanh Bằng AI",
+      "subtitle": "Tải lên CV cũ (PDF) hoặc dán văn bản để AI tự động trích xuất thông tin.",
+      "uploadPdf": "Tải lên PDF",
+      "orPaste": "HOẶC DÁN NỘI DUNG",
+      "pastePlaceholder": "Dán văn bản CV hoặc thông tin từ LinkedIn của bạn vào đây...",
+      "analyzeBtn": "✨ Phân Tích Bằng AI",
+      "analyzing": "Đang phân tích...",
+      "success": "Phân tích thành công! Vui lòng kiểm tra lại thông tin bên dưới trước khi Lưu.",
+      "error": "Lỗi phân tích: "
     }
   }
 }

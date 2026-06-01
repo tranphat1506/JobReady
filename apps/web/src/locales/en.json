@@ -1,4 +1,45 @@
 {
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Sign in to create and manage your ATS resumes",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Sign in",
+    "orLoginWith": "or continue with",
+    "noAccount": "Don't have an account?",
+    "register": "Sign up now",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "Start building your professional ATS resume",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "John Doe",
+    "registerButton": "Sign up",
+    "hasAccount": "Already have an account?",
+    "loginNow": "Sign in now"
+  },
+  "dashboard": {
+    "nav": {
+      "createCv": "Create CV with AI",
+      "masterProfile": "Master Profile",
+      "manageFiles": "Manage Files",
+      "billing": "Credits & Billing"
+    },
+    "user": {
+      "currentPlan": "Current Plan:",
+      "logout": "Log out",
+      "free": "FREE"
+    },
+    "createCv": {
+      "title": "Create CV with AI",
+      "description": "Paste your Job Description here and let AI optimize your ATS-friendly CV.",
+      "noJdTitle": "No Job Description Yet",
+      "noJdDesc": "Start by pasting the job description (JD) here for the system to analyze keywords.",
+      "addJdBtn": "Paste New JD",
+      "previewPlaceholder": "Your CV preview will appear here"
+    }
+  },
   "layout": {
     "header": {
       "features": "Features",
@@ -167,6 +208,66 @@
       "title": "Start your journey to conquering your dream job",
       "subtitle": "Thousands of candidates have found their ideal jobs thanks to having a professional CV. Don't let your opportunity slip away.",
       "button": "Create Your CV Right Now"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Your full information. AI uses this to build tailored CVs.",
+    "save": "Save",
+    "saving": "Saving...",
+    "success": "Profile saved.",
+    "sections": {
+      "personal": "Personal Information",
+      "experience": "Work Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "languages": "Languages"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "location": "Location",
+      "linkedin": "LinkedIn URL",
+      "portfolio": "Portfolio URL",
+      "summary": "Professional Summary",
+      "company": "Company Name",
+      "role": "Job Title / Role",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "current": "I currently work here",
+      "description": "Detailed Description",
+      "school": "School / University",
+      "degree": "Degree",
+      "field": "Field of Study",
+      "category": "Skill Category (e.g., Programming, Design)",
+      "items": "Skills (comma separated)",
+      "language": "Language",
+      "proficiency": "Proficiency"
+    },
+    "actions": {
+      "addExperience": "+ Add Experience",
+      "addEducation": "+ Add Education",
+      "addSkill": "+ Add Skill Category",
+      "addLanguage": "+ Add Language",
+      "remove": "Remove"
+    },
+    "empty": {
+      "experience": "No experience added yet. Click below to add.",
+      "education": "No education added yet. Click below to add.",
+      "skills": "No skills added yet. Click below to add.",
+      "languages": "No languages added yet. Click below to add."
+    },
+    "importAi": {
+      "title": "Auto-Fill with AI",
+      "subtitle": "Upload your existing CV (PDF) or paste text for AI to extract information automatically.",
+      "uploadPdf": "Upload PDF",
+      "orPaste": "OR PASTE CONTENT",
+      "pastePlaceholder": "Paste your CV text or LinkedIn information here...",
+      "analyzeBtn": "✨ Analyze with AI",
+      "analyzing": "Analyzing...",
+      "success": "Analysis successful! Please review the information below before saving.",
+      "error": "Analysis failed: "
     }
   }
 }

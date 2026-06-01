@@ -12,12 +12,12 @@ export default function Footer() {
     <footer className="bg-zinc-50 border-t border-zinc-200 pt-16 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
-          
+
           {/* Column 1: Brand & Info (Takes up 2 cols on lg) */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
-              <AppIcon />
-              <span className="text-2xl font-bold tracking-tight text-zinc-900">CareerGo</span>
+              <AppIcon className="w-7 h-7 bg-primary rounded-sm [&>i]:text-[1rem]" />
+              <span className="text-xl font-bold font-sans tracking-tight text-zinc-900">CareerGo.</span>
             </Link>
             <p className="text-zinc-600 mb-8 leading-relaxed max-w-sm">
               {t('layout.footer.description')}

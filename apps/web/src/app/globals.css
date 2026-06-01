@@ -133,6 +133,7 @@
     @apply font-sans;
   }
 }
+
 @theme {
   --color-neon-green: #00E964;
   --color-black: #000000;
@@ -140,32 +141,93 @@
   --color-accent-gray: #1A1A1A;
   --animate-glow: glow 2s ease-in-out infinite alternate;
 }
+
 @layer utilities {
-  .text-neon { color: var(--color-neon-green); }
-  .bg-neon { background-color: var(--color-neon-green); }
-  .border-neon { border-color: var(--color-neon-green); }
-  .glow-green { box-shadow: 0 0 15px rgba(0, 233, 100, 0.1); }
-  .glow-green-strong { box-shadow: 0 0 25px rgba(0, 233, 100, 0.3); }
-  .text-gradient { @apply bg-clip-text text-transparent bg-linear-to-r from-white to-gray-400; }
-  .text-gradient-neon { @apply bg-clip-text text-transparent bg-linear-to-r from-neon-green to-white; }
-  .text-glow-neon { text-shadow: 0 0 20px rgba(0, 233, 100, 0.4), 0 0 40px rgba(0, 233, 100, 0.1); }
-  .glass-card { @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-md; }
-  .glass-card-hover { @apply hover:bg-white/[0.06] hover:border-white/[0.15] transition-all duration-500 shadow-2xl; }
-  .will-change-scroll { will-change: transform, opacity; }
+  .text-neon {
+    color: var(--color-neon-green);
+  }
+
+  .bg-neon {
+    background-color: var(--color-neon-green);
+  }
+
+  .border-neon {
+    border-color: var(--color-neon-green);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 15px rgba(0, 233, 100, 0.1);
+  }
+
+  .glow-green-strong {
+    box-shadow: 0 0 25px rgba(0, 233, 100, 0.3);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-white to-gray-400;
+  }
+
+  .text-gradient-neon {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-neon-green to-white;
+  }
+
+  .text-glow-neon {
+    text-shadow: 0 0 20px rgba(0, 233, 100, 0.4), 0 0 40px rgba(0, 233, 100, 0.1);
+  }
+
+  .glass-card {
+    @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-md;
+  }
+
+  .glass-card-hover {
+    @apply hover:bg-white/[0.06] hover:border-white/[0.15] transition-all duration-500 shadow-2xl;
+  }
+
+  .will-change-scroll {
+    will-change: transform, opacity;
+  }
 }
 
 @keyframes glow {
-  from { box-shadow: 0 0 5px var(--color-neon-green); }
-  to { box-shadow: 0 0 15px var(--color-neon-green); }
+  from {
+    box-shadow: 0 0 5px var(--color-neon-green);
+  }
+
+  to {
+    box-shadow: 0 0 15px var(--color-neon-green);
+  }
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { @apply bg-black; }
-::-webkit-scrollbar-thumb { @apply bg-white/10 rounded-full hover:bg-neon-green/50 transition-colors; }
-::selection { background: var(--color-neon-green); color: black; }
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-neon-green); border-radius: 10px; }
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-neon-green/50 transition-colors;
+}
+
+::selection {
+  background: var(--color-neon-green);
+  color: black;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-neon-green);
+  border-radius: 10px;
+}
 
 /* Flaticon global fixes */
 i[class^="fi-"],

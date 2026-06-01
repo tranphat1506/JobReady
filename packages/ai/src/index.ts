@@ -164,4 +164,85 @@ export class AIParser {
       throw error;
     }
   }
+
+  public async parseMasterProfile(rawCV: string): Promise<any> {
+    const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    const model = this.genAI.getGenerativeModel({ model: modelName });
+
+    console.log(`🤖 Đang sử dụng Model cho Master Profile: ${modelName}`);
+
+    const prompt = `You are an expert HR assistant. Your task is to extract information from the following CV/Profile text and format it STRICTLY as a JSON object that matches this exact TypeScript interface:
+    {
+      personalInfo: {
+        fullName: string,
+        email: string,
+        phone?: string,
+        location?: string,
+        linkedin?: string,
+        portfolio?: string,
+        summary?: string
+      },
+      experience: Array<{
+        company: string,
+        role: string,
+        startDate?: string,
+        endDate?: string,
+        current?: boolean,
+        description?: string
+      }>,
+      education: Array<{
+        school: string,
+        degree: string,
+        field?: string,
+        startDate?: string,
+        endDate?: string,
+        description?: string
+      }>,
+      skills: Array<{
+        category: string, // e.g. "Programming Languages", "Tools", "Soft Skills"
+        items: string // Comma-separated string of skills
+      }>,
+      languages: Array<{
+        language: string,
+        proficiency?: string
+      }>
+    }
+
+    CRITICAL INSTRUCTIONS:
+    - Return ONLY the raw JSON object.
+    - Do not include markdown code blocks like \`\`\`json or \`\`\`.
+    - If some information is missing, leave it as an empty string or omit optional fields.
+    - Organize skills into logical categories (e.g., Programming, Tools, Soft Skills).
+    
+    Here is the CV text to parse:
+    ---
+    ${rawCV}
+    ---`;
+
+    const config: GenerationConfig = {
+      responseMimeType: "application/json",
+      temperature: 0.2,
+    };
+
+    try {
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: config,
+      });
+
+      let jsonText = result.response.text().trim();
+      
+      // Clean up markdown if the model still outputs it
+      if (jsonText.startsWith('\`\`\`json')) {
+        jsonText = jsonText.replace(/^\`\`\`json\n/, '').replace(/\n\`\`\`$/, '');
+      } else if (jsonText.startsWith('\`\`\`')) {
+        jsonText = jsonText.replace(/^\`\`\`\n/, '').replace(/\n\`\`\`$/, '');
+      }
+
+      return JSON.parse(jsonText);
+    } catch (error) {
+      console.error('Error parsing Master Profile with AI:', error);
+      throw error;
+    }
+  }
 }
