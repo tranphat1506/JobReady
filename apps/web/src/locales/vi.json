@@ -29,7 +29,8 @@
     "user": {
       "currentPlan": "Gói hiện tại:",
       "logout": "Đăng xuất",
-      "free": "MIỄN PHÍ"
+      "free": "MIỄN PHÍ",
+      "language": "Ngôn ngữ"
     },
     "createCv": {
       "title": "Tạo CV bằng AI",

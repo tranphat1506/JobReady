@@ -17,7 +17,6 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  // Lấy thêm thông tin package/credits từ bảng public.users nếu cần thiết
   const { data: dbUser } = await supabase
     .from('users')
     .select('full_name, email, preferences')
@@ -27,14 +26,14 @@ export default async function DashboardLayout({
   const userData = {
     email: user.email,
     full_name: dbUser?.full_name || user.user_metadata?.full_name || 'Người dùng',
-    plan: 'FREE', // Có thể query từ bảng subscriptions sau
+    plan: 'FREE',
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50 overflow-hidden font-sans">
+    <div className="flex flex-col md:flex-row h-screen bg-zinc-50 overflow-hidden font-sans">
       <Sidebar user={userData} />
       <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-7xl p-6 lg:p-8">
+        <div className="mx-auto max-w-7xl p-4 md:p-8">
           {children}
         </div>
       </main>

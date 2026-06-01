@@ -29,7 +29,8 @@
     "user": {
       "currentPlan": "Current Plan:",
       "logout": "Log out",
-      "free": "FREE"
+      "free": "FREE",
+      "language": "Language"
     },
     "createCv": {
       "title": "Create CV with AI",

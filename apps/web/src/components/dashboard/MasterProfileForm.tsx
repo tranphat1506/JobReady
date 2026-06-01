@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { MasterProfileSchema, MasterProfileData } from '@/types/profile';
 import { createClient } from '@/utils/supabase/client';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useRouter } from 'next/navigation';
 import { PDFParse } from 'pdf-parse';
 import { Sparkles, Save, Upload, X } from 'lucide-react';
 
@@ -129,6 +130,7 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
 // ── Main Component ────────────────────────────────────────────────────────
 export default function MasterProfileForm({ initialData }: Props) {
   const { t } = useTranslation();
+  const router = useRouter();
   const supabase = createClient();
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -209,12 +211,19 @@ export default function MasterProfileForm({ initialData }: Props) {
 
       if (avatarPreview) data.personal.avatar = avatarPreview;
 
-      const { error } = await supabase
+      const { data: updatedRows, error } = await supabase
         .from('master_profiles')
         .update({ content: data, updated_at: new Date().toISOString() })
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .select();
+        
       if (error) throw error;
-      setMessage({ type: 'success', text: t('profile.success') });
+      if (!updatedRows || updatedRows.length === 0) {
+        throw new Error('Lỗi: Không thể cập nhật dữ liệu. Vui lòng kiểm tra lại RLS Policy trên Supabase (Cần cấp quyền UPDATE).');
+      }
+      
+      setMessage({ type: 'success', text: t('profile.success') || 'Saved.' });
+      router.refresh();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
