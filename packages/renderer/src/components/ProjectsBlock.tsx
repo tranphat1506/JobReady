@@ -24,9 +24,22 @@ export const ProjectsBlock = ({ title, data, labels }: ProjectsBlockProps) => {
             <Text style={{ flex: 1, paddingRight: 10 }}>{proj.name} {proj.role ? `(${proj.role})` : '(Project)'}</Text>
             <Text style={{ flexShrink: 0 }}>{proj.startDate} - {proj.endDate}</Text>
           </View>
-          {isValid(proj.link) ? (
+          {proj.links && proj.links.length > 0 ? (
             <View style={styles.itemSubHeader}>
-              <Text>{l.link}: <Link src={proj.link!.startsWith('http') ? proj.link! : `https://${proj.link!}`} style={styles.link}>{proj.link!.replace(/^https?:\/\//, '')}</Link></Text>
+              <Text>
+                {proj.links.map((linkObj, index) => {
+                  if (!isValid(linkObj.url)) return null;
+                  const url = linkObj.url.startsWith('http') ? linkObj.url : `https://${linkObj.url}`;
+                  const display = linkObj.name ? `${linkObj.name}: ` : '';
+                  return (
+                    <React.Fragment key={index}>
+                      <Text>{display}</Text>
+                      <Link src={url} style={styles.link}>{linkObj.url.replace(/^https?:\/\//, '')}</Link>
+                      {index < proj.links!.length - 1 ? <Text>  •  </Text> : null}
+                    </React.Fragment>
+                  );
+                })}
+              </Text>
             </View>
           ) : null}
           {proj.description ? proj.description.map((desc, j) => (

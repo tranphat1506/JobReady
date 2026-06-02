@@ -26,7 +26,7 @@ export interface Experience {
 
 export interface Project {
   name: string;
-  link?: string;
+  links?: Link[];
   role?: string;
   startDate: string;
   endDate: string;
@@ -168,7 +168,7 @@ export interface LinkedProject {
   id?: string;
   name: string;
   role?: string;
-  link?: string;
+  links?: Link[];
   startDate?: string;
   endDate?: string;
   description?: string;

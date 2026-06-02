@@ -22,7 +22,7 @@
   "dashboard": {
     "nav": {
       "createCv": "Tạo CV bằng AI",
-      "masterProfile": "Hồ sơ gốc",
+      "masterProfile": "Hồ sơ",
       "manageFiles": "Quản lý File",
       "billing": "Credits & Lịch sử"
     },
@@ -189,7 +189,7 @@
       "title": "Hướng Dẫn Tạo CV Xin Việc Chỉ Với 3 Bước",
       "subtitle": "Quy trình thiết kế CV chưa bao giờ đơn giản và nhanh chóng đến thế.",
       "s1Title": "Bước 1: Khai báo thông tin cá nhân",
-      "s1Desc": "Điền các thông tin về học vấn, kinh nghiệm làm việc và kỹ năng của bạn một lần duy nhất để tạo hồ sơ gốc (Master Profile).",
+      "s1Desc": "Điền các thông tin về học vấn, kinh nghiệm làm việc và kỹ năng của bạn một lần duy nhất để tạo hồ sơ.",
       "s2Title": "Bước 2: Phân tích mô tả công việc (JD)",
       "s2Desc": "Dán nội dung tuyển dụng của công ty bạn muốn ứng tuyển vào hệ thống. AI sẽ ngay lập tức đối chiếu và đề xuất các chỉnh sửa phù hợp.",
       "s3Title": "Bước 3: Tải xuống file PDF chuẩn ATS",
@@ -275,7 +275,10 @@
       "addAward": "+ Thêm giải thưởng",
       "addActivity": "+ Thêm hoạt động",
       "addReference": "+ Thêm người tham chiếu",
-      "remove": "Xóa"
+      "remove": "Xóa",
+      "cropAvatar": "Cắt Ảnh (4x6)",
+      "cancel": "Hủy",
+      "confirm": "Xác nhận"
     },
     "empty": {
       "experience": "Chưa có kinh nghiệm nào. Nhấn nút bên dưới để thêm.",

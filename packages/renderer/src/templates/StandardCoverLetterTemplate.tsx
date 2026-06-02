@@ -17,56 +17,57 @@ export class StandardCoverLetterTemplate implements ICoverLetterTemplate {
     return (
       <Document>
         <Page size="A4" style={{ ...styles.page, padding: 40, fontFamily: 'Tinos' }}>
-          
+
           {/* Header - Sender Info */}
           <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 20, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 5 }}>
               {data.personal.fullName}
             </Text>
-            {isValid(data.personal.jobTitle) && (
+            {isValid(data.personal.jobTitle) ? (
               <Text style={{ fontSize: 12, color: '#555', marginBottom: 5 }}>{data.personal.jobTitle}</Text>
-            )}
+            ) : null}
             <View style={{ fontSize: 10, color: '#333', lineHeight: 1.5 }}>
-              {isValid(data.personal.phone) && <Text>{data.personal.phone}</Text>}
-              {isValid(data.personal.email) && <Text>{data.personal.email}</Text>}
-              {isValid(data.personal.location) && <Text>{data.personal.location}</Text>}
-              {isValid(data.personal.portfolio) && <Text>{data.personal.portfolio}</Text>}
+              {isValid(data.personal.phone) ? <Text>{data.personal.phone}</Text> : null}
+              {isValid(data.personal.email) ? <Text>{data.personal.email}</Text> : null}
+              {isValid(data.personal.location) ? <Text>{data.personal.location}</Text> : null}
+              {isValid(data.personal.portfolio) ? <Text>{data.personal.portfolio}</Text> : null}
             </View>
           </View>
 
           {/* Date */}
           <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontSize: 11 }}>{data.date}</Text>
+            <Text style={{ fontSize: 11 }}>{data.date || ''}</Text>
           </View>
 
           {/* Recipient Info */}
           <View style={{ marginBottom: 20 }}>
-            {isValid(data.recipient.name) && <Text style={{ fontSize: 11, fontWeight: 'bold' }}>{data.recipient.name}</Text>}
-            {isValid(data.recipient.title) && <Text style={{ fontSize: 11 }}>{data.recipient.title}</Text>}
-            {isValid(data.recipient.company) && <Text style={{ fontSize: 11, fontWeight: 'bold' }}>{data.recipient.company}</Text>}
-            {isValid(data.recipient.address) && <Text style={{ fontSize: 11 }}>{data.recipient.address}</Text>}
+            {isValid(data.recipient.name) ? <Text style={{ fontSize: 11, fontWeight: 'bold' }}>{data.recipient.name}</Text> : null}
+            {isValid(data.recipient.title) ? <Text style={{ fontSize: 11 }}>{data.recipient.title}</Text> : null}
+            {isValid(data.recipient.company) ? <Text style={{ fontSize: 11, fontWeight: 'bold' }}>{data.recipient.company}</Text> : null}
+            {isValid(data.recipient.address) ? <Text style={{ fontSize: 11 }}>{data.recipient.address}</Text> : null}
           </View>
 
           {/* Salutation */}
           <View style={{ marginBottom: 15 }}>
-            <Text style={{ fontSize: 11 }}>{data.salutation}</Text>
+            <Text style={{ fontSize: 11 }}>{data.salutation || ''}</Text>
           </View>
 
           {/* Body Paragraphs */}
           <View style={{ fontSize: 11, lineHeight: 1.5, textAlign: 'justify', marginBottom: 15 }}>
-            <Text style={{ marginBottom: 10 }}>{data.opening}</Text>
-            
-            {data.bodyParagraphs.map((para, i) => (
+            <Text style={{ marginBottom: 10 }}>{data.opening || ''}</Text>
+
+            {(data.bodyParagraphs || []).map((para, i) => (
               <Text key={i} style={{ marginBottom: 10 }}>{para}</Text>
             ))}
 
-            <Text>{data.closing}</Text>
+            <Text>{data.closing || ''}</Text>
           </View>
 
           {/* Sign Off */}
           <View style={{ fontSize: 11, marginTop: 20 }}>
-            <Text style={{ marginBottom: 40 }}>{data.signOff}</Text>
-            <Text style={{ fontWeight: 'bold' }}>{data.personal.fullName}</Text>
+            {((data as any).signOff || '').split('\n').map((line: string, i: number) => (
+              <Text key={i} style={{ marginBottom: i === 0 ? 40 : 4 }}>{line}</Text>
+            ))}
           </View>
 
         </Page>

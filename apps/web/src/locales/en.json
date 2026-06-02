@@ -275,7 +275,10 @@
       "addAward": "+ Add Award",
       "addActivity": "+ Add Activity",
       "addReference": "+ Add Reference",
-      "remove": "Remove"
+      "remove": "Remove",
+      "cropAvatar": "Crop Avatar (4x6)",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
     },
     "empty": {
       "experience": "No experience added yet. Click below to add.",

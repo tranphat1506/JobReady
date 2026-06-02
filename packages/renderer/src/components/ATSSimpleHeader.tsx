@@ -21,27 +21,28 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
     location: 'Địa chỉ'
   };
 
-  const contactItems = [];
-  if (isValid(data.dob)) contactItems.push({ label: l.dob || 'Ngày sinh', value: data.dob });
-  if (isValid(data.gender)) contactItems.push({ label: 'Giới tính', value: data.gender });
-  if (isValid(data.phone)) contactItems.push({ label: l.phone || 'Số điện thoại', value: data.phone });
-  if (isValid(data.email)) contactItems.push({ label: l.email || 'Email', value: <Text>{data.email}</Text> });
+  // Build contact items as plain strings (no JSX) to avoid Invalid string child warnings
+  const contactItems: { label: string; value: string }[] = [];
+  if (isValid(data.dob)) contactItems.push({ label: l.dob || 'Ngày sinh', value: data.dob! });
+  if (isValid(data.gender)) contactItems.push({ label: 'Giới tính', value: data.gender! });
+  if (isValid(data.phone)) contactItems.push({ label: l.phone || 'Số điện thoại', value: data.phone! });
+  if (isValid(data.email)) contactItems.push({ label: l.email || 'Email', value: data.email! });
   if (isValid(data.portfolio)) {
     const cleanUrl = data.portfolio!.replace(/^https?:\/\/(www\.)?/, '');
-    contactItems.push({ label: 'Portfolio', value: <Text>{cleanUrl}</Text> });
+    contactItems.push({ label: 'Portfolio', value: cleanUrl });
   }
-  if (isValid(data.location)) contactItems.push({ label: l.location || 'Địa chỉ', value: data.location });
+  if (isValid(data.location)) contactItems.push({ label: l.location || 'Địa chỉ', value: data.location! });
 
   if (data.links) {
     data.links.forEach(link => {
       if (isValid(link.url) && isValid(link.name)) {
         const cleanUrl = link.url.replace(/^https?:\/\/(www\.)?/, '');
-        contactItems.push({ label: link.name, value: <Text>{cleanUrl}</Text> });
+        contactItems.push({ label: link.name, value: cleanUrl });
       }
     });
   }
 
-  // Fallback to a reliable public URL placeholder
+  // Fallback avatar
   let avatarSrc = data.avatar;
   if (!isValid(avatarSrc)) {
     avatarSrc = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
@@ -68,12 +69,12 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
           </Text>
         ) : <View style={{ marginBottom: 5 }} />}
 
-        {/* Contact info grid - 2 columns or lines */}
+        {/* Contact info grid */}
         <View style={{ fontSize: 10, lineHeight: 1.3 }}>
           {contactItems.map((item, i) => (
             <View key={i} style={{ flexDirection: 'row' }}>
               <Text style={{ width: 80, fontWeight: 'bold' }}>{item.label}:</Text>
-              <Text style={{ flex: 1 }}>{item.value as any}</Text>
+              <Text style={{ flex: 1 }}>{item.value}</Text>
             </View>
           ))}
         </View>

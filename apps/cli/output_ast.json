@@ -1,37 +1,37 @@
 {
   "matchAnalysis": {
-    "matchScore": 65,
+    "matchScore": 55,
     "isRelevant": true,
     "missingSkills": [
-      "Tối thiểu 2 năm kinh nghiệm làm việc thực tế với ReactJS",
-      "Kinh nghiệm làm việc với thư viện quản lý trạng thái Zustand"
+      "Tối thiểu 2 năm kinh nghiệm thực chiến thực tế",
+      "Kinh nghiệm thực tế chuyên sâu với Zustand"
     ],
-    "feedback": "Bạn có nền tảng rất tốt về ReactJS, TypeScript và Redux Toolkit, phù hợp với các yêu cầu kỹ thuật cốt lõi của vị trí này. Tuy nhiên, vì bạn là lập trình viên mới tốt nghiệp/mức độ Junior nên còn thiếu số năm kinh nghiệm thực tế theo yêu cầu (yêu cầu tối thiểu 2 năm) và chưa sử dụng Zustand. Hãy tập trung làm nổi bật các dự án thực tế đã làm bằng ReactJS, cấu trúc component và khả năng tối ưu hóa giao diện để gây ấn tượng với nhà tuyển dụng."
+    "feedback": "Bạn có nền tảng rất vững chắc về ReactJS, TypeScript và Redux Toolkit từ quá trình thực tập và các dự án lớn. Tuy nhiên, vị trí này yêu cầu tối thiểu 2 năm kinh nghiệm trong khi bạn hiện tại là Junior/Fresher. Hãy nhấn mạnh sâu hơn vào kỹ năng thiết kế kiến trúc component tối ưu và quản lý luồng dữ liệu (state management) hiệu quả trong CV để gia tăng cơ hội."
   },
   "labels": {
     "dob": "Ngày sinh",
-    "portfolio": "Danh mục sản phẩm",
+    "portfolio": "Sản phẩm",
     "link": "Liên kết",
-    "phone": "Số điện thoại",
+    "phone": "Điện thoại",
     "email": "Email",
     "location": "Địa chỉ"
   },
   "sectionTitles": {
     "summary": "Tóm tắt chuyên môn",
     "experience": "Kinh nghiệm làm việc",
-    "projects": "Dự án thực tế",
+    "projects": "Dự án tiêu biểu",
     "education": "Học vấn",
     "skills": "Kỹ năng chuyên môn",
     "certifications": "Chứng chỉ",
-    "awards": "Giải thưởng & Thành tích",
-    "activities": "Hoạt động xã hội",
+    "awards": "Giải thưởng",
+    "activities": "Hoạt động",
     "references": "Người tham chiếu",
     "hobbies": "Sở thích"
   },
   "personal": {
     "fullName": "LÊ CHÂU TRẦN PHÁT",
-    "jobTitle": "Lập trình viên Frontend (ReactJS / TypeScript)",
-    "gender": "Nam",
+    "jobTitle": "Lập trình viên Frontend (ReactJS) / Full-Stack",
+    "gender": "",
     "avatar": "",
     "dob": "15/06/2004",
     "email": "lechautranphat@gmail.com",
@@ -45,7 +45,7 @@
       }
     ]
   },
-  "summary": "Lập trình viên phần mềm năng động với nền tảng vững chắc và định hướng chuyên sâu về phát triển Frontend sử dụng ReactJS và TypeScript. Có kinh nghiệm xây dựng các ứng dụng web với kiến trúc component tối ưu, quản lý trạng thái hiệu quả bằng Redux Toolkit và thiết kế giao diện responsive mượt mà. Sử dụng thành thạo Git trong quy trình làm việc nhóm, có tư duy giải quyết vấn đề nhạy bén và tinh thần học hỏi nhanh nhạy.",
+  "summary": "Lập trình viên phần mềm đam mê phát triển giao diện người dùng với chuyên môn cao về ReactJS, TypeScript và hệ sinh thái quản lý state (Redux Toolkit). Có kinh nghiệm thực chiến trong việc tối ưu hóa giao diện người dùng (UI/UX), thiết kế kiến trúc component tái sử dụng và phối hợp làm việc nhóm hiệu quả qua Git. Luôn hướng tới việc xây dựng các ứng dụng web hiệu năng cao, mượt mà và dễ bảo trì.",
   "experience": [
     {
       "company": "Công ty TNHH Sen Việt",
@@ -53,50 +53,49 @@
       "startDate": "09/2025",
       "endDate": "11/2025",
       "description": [
-        "Phát triển hệ thống quản lý tài sản CNTT sử dụng ReactJS trên nền tảng Node.js và MongoDB.",
-        "Thiết kế giao diện người dùng (UI) responsive, mượt mà và tối ưu hóa trải nghiệm người dùng (UX) cho các quy trình theo dõi tài sản.",
-        "Áp dụng tư duy thiết kế component trong ReactJS giúp tái sử dụng mã nguồn hiệu quả và duy trì hệ thống dễ dàng hơn.",
-        "Tích hợp các cơ chế xác thực bảo mật JWT cho phiên làm việc của người dùng.",
-        "Sử dụng Git/GitHub để quản lý phiên bản mã nguồn, phối hợp chặt chẽ cùng các thành viên trong đội ngũ phát triển."
+        "Phát triển Hệ thống Quản lý Tài sản CNTT (IT Asset Management System) sử dụng thư viện ReactJS kết hợp TypeScript và MongoDB.",
+        "Thiết kế cấu trúc component tối ưu, xây dựng giao diện responsive thân thiện và tương thích trên nhiều thiết bị.",
+        "Triển khai xác thực bảo mật người dùng bằng cơ chế JWT phối hợp với API RESTful phía Node.js.",
+        "Sử dụng Docker để tối ưu quy trình phát triển và kiểm thử hệ thống trước khi vận hành."
       ]
     }
   ],
   "projects": [
     {
       "name": "Hệ thống Quản lý Tài sản CNTT (IT Asset Management System)",
-      "link": "https://github.com/tranphat1506",
-      "role": "Thực tập sinh Lập trình viên Full-Stack",
+      "links": [{ "name": "GitHub", "url": "https://github.com/tranphat1506" }],
+      "role": "Thực tập sinh phát triển Full-Stack",
       "startDate": "09/2025",
       "endDate": "11/2025",
       "description": [
-        "Xây dựng giao diện bảng điều khiển (Dashboard) trực quan bằng ReactJS kết hợp Redux Toolkit, giúp tăng hiệu suất nhập liệu lên 30%.",
-        "Thiết kế và triển khai hệ thống quản lý hơn 500 tài sản cùng quy trình nghiệp vụ thông qua các API RESTful tự xây dựng.",
-        "Xử lý đồng bộ hóa dữ liệu và tối ưu hóa luồng tương tác phía Frontend, giảm thiểu tối đa độ trễ phản hồi của giao diện.",
-        "Chuyển đổi dữ liệu từ bảng tính thủ công sang cơ sở dữ liệu tập trung, giúp giảm thiểu 95% tình trạng trùng lặp dữ liệu."
+        "Xây dựng dashboard quản trị tương tác cao bằng ReactJS và Redux Toolkit, giúp cải thiện 30% hiệu quả nhập liệu và truy xuất dữ liệu trực quan.",
+        "Thiết kế và tối ưu các API RESTful (Node.js/Express) nhằm quản lý dữ liệu an toàn cho hơn 500 tài sản.",
+        "Tích hợp xác thực bảo mật cao thông qua cơ chế JWT với Refresh Token giúp quản lý phiên đăng nhập an toàn.",
+        "Chuyển đổi thành công hệ thống lưu trữ thủ công sang cơ sở dữ liệu tập trung, giúp giảm thiểu đến 95% sai sót dữ liệu."
       ]
     },
     {
-      "name": "Anh Gia Tattoo Web",
-      "link": "https://github.com/tranphat1506",
-      "role": "Lập trình viên Full-Stack (Tập trung Frontend & SEO)",
-      "startDate": "12/2025",
-      "endDate": "01/2026",
-      "description": [
-        "Xây dựng và tối ưu hóa nền tảng web hướng SEO, thu hút hơn 100+ người dùng tự nhiên mỗi ngày và tạo ra hơn 100+ khách hàng tiềm năng.",
-        "Tích hợp Google Analytics để theo dõi hành vi người dùng, từ đó đưa ra các cải tiến giao diện người dùng dựa trên dữ liệu thực tế.",
-        "Thiết kế và phát triển trang quản trị (Admin Dashboard) thân thiện, giúp tự động hóa quy trình quản lý lịch hẹn và giảm tải 50% thao tác thủ công."
-      ]
-    },
-    {
-      "name": "Hệ thống Quản lý Cơ sở Tri thức (KBMS) - Dự án Tốt nghiệp",
-      "link": "https://github.com/tranphat1506",
+      "name": "Knowledge Base Management System (KBMS) - Dự án Tốt nghiệp (Điểm: 9.3/10)",
+      "links": [{ "name": "GitHub", "url": "https://github.com/tranphat1506" }],
       "role": "Lập trình viên Full-Stack",
       "startDate": "09/2025",
       "endDate": "04/2026",
       "description": [
-        "Đạt điểm xuất sắc 9.3/10 cho dự án xây dựng kiến trúc lưu trữ dữ liệu tri thức 4 tầng dựa trên nền tảng .NET 8.",
-        "Xây dựng bộ biên dịch cho ngôn ngữ truy vấn tự tùy chỉnh KBQL phục vụ các tác vụ xử lý thông tin phức tạp.",
-        "Tích hợp hệ thống phân quyền dựa trên vai trò (RBAC) chặt chẽ và cơ chế truy vết bảo mật cao cho toàn hệ thống."
+        "Xây dựng kiến trúc lưu trữ dữ liệu tri thức 4 lớp sử dụng .NET 8 hỗ trợ mô hình hóa dữ liệu dựa trên luật.",
+        "Nghiên cứu và đề xuất ngôn ngữ truy vấn KBQL riêng biệt, tự xây dựng pipeline trình biên dịch hoàn chỉnh bao gồm Lexer, Parser và AST.",
+        "Thiết kế công cụ lưu trữ hiệu năng cao với cấu trúc chỉ mục B+ Tree và Write-Ahead Logging (WAL)."
+      ]
+    },
+    {
+      "name": "Website ANH GIA TATTOO WEB",
+      "links": [{ "name": "GitHub", "url": "https://github.com/tranphat1506" }],
+      "role": "Lập trình viên Full-Stack",
+      "startDate": "12/2025",
+      "endDate": "01/2026",
+      "description": [
+        "Phát triển và tối ưu hóa nền tảng web hướng SEO vượt trội, thu hút hơn 100 người dùng tự nhiên hàng ngày và đem lại lượng khách hàng tiềm năng lớn.",
+        "Tích hợp các công cụ đo lường chuyên sâu như Google Analytics và Google Ads để phân tích hành vi người dùng.",
+        "Triển khai các biện pháp bảo mật đầu cuối (Rate Limiting, IP Blocking) đảm bảo hệ thống đặt lịch hoạt động liên tục, không bị tấn công spam."
       ]
     }
   ],
@@ -107,9 +106,9 @@
       "startDate": "09/2022",
       "endDate": "04/2026",
       "description": [
-        "Chuyên ngành: Trí tuệ Nhân tạo & Phát triển Phần mềm",
-        "Điểm trung bình tích lũy (GPA): 2.82/4.0",
-        "Các môn học nổi bật: Phát triển Ứng dụng Web (9.4), Trí tuệ Nhân tạo Nâng cao (9.3), Lý thuyết Đồ thị (9.1)"
+        "Chuyên ngành chính: Trí tuệ Nhân tạo & Phát triển Phần mềm",
+        "Điểm trung bình (GPA): 2.82 / 4.0",
+        "Các môn học tiêu biểu: Phát triển ứng dụng Web (Đạt 9.4), Trí tuệ nhân tạo nâng cao (Đạt 9.3), Lý thuyết đồ thị (Đạt 9.1)"
       ]
     }
   ],
@@ -117,7 +116,7 @@
     {
       "category": "Ngôn ngữ",
       "items": [
-        "JavaScript (ES6+) (Chuyên gia)",
+        "JavaScript (ES6+) (Thành thạo)",
         "TypeScript (Thành thạo)",
         "C# (Khá)"
       ]
@@ -126,26 +125,21 @@
       "category": "Frontend",
       "items": [
         "ReactJS (Thành thạo)",
-        "Next.js (Thành thạo)",
-        "HTML5 / CSS3 / Tailwind CSS (Thành thạo)",
-        "React Native (Khá)",
-        "Material UI / Native Base (Khá)"
-      ]
-    },
-    {
-      "category": "Quản lý trạng thái",
-      "items": [
-        "Redux Toolkit (Thành thạo)"
+        "Redux Toolkit / Zustand (Thành thạo)",
+        "Next.js (Khá)",
+        "HTML5 & CSS3 (Thành thạo)",
+        "Tailwind CSS / Material UI (Thành thạo)",
+        "React Native (Khá)"
       ]
     },
     {
       "category": "Backend & DB",
       "items": [
-        "Express.js / Node.js (Khá)",
-        "ASP.NET Core / EF Core (Khá)",
+        "Node.js / Express.js (Khá)",
+        "ASP.NET Core (Khá)",
         "MongoDB (Khá)",
         "SQL Server / MySQL (Khá)",
-        "Redis / RabbitMQ (Cơ bản)"
+        "Redis / RabbitMQ (Mới bắt đầu)"
       ]
     },
     {
@@ -153,29 +147,28 @@
       "items": [
         "Git / GitHub (Thành thạo)",
         "Docker (Khá)",
-        "Nginx / Linux (Khá)",
-        "GitHub Actions (Cơ bản)"
+        "Nginx / Linux Server (Khá)",
+        "CI/CD (GitHub Actions) (Mới bắt đầu)"
       ]
     },
     {
       "category": "Kỹ năng mềm",
       "items": [
-        "Giải quyết vấn đề (Thành thạo)",
         "Làm việc nhóm (Thành thạo)",
-        "Quản lý thời gian (Thành thạo)",
-        "Thích ứng và Học hỏi nhanh (Thành thạo)"
+        "Giải quyết vấn đề (Thành thạo)",
+        "Khả năng thích ứng nhanh (Thành thạo)"
       ]
     }
   ],
   "certifications": [],
   "awards": [
     {
-      "title": "Giải Nhất - Cuộc thi Khởi nghiệp HIU Startup Competition",
+      "title": "Giải Nhất - Cuộc thi Khởi nghiệp Sáng tạo HIU",
       "issuer": "Trường Đại học Quốc tế Hồng Bàng",
       "date": "06/2025"
     },
     {
-      "title": "Giải Khuyến khích - Cuộc thi Cải tiến Hiệu suất dựa trên AI (BOSCH)",
+      "title": "Giải Khuyến khích - Cuộc thi Cải tiến Hiệu năng tích hợp AI (BOSCH)",
       "issuer": "BOSCH Việt Nam",
       "date": "07/2024"
     },
@@ -187,5 +180,9 @@
   ],
   "activities": [],
   "references": [],
-  "hobbies": []
+  "hobbies": [
+    "Khám phá công nghệ nguồn mở",
+    "Nghiên cứu cải thiện UI/UX của các sản phẩm web",
+    "Tham gia các cuộc thi công nghệ (Hackathon)"
+  ]
 }

@@ -9,6 +9,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useRouter } from 'next/navigation';
 import { PDFParse } from 'pdf-parse';
 import { Sparkles, Save, Upload, X } from 'lucide-react';
+import AvatarCropperModal from './AvatarCropperModal';
 
 if (typeof window !== 'undefined') {
   PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf.worker.min.mjs');
@@ -63,7 +64,7 @@ const PillInput = ({ value = [], onChange, placeholder }: { value: string[], onC
   const removeTag = (tag: string) => onChange(value.filter(t => t !== tag));
 
   return (
-    <div className="w-full bg-white border border-zinc-200 rounded-sm p-1.5 focus-within:border-zinc-400 focus-within:ring-1 focus-within:ring-zinc-400 transition-all min-h-[38px]">
+    <div className="w-full bg-white border border-zinc-200 rounded-sm p-1.5 focus-within:border-zinc-400 focus-within:ring-1 focus-within:ring-zinc-400 transition-all min-h-9.5">
       <div className="flex flex-wrap gap-1.5 items-center">
         {value.map((tag, i) => (
           <span key={i} className="inline-flex items-center px-2 py-0.5 rounded-sm bg-zinc-100 text-zinc-900 text-[11px] font-medium border border-zinc-200">
@@ -76,7 +77,7 @@ const PillInput = ({ value = [], onChange, placeholder }: { value: string[], onC
           onChange={e => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={value.length === 0 ? (placeholder || "...") : "..."}
-          className="flex-1 min-w-[100px] bg-transparent text-sm text-zinc-900 placeholder-zinc-400 border-none outline-none focus:ring-0 px-1 py-0.5"
+          className="flex-1 min-w-25 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 border-none outline-none focus:ring-0 px-1 py-0.5"
         />
       </div>
     </div>
@@ -127,6 +128,24 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
   );
 };
 
+// ── Nested Project Links Component ─────────────────────────────────────────
+const ProjectLinks = ({ control, register, nestIndex }: any) => {
+  const { fields, remove, append } = useFieldArray({ control, name: `projects.${nestIndex}.links` });
+  
+  return (
+    <div className="md:col-span-2 mt-4 space-y-3">
+      <SectionHeading onAdd={() => append({ name: '', url: '' })} addLabel="+ Link">Links</SectionHeading>
+      {fields.map((field: any, k) => (
+        <div key={field.id} className="flex gap-3 items-start">
+          <input {...register(`projects.${nestIndex}.links.${k}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub, Demo)" className={`${inpBox} !w-1/3 md:!w-1/4`} />
+          <input {...register(`projects.${nestIndex}.links.${k}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} !w-auto flex-1 min-w-0`} />
+          <button type="button" onClick={() => remove(k)} className="text-zinc-400 hover:text-red-500 mt-2 shrink-0"><X size={16} /></button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // ── Main Component ────────────────────────────────────────────────────────
 export default function MasterProfileForm({ initialData }: Props) {
   const { t } = useTranslation();
@@ -136,10 +155,12 @@ export default function MasterProfileForm({ initialData }: Props) {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState('personal');
 
-  const { register, control, handleSubmit, reset, formState: { errors } } = useForm<MasterProfileData>({
+  const { register, control, handleSubmit, reset, formState: { errors, isDirty } } = useForm<MasterProfileData>({
     resolver: zodResolver(MasterProfileSchema as any),
     defaultValues: initialData,
   });
+
+  const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({ control, name: 'personal.links' });
 
   const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({ control, name: 'experience' });
   const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: 'projects' });
@@ -151,15 +172,24 @@ export default function MasterProfileForm({ initialData }: Props) {
   // Avatar upload
   const [avatarPreview, setAvatarPreview] = useState<string | null>((initialData?.personal as any)?.avatar || null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setAvatarFile(file);
     const reader = new FileReader();
-    reader.onload = (ev) => setAvatarPreview(ev.target?.result as string);
+    reader.onload = (ev) => {
+      setImageToCrop(ev.target?.result as string);
+    };
     reader.readAsDataURL(file);
+    e.target.value = ''; // Reset input
+  };
+
+  const handleCropComplete = (croppedFile: File, previewUrl: string) => {
+    setAvatarFile(croppedFile);
+    setAvatarPreview(previewUrl);
+    setImageToCrop(null);
   };
 
   // AI Import
@@ -186,7 +216,7 @@ export default function MasterProfileForm({ initialData }: Props) {
 
       const res = await fetch('/api/parse-profile', { method: 'POST', body: fd });
       const data = await res.json();
-      
+
       if (!res.ok) {
         const errorMessage = data.messageCode ? t(data.messageCode) : (data.error || 'Failed to parse');
         throw new Error(errorMessage);
@@ -239,13 +269,15 @@ export default function MasterProfileForm({ initialData }: Props) {
         .update({ content: data, updated_at: new Date().toISOString() })
         .eq('user_id', user.id)
         .select();
-        
+
       if (error) throw error;
       if (!updatedRows || updatedRows.length === 0) {
         throw new Error('Lỗi: Không thể cập nhật dữ liệu. Vui lòng kiểm tra lại RLS Policy trên Supabase (Cần cấp quyền UPDATE).');
       }
-      
+
       setMessage({ type: 'success', text: t('profile.success') || 'Saved.' });
+      reset(data);
+      setAvatarFile(null);
       router.refresh();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
@@ -284,7 +316,7 @@ export default function MasterProfileForm({ initialData }: Props) {
             </button>
             <button
               onClick={handleSubmit(onSubmit)}
-              disabled={isSaving}
+              disabled={isSaving || (!isDirty && !avatarFile)}
               className="flex items-center gap-2 bg-zinc-900 text-white font-bold tracking-widest uppercase text-[11px] py-2.5 px-6 rounded-sm border border-zinc-900 hover:bg-zinc-800 transition-all disabled:opacity-50"
             >
               <Save size={14} /> {isSaving ? t('profile.saving') : t('profile.save')}
@@ -315,7 +347,7 @@ export default function MasterProfileForm({ initialData }: Props) {
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 placeholder={t('profile.importAi.pastePlaceholder')}
-                className="w-full bg-white border border-zinc-300 rounded-sm p-4 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-500 transition-all resize-none min-h-[120px]"
+                className="w-full bg-white border border-zinc-300 rounded-sm p-4 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-500 transition-all resize-none min-h-30"
               />
             </div>
             <button type="button" onClick={handleParseAI} disabled={(!importFile && !importText) || isParsing} className="bg-zinc-900 text-white font-bold uppercase tracking-widest text-[11px] px-6 py-2 rounded-sm hover:bg-zinc-800 transition-colors disabled:opacity-50">
@@ -355,10 +387,10 @@ export default function MasterProfileForm({ initialData }: Props) {
             <div className={cardCls}>
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="shrink-0 flex flex-col items-center gap-2">
-                  <div onClick={() => avatarInputRef.current?.click()} className="w-24 h-24 rounded-sm border border-dashed border-zinc-300 bg-zinc-50 flex items-center justify-center cursor-pointer hover:border-zinc-500 transition-colors overflow-hidden">
-                    {avatarPreview ? <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">Upload</span>}
+                  <div onClick={() => avatarInputRef.current?.click()} className="w-24 h-36 rounded-sm border border-dashed border-zinc-300 bg-zinc-50 flex items-center justify-center cursor-pointer hover:border-zinc-500 transition-colors overflow-hidden">
+                    {avatarPreview ? <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-[10px] text-center uppercase tracking-widest text-zinc-400 font-bold leading-relaxed">Upload<br/>4x6</span>}
                   </div>
-                  {avatarPreview && <button type="button" onClick={() => setAvatarPreview(null)} className="text-[10px] uppercase tracking-widest text-red-500 font-bold">{t('profile.actions.remove')}</button>}
+                  {avatarPreview && <button type="button" onClick={() => { setAvatarPreview(null); setAvatarFile(null); }} className="text-[10px] uppercase tracking-widest text-red-500 font-bold">{t('profile.actions.remove')}</button>}
                   <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 </div>
 
@@ -372,6 +404,19 @@ export default function MasterProfileForm({ initialData }: Props) {
                   <div><label className={lbl}>{t('profile.fields.phone')}</label><input {...register('personal.phone')} className={inpBox} /></div>
                   <div><label className={lbl}>{t('profile.fields.location')}</label><input {...register('personal.location')} className={inpBox} /></div>
                   <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.portfolio')}</label><input {...register('personal.portfolio')} className={inpBox} /></div>
+                  
+                  <div className="md:col-span-2 mt-4">
+                    <SectionHeading onAdd={() => appendLink({ name: '', url: '' })} addLabel="+ Link">Links</SectionHeading>
+                    <div className="space-y-3">
+                      {linkFields.map((field: any, i) => (
+                        <div key={field.id} className="flex gap-3 items-start">
+                          <input {...register(`personal.links.${i}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub)" className={`${inpBox} !w-1/3 md:!w-1/4`} />
+                          <input {...register(`personal.links.${i}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} !w-auto flex-1 min-w-0`} />
+                          <button type="button" onClick={() => removeLink(i)} className="text-zinc-400 hover:text-red-500 mt-2 shrink-0"><X size={16} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -415,15 +460,9 @@ export default function MasterProfileForm({ initialData }: Props) {
 
                 <ExperienceRoles control={control} register={register} nestIndex={i} />
 
-                <div className="mt-5 pt-5 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={lbl}>{t('profile.fields.items')}</label>
-                    <Controller control={control} name={`experience.${i}.appliedSkills` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
-                  <div>
-                    <label className={lbl}>{t('profile.fields.tags')}</label>
-                    <Controller control={control} name={`experience.${i}.domainTags` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
+                <div className="mt-5 pt-5 border-t border-zinc-200">
+                  <label className={lbl}>{t('profile.fields.items')}</label>
+                  <Controller control={control} name={`experience.${i}.appliedSkills` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
                 </div>
               </div>
             ))}
@@ -440,19 +479,13 @@ export default function MasterProfileForm({ initialData }: Props) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div><label className={lbl}>{t('profile.fields.projectName')}</label><input {...register(`projects.${i}.name`)} className={inpBox} /></div>
                   <div><label className={lbl}>{t('profile.fields.role')}</label><input {...register(`projects.${i}.role`)} className={inpBox} /></div>
-                  <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.link')}</label><input {...register(`projects.${i}.link`)} className={inpBox} /></div>
                   <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.description')}</label><textarea {...register(`projects.${i}.description`)} rows={3} className={`${inpBox} resize-none font-mono text-[12px]`} /></div>
+                  <ProjectLinks control={control} register={register} nestIndex={i} />
                 </div>
 
-                <div className="pt-4 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={lbl}>{t('profile.fields.items')}</label>
-                    <Controller control={control} name={`projects.${i}.appliedSkills` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
-                  <div>
-                    <label className={lbl}>{t('profile.fields.tags')}</label>
-                    <Controller control={control} name={`projects.${i}.domainTags` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
+                <div className="pt-4 border-t border-zinc-200">
+                  <label className={lbl}>{t('profile.fields.items')}</label>
+                  <Controller control={control} name={`projects.${i}.appliedSkills` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
                 </div>
               </div>
             ))}
@@ -473,11 +506,6 @@ export default function MasterProfileForm({ initialData }: Props) {
                   <div><label className={lbl}>{t('profile.fields.endDate')}</label><input {...register(`education.${i}.endDate`)} className={inpBox} /></div>
                   <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.description')}</label><textarea {...register(`education.${i}.description`)} rows={2} className={`${inpBox} resize-none`} /></div>
                 </div>
-
-                <div className="pt-4 border-t border-zinc-200">
-                  <label className={lbl}>{t('profile.fields.tags')}</label>
-                  <Controller control={control} name={`education.${i}.domainTags` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                </div>
               </div>
             ))}
           </div>
@@ -497,10 +525,6 @@ export default function MasterProfileForm({ initialData }: Props) {
                     <div><label className={lbl}>{t('profile.fields.issuer')}</label><input {...register(`certifications.${i}.issuer`)} className={inpBox} /></div>
                     <div><label className={lbl}>{t('profile.fields.date')}</label><input {...register(`certifications.${i}.date`)} className={inpBox} /></div>
                   </div>
-                  <div className="pt-4 border-t border-zinc-200">
-                    <label className={lbl}>{t('profile.fields.tags')}</label>
-                    <Controller control={control} name={`certifications.${i}.domainTags` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
                 </div>
               ))}
             </div>
@@ -515,10 +539,6 @@ export default function MasterProfileForm({ initialData }: Props) {
                     <div><label className={lbl}>{t('profile.fields.issuer')}</label><input {...register(`awards.${i}.issuer`)} className={inpBox} /></div>
                     <div><label className={lbl}>{t('profile.fields.date')}</label><input {...register(`awards.${i}.date`)} className={inpBox} /></div>
                   </div>
-                  <div className="pt-4 border-t border-zinc-200">
-                    <label className={lbl}>{t('profile.fields.tags')}</label>
-                    <Controller control={control} name={`awards.${i}.domainTags` as const} render={({ field: { onChange, value } }) => <PillInput value={(value as string[]) || []} onChange={onChange} />} />
-                  </div>
                 </div>
               ))}
             </div>
@@ -527,6 +547,14 @@ export default function MasterProfileForm({ initialData }: Props) {
         )}
 
       </form>
+
+      {imageToCrop && (
+        <AvatarCropperModal
+          imageSrc={imageToCrop}
+          onComplete={handleCropComplete}
+          onCancel={() => setImageToCrop(null)}
+        />
+      )}
     </div>
   );
 }

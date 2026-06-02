@@ -40,7 +40,6 @@ export const MasterProfileSchema = z.object({
       companyName: z.string().min(1, { message: 'Required' }),
       roles: z.array(LinkedRoleSchema).min(1, { message: 'At least one role required' }),
       appliedSkills: z.array(z.string()).optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   projects: z.array(
@@ -48,12 +47,11 @@ export const MasterProfileSchema = z.object({
       id: z.string().optional(),
       name: z.string().min(1, { message: 'Required' }),
       role: z.string().optional(),
-      link: z.string().optional(),
+      links: z.array(LinkSchema).optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       description: z.string().optional(),
       appliedSkills: z.array(z.string()).optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   education: z.array(
@@ -64,7 +62,6 @@ export const MasterProfileSchema = z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       description: z.string().optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   languages: z.array(
@@ -72,7 +69,6 @@ export const MasterProfileSchema = z.object({
       id: z.string().optional(),
       language: z.string().min(1, { message: 'Required' }),
       proficiency: z.string().optional(),
-      tags: z.array(z.string()).optional(),
     })
   ).optional(),
   certifications: z.array(
@@ -81,7 +77,6 @@ export const MasterProfileSchema = z.object({
       name: z.string().min(1, { message: 'Required' }),
       issuer: z.string().optional(),
       date: z.string().optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   awards: z.array(
@@ -90,7 +85,6 @@ export const MasterProfileSchema = z.object({
       title: z.string().min(1, { message: 'Required' }),
       issuer: z.string().optional(),
       date: z.string().optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   activities: z.array(
@@ -101,7 +95,6 @@ export const MasterProfileSchema = z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       description: z.string().optional(),
-      domainTags: z.array(z.string()).optional(),
     })
   ).optional(),
   references: z.array(
@@ -111,7 +104,6 @@ export const MasterProfileSchema = z.object({
       position: z.string().optional(),
       company: z.string().optional(),
       contactInfo: z.string().optional(),
-      tags: z.array(z.string()).optional(),
     })
   ).optional(),
   hobbies: z.string().optional(),
