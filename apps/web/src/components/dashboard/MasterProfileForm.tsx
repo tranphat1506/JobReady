@@ -150,10 +150,13 @@ export default function MasterProfileForm({ initialData }: Props) {
 
   // Avatar upload
   const [avatarPreview, setAvatarPreview] = useState<string | null>((initialData?.personal as any)?.avatar || null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setAvatarFile(file);
     const reader = new FileReader();
     reader.onload = (ev) => setAvatarPreview(ev.target?.result as string);
     reader.readAsDataURL(file);
@@ -209,7 +212,27 @@ export default function MasterProfileForm({ initialData }: Props) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      if (avatarPreview) data.personal.avatar = avatarPreview;
+      let finalAvatarUrl = avatarPreview;
+
+      // Upload actual file to Supabase Storage if user selected a new image
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, avatarFile, { upsert: true });
+
+        if (uploadError) {
+          throw new Error(`Lỗi tải ảnh lên: ${uploadError.message}`);
+        }
+
+        const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
+        finalAvatarUrl = urlData.publicUrl;
+      }
+
+      if (finalAvatarUrl) {
+        data.personal.avatar = finalAvatarUrl;
+      }
 
       const { data: updatedRows, error } = await supabase
         .from('master_profiles')
