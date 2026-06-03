@@ -11,13 +11,13 @@ export class AIParser {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  public async parseAndTailorCV(jobDescription: string, rawCV?: string, targetLanguage: string = 'English', masterProfile?: object): Promise<CVSchema> {
+  public async parseAndTailorCV(jobDescription: string, rawCV?: string, targetLanguage: string = 'English', masterProfile?: object, toneOfVoice?: string): Promise<CVSchema> {
     const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
     const model = this.genAI.getGenerativeModel({ model: modelName });
 
     console.log(`🤖 Đang sử dụng Model: ${modelName}`);
 
-    const prompt = buildCVPrompt(jobDescription, rawCV, targetLanguage, masterProfile);
+    const prompt = buildCVPrompt(jobDescription, rawCV, targetLanguage, masterProfile, toneOfVoice);
 
     const generationConfig: GenerationConfig = {
       responseMimeType: "application/json",

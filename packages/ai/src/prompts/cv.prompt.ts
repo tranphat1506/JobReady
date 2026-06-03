@@ -6,10 +6,14 @@ export function buildCVPrompt(
   jobDescription: string,
   rawCV: string | undefined,
   targetLanguage: string,
-  masterProfile?: object
+  masterProfile?: object,
+  toneOfVoice?: string
 ): string {
   let candidateContext: string;
   let specificInstructions: string;
+  const toneInstruction = toneOfVoice 
+    ? `\n      - TONE OF VOICE: The candidate prefers a "${toneOfVoice}" tone. Adjust the vocabulary, phrasing, and style of all bullet points and summaries to perfectly match this tone.`
+    : '';
 
   if (masterProfile) {
     // Structured Master Profile path — no hallucination allowed
@@ -39,7 +43,7 @@ export function buildCVPrompt(
     Your task is to create or tailor a CV to match the provided Job Description, and output a strictly formatted JSON object.
 
     CRITICAL INSTRUCTIONS:
-    ${specificInstructions}
+    ${specificInstructions}${toneInstruction}
 
     - Analyze the fit between the Candidate's data and the Job Description to generate a 'matchAnalysis' object.
       - 'matchScore': 0-100 score indicating how well the candidate fits the role.

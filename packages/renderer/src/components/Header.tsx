@@ -33,7 +33,7 @@ export const Header = ({ data, labels }: HeaderProps) => {
     const validUrl = data.portfolio!.startsWith('http') ? data.portfolio! : `https://${data.portfolio!}`;
     contactRow2.push(<Link src={validUrl} style={styles.link}>Portfolio: {cleanUrl}</Link>);
   }
-  
+
   if (data.links) {
     data.links.forEach(link => {
       if (isValid(link.url) && isValid(link.name)) {
@@ -48,20 +48,25 @@ export const Header = ({ data, labels }: HeaderProps) => {
     if (row.length === 0) return null;
     return (
       <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 3, fontSize: 10 }}>
-        {row.map((item, i) => (
-          <React.Fragment key={i}>
-            {item}
-            {i < row.length - 1 ? <Text style={{ marginHorizontal: 6 }}>•</Text> : null}
-          </React.Fragment>
-        ))}
+        {row.map((item, i) => {
+          const isLast = i === row.length - 1;
+          const keyedItem = React.isValidElement(item) ? React.cloneElement(item as React.ReactElement, { key: `item-${i}` }) : item;
+          return isLast ? [keyedItem] : [keyedItem, <Text key={`sep-${i}`} style={{ marginHorizontal: 6 }}>•</Text>];
+        })}
       </View>
     );
   };
 
   return (
     <View style={styles.header}>
-      <Text style={styles.name}>{data.fullName}</Text>
-      {isValid(data.jobTitle) ? <Text style={{ fontSize: 12, marginBottom: 4 }}>{data.jobTitle}</Text> : null}
+      <View style={{ minHeight: 30, justifyContent: 'center' }}>
+        <Text style={styles.name}>{data.fullName}</Text>
+      </View>
+      {isValid(data.jobTitle) ? (
+        <View style={{ minHeight: 18, marginBottom: 4, justifyContent: 'center' }}>
+          <Text style={{ fontSize: 12 }}>{data.jobTitle}</Text>
+        </View>
+      ) : null}
       {renderRow(contactRow1)}
       {renderRow(contactRow2)}
     </View>

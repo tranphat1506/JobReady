@@ -2,22 +2,35 @@
 import { StyleSheet, Font } from '@react-pdf/renderer';
 import * as path from 'path';
 
-// Register fonts
-const fontPath = path.resolve(__dirname, '../../assets/fonts/Tinos');
-Font.register({
-  family: 'Tinos',
-  fonts: [
-    { src: path.join(fontPath, 'Tinos-Regular.ttf') },
-    { src: path.join(fontPath, 'Tinos-Bold.ttf'), fontWeight: 'bold' },
-    { src: path.join(fontPath, 'Tinos-Italic.ttf'), fontStyle: 'italic' },
-    { src: path.join(fontPath, 'Tinos-BoldItalic.ttf'), fontWeight: 'bold', fontStyle: 'italic' }
-  ]
-});
+const isBrowser = typeof window !== 'undefined';
+
+if (isBrowser) {
+  Font.register({
+    family: 'Lora',
+    fonts: [
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787z5vCJG.ttf', fontWeight: 'bold' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-MoFkqg.ttf', fontStyle: 'italic' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-C0Ckqg.ttf', fontWeight: 'bold', fontStyle: 'italic' }
+    ]
+  });
+} else {
+  // Use CDN for Node as well to simplify font management and guarantee metrics consistency
+  Font.register({
+    family: 'Lora',
+    fonts: [
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787z5vCJG.ttf', fontWeight: 'bold' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-MoFkqg.ttf', fontStyle: 'italic' },
+      { src: 'https://fonts.gstatic.com/s/lora/v37/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-C0Ckqg.ttf', fontWeight: 'bold', fontStyle: 'italic' }
+    ]
+  });
+}
 
 export const styles = StyleSheet.create({
   page: {
     padding: '0.5in',
-    fontFamily: 'Tinos',
+    fontFamily: 'Lora',
     fontSize: 10,
     lineHeight: 1.2,
   },

@@ -16,15 +16,19 @@ export class StandardCoverLetterTemplate implements ICoverLetterTemplate {
 
     return (
       <Document>
-        <Page size="A4" style={{ ...styles.page, padding: 40, fontFamily: 'Tinos' }}>
+        <Page size="A4" style={{ ...styles.page, padding: 40 }}>
 
           {/* Header - Sender Info */}
           <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 5 }}>
-              {data.personal.fullName}
-            </Text>
+            <View style={{ minHeight: 30, justifyContent: 'center' }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 5 }}>
+                {data.personal.fullName}
+              </Text>
+            </View>
             {isValid(data.personal.jobTitle) ? (
-              <Text style={{ fontSize: 12, color: '#555', marginBottom: 5 }}>{data.personal.jobTitle}</Text>
+              <View style={{ minHeight: 18, marginBottom: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#555' }}>{data.personal.jobTitle}</Text>
+              </View>
             ) : null}
             <View style={{ fontSize: 10, color: '#333', lineHeight: 1.5 }}>
               {isValid(data.personal.phone) ? <Text>{data.personal.phone}</Text> : null}
