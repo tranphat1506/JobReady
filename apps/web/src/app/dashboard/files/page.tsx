@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/useTranslation';
-import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock } from 'lucide-react';
+import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink } from 'lucide-react';
 import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedDocument } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
 function getDraftTimeLeft(updatedAt: string): string {
   const expiresAt = new Date(new Date(updatedAt).getTime() + 24 * 60 * 60 * 1000);
-  const now = new Date();
-  const diffMs = expiresAt.getTime() - now.getTime();
+  const diffMs = expiresAt.getTime() - Date.now();
   if (diffMs <= 0) return '0 phút';
   const hours = Math.floor(diffMs / (1000 * 60 * 60));
   const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -20,6 +20,7 @@ function getDraftTimeLeft(updatedAt: string): string {
 
 export default function FilesPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -28,6 +29,10 @@ export default function FilesPage() {
   const [editName, setEditName] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Bulk select
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
   useEffect(() => { fetchDocuments(); }, []);
 
   const fetchDocuments = async () => {
@@ -35,6 +40,7 @@ export default function FilesPage() {
       setLoading(true);
       const data = await getDocuments();
       setDocuments(data);
+      setSelected(new Set());
     } catch (err: any) {
       toast.error(err.message || 'Lỗi tải danh sách tài liệu');
     } finally {
@@ -78,6 +84,44 @@ export default function FilesPage() {
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === filteredDocs.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filteredDocs.map(d => d.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    setBulkDeleting(true);
+    try {
+      await Promise.all([...selected].map(id => deleteDocument(id)));
+      toast.success(`Đã xoá ${selected.size} tài liệu`);
+      fetchDocuments();
+    } catch (err: any) {
+      toast.error('Có lỗi khi xoá hàng loạt');
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
+  const handleBulkEdit = () => {
+    const ids = [...selected];
+    if (ids.length === 0) return;
+    // Open first in current tab, rest in new tabs
+    ids.slice(1).forEach(id => window.open(`/dashboard/edit/${id}`, '_blank'));
+    router.push(`/dashboard/edit/${ids[0]}`);
+  };
+
   const filteredDocs = documents.filter(doc => {
     if (filter !== 'all' && doc.type !== filter) return false;
     if (search && !doc.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -85,6 +129,8 @@ export default function FilesPage() {
   });
 
   const hasDrafts = filteredDocs.some(d => d.status === 'draft');
+  const selectionCount = selected.size;
+  const allSelected = selectionCount > 0 && selectionCount === filteredDocs.length;
 
   return (
     <div className="flex flex-col h-full bg-zinc-50/50 min-h-screen">
@@ -106,18 +152,32 @@ export default function FilesPage() {
 
       {/* Toolbar */}
       <div className="px-8 py-4 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white/50 border-b border-zinc-100">
-        <div className="flex bg-zinc-100 p-1 rounded-lg w-full sm:w-auto">
-          {(['all', 'cv', 'cover_letter'] as const).map((f) => (
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* Select All toggle */}
+          {filteredDocs.length > 0 && (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-md capitalize transition-colors ${
-                filter === f ? 'bg-white text-primary shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
-              }`}
+              onClick={toggleSelectAll}
+              className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-800 transition-colors shrink-0"
             >
-              {f === 'all' ? (t('files.filterAll') || 'Tất cả') : f === 'cv' ? 'CV' : 'Cover Letter'}
+              {allSelected
+                ? <CheckSquare className="w-4 h-4 text-primary" />
+                : <Square className="w-4 h-4" />}
+              {t('files.selectAll') || 'Chọn tất cả'}
             </button>
-          ))}
+          )}
+          <div className="flex bg-zinc-100 p-1 rounded-lg">
+            {(['all', 'cv', 'cover_letter'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-md capitalize transition-colors ${
+                  filter === f ? 'bg-white text-primary shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
+                }`}
+              >
+                {f === 'all' ? (t('files.filterAll') || 'Tất cả') : f === 'cv' ? 'CV' : 'Cover Letter'}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="relative w-full sm:w-64">
           <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -132,7 +192,7 @@ export default function FilesPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto pb-28">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-64 text-zinc-400">
             <Loader2 className="w-8 h-8 animate-spin mb-4" />
@@ -146,52 +206,68 @@ export default function FilesPage() {
           </div>
         ) : (
           <>
-            {/* Draft notice */}
             {hasDrafts && (
               <div className="mb-5 flex items-start gap-2 text-xs text-orange-700 bg-orange-50 border border-orange-200 rounded-lg px-4 py-3">
                 <Clock className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{t('files.draftNotice') || '* Các tài liệu ở trạng thái Nháp (DRAFT) sẽ tự động bị xoá sau 24 giờ. Bấm vào để "Lưu" và hoàn tất.'}</span>
+                <span>{t('files.draftNotice') || '* Các tài liệu DRAFT sẽ tự động bị xoá sau 24 giờ.'}</span>
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredDocs.map((doc) => {
                 const isDraft = doc.status === 'draft';
+                const isSelected = selected.has(doc.id);
                 return (
-                  <div key={doc.id} className={`group flex flex-col bg-white border rounded-xl overflow-hidden transition-all ${isDraft ? 'border-orange-200 hover:border-orange-400' : 'border-zinc-200 hover:border-primary/50 hover:shadow-md'}`}>
-
-                    {/* Preview Mockup */}
-                    <Link href={`/dashboard/edit/${doc.id}`} className="block">
-                      <div className={`h-32 border-b p-4 relative overflow-hidden flex items-start justify-center ${isDraft ? 'bg-orange-50 border-orange-100' : 'bg-zinc-50 border-zinc-100'}`}>
-                        <div className="w-3/4 h-[120%] bg-white border border-zinc-200 rounded shadow-sm p-2 flex flex-col gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                          <div className="w-1/2 h-2 bg-zinc-300 rounded-sm"></div>
-                          <div className="w-full h-1 bg-zinc-200 rounded-sm mt-1"></div>
-                          <div className="w-full h-1 bg-zinc-200 rounded-sm"></div>
-                          <div className="w-3/4 h-1 bg-zinc-200 rounded-sm"></div>
-                        </div>
-                        {/* Type badge */}
-                        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-zinc-600 uppercase tracking-widest border border-zinc-200 shadow-sm flex items-center gap-1">
-                          {doc.type === 'cv' ? 'CV' : 'Cover Letter'}
-                          {doc.template_id && <span className="text-zinc-400 border-l border-zinc-300 pl-1 ml-0.5">{doc.template_id}</span>}
-                        </div>
-                        {/* ATS Score */}
-                        {doc.resume_versions && doc.resume_versions[0]?.score != null && (
-                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest shadow-sm border border-zinc-200">
-                            <span className={`w-1.5 h-1.5 rounded-full ${doc.resume_versions[0].score >= 70 ? 'bg-green-500' : doc.resume_versions[0].score >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}></span>
-                            <span className={doc.resume_versions[0].score >= 70 ? 'text-green-600' : doc.resume_versions[0].score >= 40 ? 'text-yellow-600' : 'text-red-600'}>
-                              {doc.resume_versions[0].score} ATS
-                            </span>
-                          </div>
-                        )}
-                        {/* Draft time left badge */}
-                        {isDraft && (
-                          <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded text-[10px] font-semibold text-orange-700">
-                            <Clock className="w-3 h-3" />
-                            {getDraftTimeLeft(doc.updated_at)}
-                          </div>
-                        )}
+                  <div
+                    key={doc.id}
+                    className={`group flex flex-col bg-white border rounded-xl overflow-hidden transition-all ${
+                      isSelected
+                        ? 'border-primary ring-2 ring-primary/20 shadow-md'
+                        : isDraft
+                          ? 'border-orange-200 hover:border-orange-400'
+                          : 'border-zinc-200 hover:border-primary/50 hover:shadow-md'
+                    }`}
+                  >
+                    {/* Preview Mockup — click to toggle select */}
+                    <div
+                      className={`h-32 border-b p-4 relative overflow-hidden flex items-start justify-center cursor-pointer ${isDraft ? 'bg-orange-50 border-orange-100' : 'bg-zinc-50 border-zinc-100'}`}
+                      onClick={() => toggleSelect(doc.id)}
+                    >
+                      <div className="w-3/4 h-[120%] bg-white border border-zinc-200 rounded shadow-sm p-2 flex flex-col gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <div className="w-1/2 h-2 bg-zinc-300 rounded-sm"></div>
+                        <div className="w-full h-1 bg-zinc-200 rounded-sm mt-1"></div>
+                        <div className="w-full h-1 bg-zinc-200 rounded-sm"></div>
+                        <div className="w-3/4 h-1 bg-zinc-200 rounded-sm"></div>
                       </div>
-                    </Link>
+                      {/* Type badge */}
+                      <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-zinc-600 uppercase tracking-widest border border-zinc-200 shadow-sm flex items-center gap-1">
+                        {doc.type === 'cv' ? 'CV' : 'Cover Letter'}
+                        {doc.template_id && <span className="text-zinc-400 border-l border-zinc-300 pl-1 ml-0.5">{doc.template_id}</span>}
+                      </div>
+                      {/* ATS Score */}
+                      {doc.resume_versions && doc.resume_versions[0]?.score != null && (
+                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest shadow-sm border border-zinc-200">
+                          <span className={`w-1.5 h-1.5 rounded-full ${doc.resume_versions[0].score >= 70 ? 'bg-green-500' : doc.resume_versions[0].score >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}></span>
+                          <span className={doc.resume_versions[0].score >= 70 ? 'text-green-600' : doc.resume_versions[0].score >= 40 ? 'text-yellow-600' : 'text-red-600'}>
+                            {doc.resume_versions[0].score} ATS
+                          </span>
+                        </div>
+                      )}
+                      {/* Draft countdown */}
+                      {isDraft && (
+                        <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded text-[10px] font-semibold text-orange-700">
+                          <Clock className="w-3 h-3" />
+                          {getDraftTimeLeft(doc.updated_at)}
+                        </div>
+                      )}
+                      {/* Checkbox overlay */}
+                      <div className={`absolute top-2.5 right-2.5 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        {isSelected
+                          ? <CheckSquare className="w-4 h-4 text-primary drop-shadow" />
+                          : <Square className="w-4 h-4 text-zinc-400" />
+                        }
+                      </div>
+                    </div>
 
                     {/* Info + Actions */}
                     <div className="p-4 flex flex-col gap-2">
@@ -208,7 +284,6 @@ export default function FilesPage() {
                         </form>
                       ) : (
                         <div className="flex items-center gap-2">
-                          {/* Click name to rename — completed only */}
                           {!isDraft ? (
                             <button
                               onClick={() => { setEditingId(doc.id); setEditName(doc.name); }}
@@ -230,10 +305,8 @@ export default function FilesPage() {
                         {new Date(doc.updated_at).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' })}
                       </p>
 
-                      {/* Action buttons */}
                       {!editingId && (
                         <div className="flex items-center gap-1.5 pt-1 border-t border-zinc-100 mt-1">
-                          {/* Edit file button — both draft and completed go to editor */}
                           <Link
                             href={`/dashboard/edit/${doc.id}`}
                             className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 hover:text-primary hover:bg-primary/5 rounded transition-colors"
@@ -264,6 +337,36 @@ export default function FilesPage() {
           </>
         )}
       </div>
+
+      {/* Bulk Action Bar */}
+      {selectionCount > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 bg-zinc-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-zinc-700 animate-in fade-in slide-in-from-bottom-4 duration-200">
+          <span className="text-sm font-semibold text-zinc-300">
+            {selectionCount} {t('files.selected') || 'đã chọn'}
+          </span>
+          <div className="w-px h-5 bg-zinc-700" />
+          <button
+            onClick={handleBulkEdit}
+            className="flex items-center gap-1.5 text-sm font-semibold text-white hover:text-primary transition-colors px-2 py-1 rounded hover:bg-white/10"
+          >
+            <ExternalLink className="w-4 h-4" /> {t('files.bulkEdit') || 'Mở'}
+          </button>
+          <button
+            onClick={handleBulkDelete}
+            disabled={bulkDeleting}
+            className="flex items-center gap-1.5 text-sm font-semibold text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded hover:bg-white/10 disabled:opacity-50"
+          >
+            <Trash2 className="w-4 h-4" />
+            {bulkDeleting ? 'Đang xoá...' : (t('files.bulkDelete') || 'Xoá')}
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-1"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deletingId && (

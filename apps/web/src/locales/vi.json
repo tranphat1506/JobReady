@@ -492,7 +492,11 @@
     "duplicateSuccess": "Nhân bản thành công",
     "deleteConfirmTitle": "Xác nhận xoá",
     "deleteConfirmDesc": "Bạn có chắc chẫn muốn xoá tài liệu này không? Hành động này không thể hoàn tác.",
-    "deleteConfirmBtn": "Xoá Tài Liệu"
+    "deleteConfirmBtn": "Xoá Tài Liệu",
+    "selectAll": "Chọn tất cả",
+    "selected": "đã chọn",
+    "bulkEdit": "Mở",
+    "bulkDelete": "Xoá tất cả"
   },
   "credits": {
     "title": "Credits & Lịch sử",

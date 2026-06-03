@@ -492,7 +492,11 @@
     "duplicateSuccess": "Duplicated successfully",
     "deleteConfirmTitle": "Confirm Delete",
     "deleteConfirmDesc": "Are you sure you want to delete this document? This action cannot be undone.",
-    "deleteConfirmBtn": "Delete Document"
+    "deleteConfirmBtn": "Delete Document",
+    "selectAll": "Select all",
+    "selected": "selected",
+    "bulkEdit": "Open",
+    "bulkDelete": "Delete all"
   },
   "credits": {
     "title": "Credits & History",
