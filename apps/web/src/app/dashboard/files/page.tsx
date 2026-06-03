@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/useTranslation';
 import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink } from 'lucide-react';
-import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedDocument } from '@/actions/documentManagement';
+import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedDocument, getUserLimits } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -22,6 +22,7 @@ export default function FilesPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
+  const [limits, setLimits] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'cv' | 'cover_letter'>('all');
@@ -38,8 +39,12 @@ export default function FilesPage() {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const data = await getDocuments();
+      const [data, userLimits] = await Promise.all([
+        getDocuments(),
+        getUserLimits()
+      ]);
       setDocuments(data);
+      setLimits(userLimits);
       setSelected(new Set());
     } catch (err: any) {
       toast.error(err.message || 'Lỗi tải danh sách tài liệu');
@@ -73,10 +78,22 @@ export default function FilesPage() {
     }
   };
 
-  const handleDuplicate = async (id: string) => {
+  const handleDuplicate = async (doc: SavedDocument) => {
+    // Check limits before duplicating
+    if (limits) {
+      if (doc.type === 'cv' && limits.cvUsed >= limits.cvLimit) {
+        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.cvLimit} CV. Vui lòng nâng cấp gói để tiếp tục.`);
+        return;
+      }
+      if (doc.type === 'cover_letter' && limits.clUsed >= limits.clLimit) {
+        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.clLimit} Cover Letter. Vui lòng nâng cấp gói để tiếp tục.`);
+        return;
+      }
+    }
+
     try {
       toast.loading(t('files.duplicating') || 'Đang nhân bản...', { id: 'dup' });
-      await duplicateDocument(id);
+      await duplicateDocument(doc.id);
       toast.success(t('files.duplicateSuccess') || 'Nhân bản thành công', { id: 'dup' });
       fetchDocuments();
     } catch (err: any) {
@@ -142,12 +159,22 @@ export default function FilesPage() {
           </h1>
           <p className="text-zinc-500 text-sm mt-1">{t('files.subtitle') || 'Lưu trữ và chỉnh sửa các CV, Cover Letter của bạn.'}</p>
         </div>
-        <Link
-          href="/dashboard"
-          className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
-        >
-          <FilePlus2 className="w-4 h-4" /> {t('files.createNew') || 'Tạo mới'}
-        </Link>
+        
+        <div className="flex items-center gap-6">
+          {limits && (
+            <div className="flex items-center gap-4 text-xs font-semibold text-zinc-500 bg-zinc-50 border border-zinc-200 px-4 py-2 rounded-lg">
+              <div>CV: <span className={limits.cvUsed >= limits.cvLimit ? "text-red-500" : "text-zinc-900"}>{limits.cvUsed}</span>/{limits.cvLimit}</div>
+              <div className="w-px h-3 bg-zinc-300"></div>
+              <div>Cover Letter: <span className={limits.clUsed >= limits.clLimit ? "text-red-500" : "text-zinc-900"}>{limits.clUsed}</span>/{limits.clLimit}</div>
+            </div>
+          )}
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
+          >
+            <FilePlus2 className="w-4 h-4" /> {t('files.createNew') || 'Tạo mới'}
+          </Link>
+        </div>
       </div>
 
       {/* Toolbar */}
@@ -315,7 +342,7 @@ export default function FilesPage() {
                           </Link>
                           {!isDraft && (
                             <button
-                              onClick={() => handleDuplicate(doc.id)}
+                              onClick={() => handleDuplicate(doc)}
                               className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 hover:text-primary hover:bg-primary/5 rounded transition-colors"
                             >
                               <Copy className="w-3 h-3" /> {t('files.duplicate') || 'Nhân bản'}

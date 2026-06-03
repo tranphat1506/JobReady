@@ -27,9 +27,18 @@ export default async function CreditsPage() {
   // Payment history from subscriptions
   const { data: subscriptions } = await supabase
     .from('subscriptions')
-    .select('id, status, start_date, end_date, package_id, packages(name, price)')
+    .select('id, status, start_date, end_date, package_id, packages(name, price, cv_slot_limit, cl_slot_limit)')
     .eq('user_id', user.id)
     .order('start_date', { ascending: false });
+
+  // Get user credits
+  const { data: userData } = await supabase
+    .from('users')
+    .select('credits')
+    .eq('id', user.id)
+    .single();
+
+  const credits = userData?.credits ?? 0;
 
   const total = logs?.length ?? 0;
   const success = logs?.filter(l => l.status === 'success').length ?? 0;
@@ -40,6 +49,11 @@ export default async function CreditsPage() {
     return label === key ? action : label;
   };
 
+  const activeSub = subscriptions?.find(s => s.status === 'ACTIVE');
+  const currentPlanName = activeSub?.packages?.name ?? 'FREE';
+  const cvLimit = activeSub?.packages?.cv_slot_limit ?? 2;
+  const clLimit = activeSub?.packages?.cl_slot_limit ?? 2;
+
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       {/* Header */}
@@ -49,20 +63,29 @@ export default async function CreditsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white border border-zinc-200 rounded-xl p-5">
-          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.used')}</p>
-          <p className="text-4xl font-bold text-zinc-900">{total}</p>
-          <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.credits')}</p>
+          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">Số dư Credits</p>
+          <p className="text-4xl font-bold text-zinc-900">{credits}</p>
+          <p className="text-xs text-zinc-400 mt-1">Sử dụng cho tạo CV và tính năng AI</p>
         </div>
         <div className="bg-white border border-zinc-200 rounded-xl p-5">
-          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.success')}</p>
-          <p className="text-4xl font-bold text-zinc-900">{success}</p>
-          <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.of')} {total} {t('credits.stats.times')}</p>
+          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">Giới hạn Lưu trữ</p>
+          <div className="flex items-center gap-4 mt-2">
+            <div>
+              <p className="text-xl font-bold text-zinc-900">{cvLimit}</p>
+              <p className="text-xs text-zinc-400">CV Slots</p>
+            </div>
+            <div className="w-px h-8 bg-zinc-200"></div>
+            <div>
+              <p className="text-xl font-bold text-zinc-900">{clLimit}</p>
+              <p className="text-xs text-zinc-400">Cover Letter Slots</p>
+            </div>
+          </div>
         </div>
         <div className="bg-white border border-zinc-200 rounded-xl p-5">
           <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.currentPlan')}</p>
-          <p className="text-2xl font-bold text-primary mt-1">FREE</p>
+          <p className="text-2xl font-bold text-primary mt-1 uppercase">{currentPlanName}</p>
           <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.upgradeCta')}</p>
         </div>
       </div>

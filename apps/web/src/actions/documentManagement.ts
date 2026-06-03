@@ -56,6 +56,73 @@ export async function checkMasterProfileEmpty(): Promise<boolean> {
   return Object.keys(data.content).length === 0;
 }
 
+export async function getUserLimits() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('packages ( cv_slot_limit, cl_slot_limit )')
+    .eq('user_id', user.id)
+    .eq('status', 'ACTIVE')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const cvLimit = subData?.packages?.cv_slot_limit ?? 2;
+  const clLimit = subData?.packages?.cl_slot_limit ?? 2;
+
+  const { data: cvData } = await supabase
+    .from('resumes')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('type', 'cv')
+    .eq('status', 'completed');
+
+  const { data: clData } = await supabase
+    .from('resumes')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('type', 'cover_letter')
+    .eq('status', 'completed');
+
+  return {
+    cvUsed: cvData?.length || 0,
+    cvLimit,
+    clUsed: clData?.length || 0,
+    clLimit
+  };
+}
+
+export async function checkUserLimit(supabase: any, userId: string, type: 'cv' | 'cover_letter') {
+  // 1. Get user limits from active subscription
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('packages ( cv_slot_limit, cl_slot_limit )')
+    .eq('user_id', userId)
+    .eq('status', 'ACTIVE')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const cvLimit = subData?.packages?.cv_slot_limit ?? 2;
+  const clLimit = subData?.packages?.cl_slot_limit ?? 2;
+  const limit = type === 'cv' ? cvLimit : clLimit;
+
+  // 2. Count current completed documents
+  const { count } = await supabase
+    .from('resumes')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('type', type)
+    .eq('status', 'completed');
+
+  if ((count || 0) >= limit) {
+    throw new Error(`Bạn đã đạt giới hạn lưu trữ tối đa ${limit} tài liệu ${type.toUpperCase()}. Vui lòng nâng cấp gói để mở rộng.`);
+  }
+}
+
 export async function saveDocument(
   data: CVSchema | CoverLetterSchema,
   type: 'cv' | 'cover_letter',
@@ -112,6 +179,11 @@ export async function saveDocument(
 
     if (updateError) throw updateError;
   } else {
+    // Check limit before creating a new completed document
+    if (status === 'completed') {
+      await checkUserLimit(supabase, user.id, type);
+    }
+
     // INSERT new resume.
     // CONSTRAINT: 1 User has at most 1 draft per type. If creating a new draft, delete the old one first.
     if (status === 'draft') {
@@ -277,6 +349,10 @@ export async function duplicateDocument(id: string) {
     .limit(1);
 
   if (vError || !versions || versions.length === 0) throw new Error('Cannot fetch content');
+
+  if (resume.status === 'completed') {
+    await checkUserLimit(supabase, user.id, resume.type);
+  }
 
   const { data: newResume, error: insertError } = await supabase
     .from('resumes')

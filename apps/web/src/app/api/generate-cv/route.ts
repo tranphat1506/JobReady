@@ -88,6 +88,32 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw new ApiError('GEMINI_API_KEY is not configured in .env.local', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
   }
 
+  // --- CHECK CREDITS ---
+  let totalCost = 0;
+  const { data: settings } = await supabase.from('system_settings').select('key, value');
+  const getPrice = (k: string) => {
+    const s = settings?.find(s => s.key === k);
+    return s ? Number(s.value) : 0;
+  };
+
+  if (goal === 'cv') totalCost = getPrice('price_generate_cv');
+  else if (goal === 'cover_letter') totalCost = getPrice('price_generate_cl');
+  else totalCost = getPrice('price_generate_cv') + getPrice('price_generate_cl');
+
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('credits')
+    .eq('id', userId)
+    .single();
+
+  if (userError || !userData) {
+    throw new ApiError('Không thể lấy thông tin credits của người dùng', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  if (userData.credits < totalCost) {
+    throw new ApiError(`Không đủ credits. Yêu cầu: ${totalCost}, Hiện có: ${userData.credits}`, 402, 'INSUFFICIENT_CREDITS' as ErrorCodes);
+  }
+
   const aiParser = new AIParser(process.env.GEMINI_API_KEY);
   const responseData: any = {};
   
@@ -126,6 +152,16 @@ export const POST = withErrorHandler(async (req: Request) => {
   }).then(({error}) => {
     if (error) console.error('Failed to log AI generation:', error);
   });
+
+  // Deduct credits silently
+  if (totalCost > 0) {
+    supabase.from('users')
+      .update({ credits: userData.credits - totalCost })
+      .eq('id', userId)
+      .then(({error}) => {
+        if (error) console.error('Failed to deduct credits:', error);
+      });
+  }
 
   // Save cache in dev
   if (isDev && cacheFile) {
