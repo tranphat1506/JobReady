@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lora, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@flaticon/flaticon-uicons/css/all/all.rounded.css";
+import { Toaster } from 'react-hot-toast';
 
 const lora = Lora({
   variable: "--font-lora",
@@ -38,7 +39,10 @@ export default function RootLayout({
       lang="vi"
       className={`${lora.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster position="bottom-center" />
+      </body>
     </html>
   );
 }

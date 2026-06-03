@@ -250,6 +250,7 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                     <InputField label={t('builder.startDate') || "Từ năm"} value={item.startDate} path={[idx.toString(), 'startDate']} />
                     <InputField label={t('builder.endDate') || "Đến năm"} value={item.endDate} path={[idx.toString(), 'endDate']} />
                   </div>
+                  <StringArrayField label={t('builder.description') || "Mô tả / Chi tiết"} items={item.description} path={[idx.toString(), 'description']} />
                 </>
               )}
 

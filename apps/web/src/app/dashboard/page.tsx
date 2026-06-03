@@ -7,10 +7,11 @@ import { Step1Goal } from '@/components/builder/Step1Goal';
 import { Step2Source } from '@/components/builder/Step2Source';
 import { Step3Customize } from '@/components/builder/Step3Customize';
 import { Step4TemplateSelection } from '@/components/builder/Step4TemplateSelection';
-import { Step5ReviewEdit } from '@/components/builder/Step5ReviewEdit';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
+import { saveDocument, saveJobDescription } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 const PDFPreview = dynamic(() => import('@/components/builder/PDFPreview'), { ssr: false, loading: () => <div className="w-full h-full bg-zinc-50 animate-pulse flex items-center justify-center text-zinc-400 border border-zinc-200">Loading Preview...</div> });
 
@@ -25,13 +26,39 @@ export interface BuilderState {
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ cv?: CVSchema; coverLetter?: CoverLetterSchema } | null>(null);
 
+  // Draft modal state
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftData, setDraftData] = useState<any>(null);
+
+  // IDs of the drafts stored in the database
+  const [cvId, setCvId] = useState<string | null>(null);
+  const [clId, setClId] = useState<string | null>(null);
+
   const [cvTemplate, setCvTemplate] = useState('harvard');
   const [clTemplate, setClTemplate] = useState('standard-cover-letter');
+
+  useEffect(() => {
+    async function checkDrafts() {
+      try {
+        const drafts = await getDrafts();
+        if (drafts) {
+          setResult(drafts.result);
+          setCvId(drafts.draftIds.cvId);
+          setClId(drafts.draftIds.clId);
+          setCurrentStep(5);
+        }
+      } catch (e) {
+        console.error('Error fetching drafts:', e);
+      }
+    }
+    checkDrafts();
+  }, []);
 
   const [state, setState] = useState<BuilderState>({
     goal: 'cv',
@@ -46,7 +73,7 @@ export default function DashboardPage() {
     setState(prev => ({ ...prev, ...updates }));
   };
 
-  const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, 5));
+  const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, 4));
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
   const handleReset = () => {
     setCurrentStep(1);
@@ -78,8 +105,29 @@ export default function DashboardPage() {
 
       const data = await response.json();
       setResult(data);
+
+      // Save JD and Drafts automatically
+      let savedJobId = undefined;
+      if (state.jobDescription.trim()) {
+        try {
+          savedJobId = await saveJobDescription(state.jobDescription, 'Custom JD');
+        } catch (e) {
+          console.error('Failed to save JD:', e);
+        }
+      }
+
+      if (data.cv) {
+        const id = await saveDocument(data.cv, 'cv', data.cv.personal?.fullName ? `CV - ${data.cv.personal.fullName}` : 'Untitled CV', undefined, savedJobId, cvTemplate, 'draft');
+        setCvId(id || null);
+      }
+
+      if (data.coverLetter) {
+        const id = await saveDocument(data.coverLetter, 'cover_letter', data.coverLetter.personal?.fullName ? `Cover Letter - ${data.coverLetter.personal.fullName}` : 'Untitled Cover Letter', undefined, savedJobId, clTemplate, 'draft');
+        setClId(id || null);
+      }
+
       setCurrentStep(4);
-      toast.success(t('builder.step4Title') || 'Đã tạo tài liệu thành công!');
+      toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
     } catch (error: any) {
       toast.error(error.message);
       console.error(error);
@@ -92,8 +140,7 @@ export default function DashboardPage() {
     { id: 1, title: t('dashboard.steps.step1') || 'Mục Tiêu', desc: t('dashboard.steps.step1Desc') || 'Chọn loại CV & Cover Letter', icon: <Briefcase className="w-5 h-5" /> },
     { id: 2, title: t('dashboard.steps.step2') || 'Dữ Liệu', desc: t('dashboard.steps.step2Desc') || 'Cung cấp thông tin nền tảng', icon: <Database className="w-5 h-5" /> },
     { id: 3, title: t('dashboard.steps.step3') || 'Tuỳ Chỉnh AI', desc: t('dashboard.steps.step3Desc') || 'Chỉ định giọng văn & Prompt', icon: <Wand2 className="w-5 h-5" /> },
-    { id: 4, title: t('dashboard.steps.step4') || 'Chọn Mẫu', desc: t('dashboard.steps.step4Desc') || 'Lựa chọn giao diện hiển thị', icon: <LayoutTemplate className="w-5 h-5" /> },
-    { id: 5, title: t('dashboard.steps.step5') || 'Hoàn Tất', desc: t('dashboard.steps.step5Desc') || 'Chỉnh sửa & Tải xuống', icon: <CheckCircle2 className="w-5 h-5" /> }
+    { id: 4, title: t('dashboard.steps.step4') || 'Chọn Mẫu', desc: t('dashboard.steps.step4Desc') || 'Lựa chọn giao diện hiển thị', icon: <LayoutTemplate className="w-5 h-5" /> }
   ];
 
   const showCV = result?.cv != null;
@@ -101,6 +148,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0 font-sans">
+
       <div className="mb-8 border-b border-zinc-200 pb-5 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">
@@ -133,8 +181,8 @@ export default function DashboardPage() {
                   <div key={step.id} className="flex flex-col items-center">
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-all duration-300 border-2 ${isCompleted ? 'bg-primary text-white border-primary' :
-                          isCurrent ? 'bg-white text-primary border-primary ring-4 ring-primary/20' :
-                            'bg-white text-zinc-400 border-zinc-200'
+                        isCurrent ? 'bg-white text-primary border-primary ring-4 ring-primary/20' :
+                          'bg-white text-zinc-400 border-zinc-200'
                         }`}
                     >
                       {isCompleted ? <Check className="w-4 h-4" /> : step.id}
@@ -169,7 +217,17 @@ export default function DashboardPage() {
                 showCV={showCV}
                 showCL={showCL}
                 onPrev={() => setCurrentStep(3)}
-                onNext={() => setCurrentStep(5)}
+                onNext={async () => {
+                  // We update the templates for the drafts one last time
+                  if (cvId) await saveDocument(result!.cv!, 'cv', result!.cv!.personal?.fullName ? `CV - ${result!.cv!.personal.fullName}` : 'Untitled CV', undefined, undefined, cvTemplate, 'draft', cvId);
+                  if (clId) await saveDocument(result!.coverLetter!, 'cover_letter', result!.coverLetter!.personal?.fullName ? `Cover Letter - ${result!.coverLetter!.personal.fullName}` : 'Untitled Cover Letter', undefined, undefined, clTemplate, 'draft', clId);
+
+                  if (cvId) {
+                    router.push(`/dashboard/edit/${cvId}`);
+                  } else if (clId) {
+                    router.push(`/dashboard/edit/${clId}`);
+                  }
+                }}
               />
             )}
           </div>
@@ -177,7 +235,7 @@ export default function DashboardPage() {
 
         {/* RIGHT COLUMN: PREVIEW (HIDDEN IN STEP 5 AS IT TAKES FULL WIDTH) */}
         {currentStep < 5 && (
-          <div className="lg:col-span-7 transition-all duration-500 min-h-[400px] border border-zinc-200 rounded-xl bg-slate-50 flex flex-col shadow-sm overflow-hidden">
+          <div className="lg:col-span-7 transition-all duration-500 min-h-100 border border-zinc-200 rounded-xl bg-slate-50 flex flex-col shadow-sm overflow-hidden">
             {currentStep < 4 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-zinc-400">
                 <FileCode2 className="w-12 h-12 mb-4 opacity-50" />
@@ -195,22 +253,6 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-
-      {/* FULL SCREEN STEP 5 */}
-      {currentStep === 5 && (
-        <div className="fixed inset-0 z-50 bg-white">
-          <Step5ReviewEdit
-            result={result}
-            setResult={setResult}
-            onReset={handleReset}
-            cvTemplate={cvTemplate}
-            clTemplate={clTemplate}
-            showCV={showCV}
-            showCL={showCL}
-            onPrev={() => setCurrentStep(4)}
-          />
-        </div>
-      )}
     </div>
   );
 }

@@ -1,7 +1,9 @@
-import React, { useRef } from 'react';
-import { Database, UploadCloud, ArrowRight, ArrowLeft } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Database, UploadCloud, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { BuilderState } from '@/app/dashboard/page';
 import { useTranslation } from '@/hooks/useTranslation';
+import { checkMasterProfileEmpty } from '@/actions/documentManagement';
+import Link from 'next/link';
 
 interface Step2Props {
   state: BuilderState;
@@ -13,6 +15,23 @@ interface Step2Props {
 export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
+  
+  const [isProfileEmpty, setIsProfileEmpty] = useState<boolean>(false);
+  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function checkProfile() {
+      const empty = await checkMasterProfileEmpty();
+      setIsProfileEmpty(empty);
+      setLoadingProfile(false);
+      
+      // If profile is empty and current selection is master_profile, switch to upload to be safe
+      if (empty && state.sourceType === 'master_profile') {
+        updateState({ sourceType: 'upload' });
+      }
+    }
+    checkProfile();
+  }, [state.sourceType, updateState]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -47,9 +66,25 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
               <p className="text-xs text-zinc-500 mb-2">
                 {t('builder.useMasterProfileDesc') || 'Lấy toàn bộ thông tin đã lưu trên hệ thống.'}
               </p>
-              <span className="inline-block px-2.5 py-1 bg-primary text-white text-[10px] font-semibold rounded-md">
-                {t('builder.recommended') || 'Khuyên dùng'}
-              </span>
+              
+              {loadingProfile ? (
+                <span className="inline-block px-2.5 py-1 bg-zinc-100 text-zinc-400 text-[10px] font-semibold rounded-md">
+                  Đang kiểm tra...
+                </span>
+              ) : isProfileEmpty ? (
+                <div className="flex flex-col gap-2 mt-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-600 border border-red-100 text-[10px] font-semibold rounded-md w-fit">
+                    <AlertTriangle className="w-3 h-3" /> Master Profile trống!
+                  </span>
+                  <Link href="/dashboard/profile" target="_blank" className="text-xs text-primary font-medium hover:underline w-fit">
+                    + Cập nhật Master Profile ngay
+                  </Link>
+                </div>
+              ) : (
+                <span className="inline-block px-2.5 py-1 bg-primary text-white text-[10px] font-semibold rounded-md">
+                  {t('builder.recommended') || 'Khuyên dùng'}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -110,7 +145,11 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
         </button>
         <button
           onClick={onNext}
-          disabled={state.sourceType === 'upload' && !state.file}
+          disabled={
+            (state.sourceType === 'upload' && !state.file) || 
+            (state.sourceType === 'master_profile' && isProfileEmpty) ||
+            loadingProfile
+          }
           className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 font-semibold text-sm rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           {t('builder.next') || 'Tiếp tục'} <ArrowRight className="w-4 h-4" />

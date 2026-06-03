@@ -64,7 +64,7 @@ const PillInput = ({ value = [], onChange, placeholder }: { value: string[], onC
   const removeTag = (tag: string) => onChange(value.filter(t => t !== tag));
 
   return (
-    <div className="w-full bg-white border border-zinc-300 rounded-lg p-1.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all min-h-[42px] shadow-sm">
+    <div className="w-full bg-white border border-zinc-300 rounded-lg p-1.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all min-h-10.5 shadow-sm">
       <div className="flex flex-wrap gap-1.5 items-center">
         {value.map((tag, i) => (
           <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700 text-xs font-medium border border-zinc-200">
@@ -131,14 +131,14 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
 // ── Nested Project Links Component ─────────────────────────────────────────
 const ProjectLinks = ({ control, register, nestIndex }: any) => {
   const { fields, remove, append } = useFieldArray({ control, name: `projects.${nestIndex}.links` });
-  
+
   return (
     <div className="md:col-span-2 mt-4 space-y-3">
       <SectionHeading onAdd={() => append({ name: '', url: '' })} addLabel="+ Link">Links</SectionHeading>
       {fields.map((field: any, k) => (
         <div key={field.id} className="flex gap-3 items-start">
-          <input {...register(`projects.${nestIndex}.links.${k}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub, Demo)" className={`${inpBox} !w-1/3 md:!w-1/4`} />
-          <input {...register(`projects.${nestIndex}.links.${k}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} !w-auto flex-1 min-w-0`} />
+          <input {...register(`projects.${nestIndex}.links.${k}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub, Demo)" className={`${inpBox} w-1/3! md:w-1/4!`} />
+          <input {...register(`projects.${nestIndex}.links.${k}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} w-auto! flex-1 min-w-0`} />
           <button type="button" onClick={() => remove(k)} className="text-zinc-400 hover:text-red-500 mt-2 shrink-0"><X size={16} /></button>
         </div>
       ))}
@@ -174,7 +174,7 @@ export default function MasterProfileForm({ initialData }: Props) {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -388,7 +388,7 @@ export default function MasterProfileForm({ initialData }: Props) {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="shrink-0 flex flex-col items-center gap-2">
                   <div onClick={() => avatarInputRef.current?.click()} className="w-24 h-36 rounded-sm border border-dashed border-zinc-300 bg-zinc-50 flex items-center justify-center cursor-pointer hover:border-zinc-500 transition-colors overflow-hidden">
-                    {avatarPreview ? <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-[10px] text-center uppercase tracking-widest text-zinc-400 font-bold leading-relaxed">Upload<br/>4x6</span>}
+                    {avatarPreview ? <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-[10px] text-center uppercase tracking-widest text-zinc-400 font-bold leading-relaxed">Upload<br />4x6</span>}
                   </div>
                   {avatarPreview && <button type="button" onClick={() => { setAvatarPreview(null); setAvatarFile(null); }} className="text-[10px] uppercase tracking-widest text-red-500 font-bold">{t('profile.actions.remove')}</button>}
                   <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
@@ -404,14 +404,14 @@ export default function MasterProfileForm({ initialData }: Props) {
                   <div><label className={lbl}>{t('profile.fields.phone')}</label><input {...register('personal.phone')} className={inpBox} /></div>
                   <div><label className={lbl}>{t('profile.fields.location')}</label><input {...register('personal.location')} className={inpBox} /></div>
                   <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.portfolio')}</label><input {...register('personal.portfolio')} className={inpBox} /></div>
-                  
+
                   <div className="md:col-span-2 mt-4">
                     <SectionHeading onAdd={() => appendLink({ name: '', url: '' })} addLabel="+ Link">Links</SectionHeading>
                     <div className="space-y-3">
                       {linkFields.map((field: any, i) => (
                         <div key={field.id} className="flex gap-3 items-start">
-                          <input {...register(`personal.links.${i}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub)" className={`${inpBox} !w-1/3 md:!w-1/4`} />
-                          <input {...register(`personal.links.${i}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} !w-auto flex-1 min-w-0`} />
+                          <input {...register(`personal.links.${i}.name`)} defaultValue={field.name} placeholder="Platform (e.g. GitHub)" className={`${inpBox} w-1/3! md:w-1/4!`} />
+                          <input {...register(`personal.links.${i}.url`)} defaultValue={field.url} placeholder="https://" className={`${inpBox} w-auto! flex-1 min-w-0`} />
                           <button type="button" onClick={() => removeLink(i)} className="text-zinc-400 hover:text-red-500 mt-2 shrink-0"><X size={16} /></button>
                         </div>
                       ))}
@@ -504,7 +504,21 @@ export default function MasterProfileForm({ initialData }: Props) {
                   <div><label className={lbl}>{t('profile.fields.degree')}</label><input {...register(`education.${i}.degree`)} className={inpBox} /></div>
                   <div><label className={lbl}>{t('profile.fields.startDate')}</label><input {...register(`education.${i}.startDate`)} className={inpBox} /></div>
                   <div><label className={lbl}>{t('profile.fields.endDate')}</label><input {...register(`education.${i}.endDate`)} className={inpBox} /></div>
-                  <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.description')}</label><textarea {...register(`education.${i}.description`)} rows={2} className={`${inpBox} resize-none`} /></div>
+                  <div className="md:col-span-2">
+                    <label className={lbl}>{t('profile.fields.description')}</label>
+                    <Controller 
+                      control={control} 
+                      name={`education.${i}.description` as const} 
+                      render={({ field: { onChange, value } }) => (
+                        <textarea 
+                          rows={2} 
+                          className={`${inpBox} resize-none`} 
+                          value={Array.isArray(value) ? value.join('\n') : (value || '')}
+                          onChange={e => onChange(e.target.value.split('\n'))}
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

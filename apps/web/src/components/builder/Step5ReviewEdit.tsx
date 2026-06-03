@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, CheckCircle2, FileText, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FileText, ChevronRight, ArrowRight, Sparkles, MousePointer2 } from 'lucide-react';
 import PDFPreview from './PDFPreview';
 import { HTMLHarvardTemplate } from '../html-cv/HTMLHarvardTemplate';
 import { HTMLATSSimpleTemplate } from '../html-cv/HTMLATSSimpleTemplate';
@@ -7,6 +7,9 @@ import { HTMLCoverLetterTemplate } from '../html-cv/HTMLCoverLetterTemplate';
 import { BlockEditorForm } from './BlockEditorForm';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
 import { useTranslation } from '@/hooks/useTranslation';
+import { saveDocument } from '@/actions/documentManagement';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface Step5Props {
   result: { cv?: CVSchema; coverLetter?: CoverLetterSchema } | null;
@@ -16,7 +19,10 @@ interface Step5Props {
   clTemplate: string;
   showCV: boolean;
   showCL: boolean;
+  cvId?: string | null;
+  clId?: string | null;
   onPrev: () => void;
+  initialStatus?: string;
 }
 
 export function Step5ReviewEdit({
@@ -27,15 +33,29 @@ export function Step5ReviewEdit({
   clTemplate,
   showCV,
   showCL,
+  cvId,
+  clId,
   onPrev,
+  initialStatus = 'completed',
 }: Step5Props) {
   const { t } = useTranslation();
+  const router = useRouter();
   // Mock state for active edit block
   const [activeBlock, setActiveBlock] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
   const [activeDoc, setActiveDoc] = useState<'cv' | 'cover_letter'>(showCV ? 'cv' : (showCL ? 'cover_letter' : 'cv'));
   const [zoom, setZoom] = useState<number>(0.85);
   const [showMatchAnalysis, setShowMatchAnalysis] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [status, setStatus] = useState<string>(initialStatus);
+  
+  // Document Names
+  const [cvName, setCvName] = useState<string>(
+    result?.cv ? (result.cv as any).personal?.fullName ? `CV - ${(result.cv as any).personal.fullName}${(result.cv as any).personal.jobTitle ? ` - ${(result.cv as any).personal.jobTitle}` : ''}` : 'Untitled CV' : ''
+  );
+  const [clName, setClName] = useState<string>(
+    result?.coverLetter ? (result.coverLetter as any).personal?.fullName ? `Cover Letter - ${(result.coverLetter as any).personal.fullName}${(result.coverLetter as any).personal.jobTitle ? ` - ${(result.coverLetter as any).personal.jobTitle}` : ''}` : 'Untitled Cover Letter' : ''
+  );
 
   // Free Drag to pan state
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -140,12 +160,39 @@ export function Step5ReviewEdit({
     }
   };
 
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      if (showCV && result?.cv) {
+        await saveDocument(result.cv, 'cv', cvName, undefined, undefined, cvTemplate, 'completed', cvId || undefined);
+      }
+      if (showCL && result?.coverLetter) {
+        await saveDocument(result.coverLetter, 'cover_letter', clName, undefined, undefined, clTemplate, 'completed', clId || undefined);
+      }
+      
+      const redirectId = cvId || clId;
+      setStatus('completed');
+      
+      if (redirectId) {
+        toast.success(t('builder.saveSuccess') || 'Đã lưu tài liệu thành công!');
+        router.push(`/dashboard/edit/${redirectId}`);
+      } else {
+        toast.success(t('builder.saveSuccess') || 'Đã lưu tài liệu thành công!');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Lỗi khi lưu tài liệu');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex h-full w-full relative overflow-hidden bg-zinc-100">
       {/* Top Floating Header Wrapper */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-30">
-        <div className="flex items-center bg-white rounded-xl shadow-md border border-zinc-200 p-1">
-          <button
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30 w-[90%] max-w-5xl">
+        <div className="flex flex-1 items-center bg-white rounded-xl shadow-md border border-zinc-200 p-1.5 w-full justify-between">
+          <div className="flex items-center">
+            <button
             onClick={onPrev}
             className="flex items-center gap-2 text-zinc-600 px-4 py-2 hover:bg-zinc-100 rounded-lg font-semibold text-sm transition-colors"
           >
@@ -187,24 +234,62 @@ export function Step5ReviewEdit({
               </button>
             </div>
           )}
-          <div className="px-2">
+          </div>
+                      
+          {/* Right side: Name, Save, Download */}
+          <div className="flex items-center gap-2 pr-1">
+            <div className="flex items-center border border-zinc-200 bg-zinc-50 rounded-lg overflow-hidden h-9 w-48 sm:w-64">
+              <input 
+                type="text" 
+                value={activeDoc === 'cv' ? cvName : clName}
+                onChange={(e) => activeDoc === 'cv' ? setCvName(e.target.value) : setClName(e.target.value)}
+                className="w-full h-full bg-transparent px-3 text-sm font-semibold text-zinc-800 focus:outline-none placeholder:font-normal"
+                placeholder="Tên tài liệu..."
+              />
+            </div>
+            
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center justify-center h-9 px-4 gap-2 bg-primary text-white rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity shadow-sm disabled:opacity-50"
+            >
+              {isSaving && (
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              )}
+              <span className="hidden sm:inline">{t('builder.saveToDashboard') || 'Lưu'}</span>
+            </button>
+
             {activeDoc === 'cv' && showCV && result?.cv && (
-              <PDFPreview type="cv" templateId={cvTemplate} data={result.cv as any} hidePreview={true} />
+              <div className="h-9">
+                {status === 'draft' ? (
+                  <button disabled title="Lưu tài liệu để tải xuống PDF" className="flex items-center justify-center h-9 px-4 gap-2 bg-zinc-200 text-zinc-500 rounded-lg font-semibold text-sm cursor-not-allowed">PDF</button>
+                ) : (
+                  <PDFPreview type="cv" templateId={cvTemplate} data={result.cv as any} hidePreview={true} />
+                )}
+              </div>
             )}
             {activeDoc === 'cover_letter' && showCL && result?.coverLetter && (
-              <PDFPreview type="cover_letter" templateId={clTemplate} data={result.coverLetter as any} hidePreview={true} />
+              <div className="h-9">
+                {status === 'draft' ? (
+                  <button disabled title="Lưu tài liệu để tải xuống PDF" className="flex items-center justify-center h-9 px-4 gap-2 bg-zinc-200 text-zinc-500 rounded-lg font-semibold text-sm cursor-not-allowed">PDF</button>
+                ) : (
+                  <PDFPreview type="cover_letter" templateId={clTemplate} data={result.coverLetter as any} hidePreview={true} />
+                )}
+              </div>
             )}
           </div>
         </div>
-        
-        {/* Floating Edit Hint */}
-        {!activeBlock && (
-          <div className="flex items-center gap-2 text-xs font-medium text-zinc-600 bg-white/90 backdrop-blur px-4 py-2 rounded-lg border border-zinc-200 shadow-sm animate-in fade-in slide-in-from-top-1">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+      </div>
+
+      {/* Floating Edit Hint at Bottom */}
+      {!activeBlock && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+          <div className="flex items-center gap-2 text-xs font-medium text-zinc-600 bg-white/90 backdrop-blur px-4 py-2 rounded-full border border-zinc-200 shadow-md animate-in fade-in slide-in-from-bottom-2">
+            <MousePointer2 className="w-4 h-4 text-primary" />
             {t('builder.editHint') || 'Nhấp trực tiếp vào tài liệu để chỉnh sửa'}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Floating Drawer for Editing */}
       <div

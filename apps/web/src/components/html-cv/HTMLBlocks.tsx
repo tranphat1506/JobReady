@@ -132,6 +132,18 @@ export const HTMLEducationBlock = ({ title, data, activeBlock, onBlockClick }: a
           <div className={s.itemSubHeader}>
             <span>{edu.degree}</span>
           </div>
+          {edu.description && Array.isArray(edu.description) && edu.description.map((desc: string, j: number) => (
+            <div key={j} className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{desc}</div>
+            </div>
+          ))}
+          {edu.description && typeof edu.description === 'string' && (
+            <div className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{edu.description}</div>
+            </div>
+          )}
         </div>
       ))}
     </EditableBlock>
@@ -154,12 +166,18 @@ export const HTMLExperienceBlock = ({ title, data, activeBlock, onBlockClick }: 
           <div className={s.itemSubHeader}>
             <span>{exp.position}</span>
           </div>
-          {exp.description && exp.description.map((desc: string, j: number) => (
+          {exp.description && Array.isArray(exp.description) && exp.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>
               <div className={s.bulletText}>{desc}</div>
             </div>
           ))}
+          {exp.description && typeof exp.description === 'string' && (
+            <div className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{exp.description}</div>
+            </div>
+          )}
         </div>
       ))}
     </EditableBlock>
@@ -200,12 +218,18 @@ export const HTMLProjectsBlock = ({ title, data, activeBlock, onBlockClick }: an
               </span>
             </div>
           )}
-          {proj.description && proj.description.map((desc: string, j: number) => (
+          {proj.description && Array.isArray(proj.description) && proj.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>
               <div className={s.bulletText}>{desc}</div>
             </div>
           ))}
+          {proj.description && typeof proj.description === 'string' && (
+            <div className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{proj.description}</div>
+            </div>
+          )}
         </div>
       ))}
     </EditableBlock>
@@ -287,12 +311,18 @@ export const HTMLActivitiesBlock = ({ title, data, activeBlock, onBlockClick }: 
             <span>{act.startDate} - {act.endDate || 'Present'}</span>
           </div>
           {isValid(act.role) && <div className="italic mb-1">{act.role}</div>}
-          {act.description && act.description.map((desc: string, j: number) => (
+          {act.description && Array.isArray(act.description) && act.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>
               <div className={s.bulletText}>{desc}</div>
             </div>
           ))}
+          {act.description && typeof act.description === 'string' && (
+            <div className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{act.description}</div>
+            </div>
+          )}
         </div>
       ))}
     </EditableBlock>
