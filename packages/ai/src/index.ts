@@ -4,6 +4,12 @@ import { buildCVPrompt } from './prompts/cv.prompt';
 import { buildCoverLetterPrompt } from './prompts/coverLetter.prompt';
 import { buildMasterProfilePrompt } from './prompts/masterProfile.prompt';
 
+export interface AIUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
 export class AIParser {
   private genAI: GoogleGenerativeAI;
 
@@ -11,7 +17,7 @@ export class AIParser {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  public async parseAndTailorCV(jobDescription: string, rawCV?: string, targetLanguage: string = 'English', masterProfile?: object, toneOfVoice?: string): Promise<CVSchema> {
+  public async parseAndTailorCV(jobDescription: string, rawCV?: string, targetLanguage: string = 'English', masterProfile?: object, toneOfVoice?: string): Promise<{ data: CVSchema; usage: AIUsage }> {
     const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
     const model = this.genAI.getGenerativeModel({ model: modelName });
 
@@ -29,26 +35,32 @@ export class AIParser {
         generationConfig,
       });
 
+      let usage: AIUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
       // In thông số Token tiêu hao
       if (result.response.usageMetadata) {
+        usage = {
+          promptTokens: result.response.usageMetadata.promptTokenCount,
+          completionTokens: result.response.usageMetadata.candidatesTokenCount,
+          totalTokens: result.response.usageMetadata.totalTokenCount,
+        };
         console.log('\n📊 THỐNG KÊ TOKEN SỬ DỤNG (Gemini):');
-        console.log(`- Prompt Tokens (đầu vào): ${result.response.usageMetadata.promptTokenCount}`);
-        console.log(`- Output Tokens (đầu ra):  ${result.response.usageMetadata.candidatesTokenCount}`);
-        console.log(`- Tổng Tokens:             ${result.response.usageMetadata.totalTokenCount}\n`);
+        console.log(`- Prompt Tokens (đầu vào): ${usage.promptTokens}`);
+        console.log(`- Output Tokens (đầu ra):  ${usage.completionTokens}`);
+        console.log(`- Tổng Tokens:             ${usage.totalTokens}\n`);
       }
 
       let responseText = result.response.text();
       // Dự phòng xóa markdown block nếu có
       responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-      return JSON.parse(responseText) as CVSchema;
+      return { data: JSON.parse(responseText) as CVSchema, usage };
     } catch (error) {
       console.error('Error parsing CV with AI:', error);
       throw error;
     }
   }
 
-  public async parseAndTailorCoverLetter(jobDescription: string, rawCV: string, targetLanguage: string = 'English'): Promise<any> {
+  public async parseAndTailorCoverLetter(jobDescription: string, rawCV: string, targetLanguage: string = 'English'): Promise<{ data: any; usage: AIUsage }> {
     const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
     const model = this.genAI.getGenerativeModel({ model: modelName });
 
@@ -68,17 +80,26 @@ export class AIParser {
     const response = await result.response;
     const text = response.text();
 
+    let usage: AIUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+    if (response.usageMetadata) {
+      usage = {
+        promptTokens: response.usageMetadata.promptTokenCount,
+        completionTokens: response.usageMetadata.candidatesTokenCount,
+        totalTokens: response.usageMetadata.totalTokenCount,
+      };
+    }
+
     try {
       const jsonStrMatch = text.match(/```json\n([\s\S]*?)\n```/);
       const jsonText = jsonStrMatch ? jsonStrMatch[1] : text;
-      return JSON.parse(jsonText);
+      return { data: JSON.parse(jsonText), usage };
     } catch (error) {
       console.error('Failed to parse Cover Letter Gemini response as JSON. Raw response:', text);
       throw error;
     }
   }
 
-  public async parseMasterProfile(rawCV: string): Promise<any> {
+  public async parseMasterProfile(rawCV: string): Promise<{ data: any; usage: AIUsage }> {
     const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
     const model = this.genAI.getGenerativeModel({ model: modelName });
 
@@ -97,6 +118,15 @@ export class AIParser {
         generationConfig: config,
       });
 
+      let usage: AIUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+      if (result.response.usageMetadata) {
+        usage = {
+          promptTokens: result.response.usageMetadata.promptTokenCount,
+          completionTokens: result.response.usageMetadata.candidatesTokenCount,
+          totalTokens: result.response.usageMetadata.totalTokenCount,
+        };
+      }
+
       let jsonText = result.response.text().trim();
 
       // Clean up markdown if the model still outputs it
@@ -106,7 +136,7 @@ export class AIParser {
         jsonText = jsonText.replace(/^```\n/, '').replace(/\n```$/, '');
       }
 
-      return JSON.parse(jsonText);
+      return { data: JSON.parse(jsonText), usage };
     } catch (error) {
       console.error('Error parsing Master Profile with AI:', error);
       throw error;
