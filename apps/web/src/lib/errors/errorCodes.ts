@@ -2,6 +2,7 @@ export const ErrorCodes = {
   // System Errors
   INTERNAL_SERVER_ERROR: 'error.system.internal',
   BAD_REQUEST: 'error.system.bad_request',
+  INSUFFICIENT_CREDITS: 'error.system.insufficient_credits',
 
   // API Errors
   API_GEMINI_SERVICE_UNAVAILABLE: 'error.api.gemini.service_unavailable',
