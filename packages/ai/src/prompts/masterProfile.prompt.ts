@@ -44,7 +44,7 @@ export function buildMasterProfilePrompt(rawCV: string): string {
       degree: string,
       startDate?: string,
       endDate?: string,
-      description?: string
+      description?: string[]
     }>,
     languages?: Array<{
       language: string,

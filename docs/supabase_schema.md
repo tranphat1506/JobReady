@@ -61,6 +61,10 @@ Metadata for generated tailored CVs/Cover Letters.
 - `profile_id` (UUID, Not Null) - References `master_profiles(id)`
 - `job_id` (UUID) - References `job_descriptions(id)` (Nullable)
 - `type` (TEXT, Not Null)
+- `name` (TEXT) - Name of the document (Nullable)
+- `status` (TEXT) - e.g. 'draft', 'completed' (Default: 'draft')
+- `template_id` (TEXT) - Selected layout template (Nullable)
+- `metadata` (JSONB) - Additional info like language, tone (Default: '{}')
 - `created_at` (TIMESTAMPTZ)
 - `updated_at` (TIMESTAMPTZ)
 
@@ -69,7 +73,8 @@ Stores the actual generated JSON content for a resume.
 - `id` (UUID, Primary Key)
 - `resume_id` (UUID, Not Null) - References `resumes(id)`
 - `content` (JSONB, Not Null)
-- `score` (INTEGER)
+- `score` (INTEGER) - General match score (Nullable)
+- `match_analysis` (JSONB) - Detailed match object (isRelevant, missingSkills, feedback)
 - `created_at` (TIMESTAMPTZ)
 
 ### 8. `ai_generation_logs`
