@@ -73,7 +73,7 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   if (userData.credits < totalCost) {
-    throw new ApiError(`Không đủ credits. Yêu cầu: ${totalCost}, Hiện có: ${userData.credits}`, 402, 'INSUFFICIENT_CREDITS' as ErrorCodes);
+    throw new ApiError(`Không đủ credits. Yêu cầu: ${totalCost}, Hiện có: ${userData.credits}`, 402, 'INSUFFICIENT_CREDITS');
   }
 
   const aiParser = new AIParser(process.env.GEMINI_API_KEY);
