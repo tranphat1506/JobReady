@@ -23,7 +23,7 @@ export function HTMLATSSimpleTemplate({ data, activeBlock, onBlockClick }: Props
   const layout = (data as any).layout || ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'awards', 'activities'];
 
   return (
-    <div className="w-full h-full bg-white text-black font-['Lora',serif] text-[10px] leading-[1.2] p-12 box-border">
+    <div className="w-full h-full bg-white text-black font-['Lora',serif] text-[10pt] leading-[1.2] p-[0.5in] box-border">
       
       {/* HEADER */}
       <HTMLATSSimpleHeader data={data.personal || {}} activeBlock={activeBlock} onBlockClick={onBlockClick} />

@@ -4,20 +4,20 @@ import { EditableBlock } from './EditableBlock';
 // Helper for strings
 const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
 
-// --- Shared Styles (Tailwind Mapping) ---
+// --- Shared Styles (Exact pt Mapping from React-PDF) ---
 const s = {
-  header: "flex flex-col items-center mb-[15px]",
-  name: "text-[20px] font-bold uppercase mb-1",
-  contactInfo: "text-[10px] flex flex-row justify-center flex-wrap gap-2",
-  sectionTitleContainer: "border-b-[0.5px] border-black mb-2 mt-2.5 pb-1",
-  sectionTitleText: "text-[13px] font-bold uppercase",
-  itemContainer: "mb-1.5",
+  header: "flex flex-col items-center mb-[15pt]",
+  name: "text-[20pt] font-bold uppercase mb-[5pt]",
+  contactInfo: "text-[10pt] flex flex-row justify-center flex-wrap gap-[8pt]",
+  sectionTitleContainer: "border-b-[0.5pt] border-black mb-[8pt] mt-[10pt]",
+  sectionTitleText: "text-[13pt] font-bold uppercase mb-[4pt]",
+  itemContainer: "mb-[6pt]",
   itemHeader: "flex flex-row justify-between font-bold",
-  itemSubHeader: "flex flex-row justify-between italic mb-0.75",
-  bulletPoint: "flex flex-row pl-2.5 mb-0.5",
-  bulletDot: "w-2.5 shrink-0",
+  itemSubHeader: "flex flex-row justify-between italic mb-[3pt]",
+  bulletPoint: "flex flex-row pl-[10pt] mb-[2pt]",
+  bulletDot: "w-[10pt] shrink-0",
   bulletText: "flex-1 text-justify",
-  summary: "mb-2.5 text-justify",
+  summary: "mb-[10pt] text-justify",
   link: "text-black no-underline",
 };
 
@@ -39,7 +39,7 @@ export const HTMLHeader = ({ data, activeBlock, onBlockClick }: any) => {
     <EditableBlock id="personal" isActive={activeBlock === 'personal'} onClick={onBlockClick}>
       <div className={s.header}>
         <div className={s.name}>{data.fullName || 'YOUR NAME'}</div>
-        {isValid(data.jobTitle) && <div className="text-[12px] mb-0.75">{data.jobTitle}</div>}
+        {isValid(data.jobTitle) && <div className="text-[10pt] mb-[5pt]">{data.jobTitle}</div>}
         <div className={s.contactInfo}>
           {contacts.map((c, i) => (
             <React.Fragment key={i}>
@@ -55,21 +55,49 @@ export const HTMLHeader = ({ data, activeBlock, onBlockClick }: any) => {
 
 export const HTMLATSSimpleHeader = ({ data, activeBlock, onBlockClick }: any) => {
   const contacts = [];
-  if (isValid(data.phone)) contacts.push({ label: 'Phone', value: data.phone });
+  if (isValid(data.dob)) contacts.push({ label: 'Ngày sinh', value: data.dob });
+  if (isValid(data.gender)) contacts.push({ label: 'Giới tính', value: data.gender });
+  if (isValid(data.phone)) contacts.push({ label: 'Số điện thoại', value: data.phone });
   if (isValid(data.email)) contacts.push({ label: 'Email', value: data.email });
-  if (isValid(data.location)) contacts.push({ label: 'Location', value: data.location });
+  if (isValid(data.portfolio)) {
+    const cleanUrl = data.portfolio.replace(/^https?:\/\/(www\.)?/, '');
+    contacts.push({ label: 'Portfolio', value: cleanUrl });
+  }
+  if (isValid(data.location)) contacts.push({ label: 'Địa chỉ', value: data.location });
   
+  if (data.links) {
+    data.links.forEach((link: any) => {
+      if (isValid(link.url) && isValid(link.name)) {
+        const cleanUrl = link.url.replace(/^https?:\/\/(www\.)?/, '');
+        contacts.push({ label: link.name, value: cleanUrl });
+      }
+    });
+  }
+
+  let avatarSrc = data.avatar;
+  if (!isValid(avatarSrc)) {
+    avatarSrc = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
+  }
+
   return (
     <EditableBlock id="personal" isActive={activeBlock === 'personal'} onClick={onBlockClick}>
-      <div className="flex flex-row mb-5 items-center border-b-2 border-black pb-3.75">
-        <div className="flex-1">
-          <div className="text-[24px] font-bold uppercase mb-1">{data.fullName || 'YOUR NAME'}</div>
-          {isValid(data.jobTitle) && <div className="text-[12px] text-zinc-600 font-medium">{data.jobTitle}</div>}
+      <div className="flex flex-row mb-[20pt] items-center">
+        <div className="w-[100pt] mr-[20pt] shrink-0">
+          <img src={avatarSrc} className="w-[100pt] h-[100pt] object-contain" alt="Avatar" />
         </div>
-        <div className="text-[10px] flex flex-col items-end gap-0.5">
-          {contacts.map((c, i) => (
-            <div key={i}><span className="font-bold">{c.label}:</span> {c.value}</div>
-          ))}
+        <div className="flex-1">
+          <div className="text-[24pt] font-bold uppercase">{data.fullName || 'YOUR NAME'}</div>
+          {isValid(data.jobTitle) ? (
+            <div className="text-[13pt] text-[#555] mb-[5pt]">{data.jobTitle}</div>
+          ) : <div className="mb-[5pt]" />}
+          <div className="text-[10pt] leading-[1.3]">
+            {contacts.map((c, i) => (
+              <div key={i} className="flex flex-row">
+                <span className="w-[80pt] font-bold">{c.label}:</span>
+                <span className="flex-1">{c.value}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </EditableBlock>
@@ -176,11 +204,11 @@ export const HTMLSkillsBlock = ({ title, data, activeBlock, onBlockClick }: any)
       <div className={s.sectionTitleContainer}>
         <div className={s.sectionTitleText}>{title || 'Skills'}</div>
       </div>
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col">
         {data.map((skill: any, i: number) => (
           <div key={i} className="flex flex-row text-justify">
-            <span className="font-bold w-[25%] shrink-0">{skill.category}:</span>
-            <span className="flex-1">{skill.items.join(', ')}</span>
+            <span className="font-bold">{skill.category}: </span>
+            <span className="flex-1 ml-[4pt]">{skill.items.join(', ')}</span>
           </div>
         ))}
       </div>
@@ -243,7 +271,7 @@ export const HTMLActivitiesBlock = ({ title, data, activeBlock, onBlockClick }: 
             <span>{act.organization}</span>
             <span>{act.startDate} - {act.endDate || 'Present'}</span>
           </div>
-          {act.role && <div className="italic mb-0.75">{act.role}</div>}
+          {act.role && <div className="italic mb-[3pt]">{act.role}</div>}
           {act.description && act.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>
