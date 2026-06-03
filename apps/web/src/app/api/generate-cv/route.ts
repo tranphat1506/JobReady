@@ -91,17 +91,41 @@ export const POST = withErrorHandler(async (req: Request) => {
   const aiParser = new AIParser(process.env.GEMINI_API_KEY);
   const responseData: any = {};
   
+  const startTime = Date.now();
+  let totalUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+  
   if (goal === 'cv' || goal === 'both') {
     console.log(`[AI] Generating Tailored CV for user ${userId} (Source: ${sourceType}, Tone: ${toneOfVoice})...`);
-    responseData.cv = await aiParser.parseAndTailorCV(jobDescription, rawCV, targetLanguage, masterProfile, toneOfVoice);
+    const cvResult = await aiParser.parseAndTailorCV(jobDescription, rawCV, targetLanguage, masterProfile, toneOfVoice);
+    responseData.cv = cvResult.data;
+    totalUsage.promptTokens += cvResult.usage.promptTokens;
+    totalUsage.completionTokens += cvResult.usage.completionTokens;
   }
   
   if (goal === 'cover_letter' || goal === 'both') {
     console.log(`[AI] Generating Cover Letter for user ${userId}...`);
     const clContext = masterProfile ? `[Master Profile JSON]\n${JSON.stringify(masterProfile, null, 2)}` : (rawCV || '');
-    // We could theoretically pass toneOfVoice to coverLetter too in the future.
-    responseData.coverLetter = await aiParser.parseAndTailorCoverLetter(jobDescription, clContext, targetLanguage);
+    const clResult = await aiParser.parseAndTailorCoverLetter(jobDescription, clContext, targetLanguage);
+    responseData.coverLetter = clResult.data;
+    totalUsage.promptTokens += clResult.usage.promptTokens;
+    totalUsage.completionTokens += clResult.usage.completionTokens;
   }
+
+  const latency = Date.now() - startTime;
+
+  // Log to Supabase silently
+  supabase.from('ai_generation_logs').insert({
+    user_id: userId,
+    action_type: `generate_${goal}`,
+    model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+    tokens_prompt: totalUsage.promptTokens,
+    tokens_completion: totalUsage.completionTokens,
+    cost_usd: 0,
+    latency_ms: latency,
+    status: 'success'
+  }).then(({error}) => {
+    if (error) console.error('Failed to log AI generation:', error);
+  });
 
   // Save cache in dev
   if (isDev && cacheFile) {

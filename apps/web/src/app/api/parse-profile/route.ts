@@ -61,7 +61,25 @@ export const POST = withErrorHandler(async (req: Request) => {
   const aiParser = new AIParser(process.env.GEMINI_API_KEY);
   
   console.log(`[AI] Parsing Master Profile for user ${userId}...`);
-  const parsedData = await aiParser.parseMasterProfile(contentToParse);
+  const startTime = Date.now();
+  const parsedResult = await aiParser.parseMasterProfile(contentToParse);
+  const parsedData = parsedResult.data;
+  const usage = parsedResult.usage;
+  const latency = Date.now() - startTime;
+
+  // Log to Supabase silently
+  supabase.from('ai_generation_logs').insert({
+    user_id: userId,
+    action_type: 'parse_master_profile',
+    model_used: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    tokens_prompt: usage.promptTokens,
+    tokens_completion: usage.completionTokens,
+    cost_usd: 0,
+    latency_ms: latency,
+    status: 'success'
+  }).then(({error}) => {
+    if (error) console.error('Failed to log AI generation:', error);
+  });
 
   // Save cache in dev
   if (isDev && cacheFile) {
