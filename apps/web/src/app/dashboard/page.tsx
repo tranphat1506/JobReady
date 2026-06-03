@@ -32,33 +32,12 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ cv?: CVSchema; coverLetter?: CoverLetterSchema } | null>(null);
 
-  // Draft modal state
-  const [showDraftModal, setShowDraftModal] = useState(false);
-  const [draftData, setDraftData] = useState<any>(null);
-
   // IDs of the drafts stored in the database
   const [cvId, setCvId] = useState<string | null>(null);
   const [clId, setClId] = useState<string | null>(null);
 
   const [cvTemplate, setCvTemplate] = useState('harvard');
   const [clTemplate, setClTemplate] = useState('standard-cover-letter');
-
-  useEffect(() => {
-    async function checkDrafts() {
-      try {
-        const drafts = await getDrafts();
-        if (drafts) {
-          setResult(drafts.result);
-          setCvId(drafts.draftIds.cvId);
-          setClId(drafts.draftIds.clId);
-          setCurrentStep(5);
-        }
-      } catch (e) {
-        console.error('Error fetching drafts:', e);
-      }
-    }
-    checkDrafts();
-  }, []);
 
   const [state, setState] = useState<BuilderState>({
     goal: 'cv',
