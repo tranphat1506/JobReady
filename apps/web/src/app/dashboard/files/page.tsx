@@ -208,7 +208,18 @@ export default function FilesPage() {
                         </form>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-zinc-900 text-sm truncate flex-1 min-w-0" title={doc.name}>{doc.name}</h3>
+                          {/* Click name to rename — completed only */}
+                          {!isDraft ? (
+                            <button
+                              onClick={() => { setEditingId(doc.id); setEditName(doc.name); }}
+                              className="font-semibold text-zinc-900 text-sm truncate flex-1 min-w-0 text-left hover:text-primary transition-colors"
+                              title={`${doc.name} — nhấp để đổi tên`}
+                            >
+                              {doc.name}
+                            </button>
+                          ) : (
+                            <h3 className="font-semibold text-zinc-900 text-sm truncate flex-1 min-w-0" title={doc.name}>{doc.name}</h3>
+                          )}
                           {isDraft && (
                             <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0">DRAFT</span>
                           )}
@@ -219,21 +230,20 @@ export default function FilesPage() {
                         {new Date(doc.updated_at).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' })}
                       </p>
 
-                      {/* Action buttons — always visible, never hidden */}
+                      {/* Action buttons */}
                       {!editingId && (
                         <div className="flex items-center gap-1.5 pt-1 border-t border-zinc-100 mt-1">
-                          <button
-                            onClick={() => { setEditingId(doc.id); setEditName(doc.name); }}
+                          {/* Edit file button — both draft and completed go to editor */}
+                          <Link
+                            href={`/dashboard/edit/${doc.id}`}
                             className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 hover:text-primary hover:bg-primary/5 rounded transition-colors"
-                            title={t('files.rename') || 'Đổi tên'}
                           >
-                            <Edit2 className="w-3 h-3" /> {t('files.rename') || 'Sửa'}
-                          </button>
+                            <Edit2 className="w-3 h-3" /> {t('files.edit') || 'Sửa'}
+                          </Link>
                           {!isDraft && (
                             <button
                               onClick={() => handleDuplicate(doc.id)}
                               className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 hover:text-primary hover:bg-primary/5 rounded transition-colors"
-                              title={t('files.duplicate') || 'Nhân bản'}
                             >
                               <Copy className="w-3 h-3" /> {t('files.duplicate') || 'Nhân bản'}
                             </button>
@@ -241,7 +251,6 @@ export default function FilesPage() {
                           <button
                             onClick={() => setDeletingId(doc.id)}
                             className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 hover:text-red-500 hover:bg-red-50 rounded transition-colors ml-auto"
-                            title={t('files.delete') || 'Xoá'}
                           >
                             <Trash2 className="w-3 h-3" /> {t('files.delete') || 'Xoá'}
                           </button>
