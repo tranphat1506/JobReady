@@ -202,6 +202,10 @@ export default function DashboardPage() {
                   if (clId) await saveDocument(result!.coverLetter!, 'cover_letter', result!.coverLetter!.personal?.fullName ? `Cover Letter - ${result!.coverLetter!.personal.fullName}` : 'Untitled Cover Letter', undefined, undefined, clTemplate, 'draft', clId);
 
                   if (cvId) {
+                    // If both exist, open CL in new tab then navigate to CV
+                    if (clId) {
+                      window.open(`/dashboard/edit/${clId}`, '_blank');
+                    }
                     router.push(`/dashboard/edit/${cvId}`);
                   } else if (clId) {
                     router.push(`/dashboard/edit/${clId}`);
