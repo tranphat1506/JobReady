@@ -70,8 +70,9 @@ export async function getUserLimits() {
     .limit(1)
     .single();
 
-  const cvLimit = subData?.packages?.cv_slot_limit ?? 2;
-  const clLimit = subData?.packages?.cl_slot_limit ?? 2;
+  const packages = subData?.packages as any;
+  const cvLimit = packages?.cv_slot_limit ?? 2;
+  const clLimit = packages?.cl_slot_limit ?? 2;
 
   const { data: cvData } = await supabase
     .from('resumes')
@@ -106,8 +107,9 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     .limit(1)
     .single();
 
-  const cvLimit = subData?.packages?.cv_slot_limit ?? 2;
-  const clLimit = subData?.packages?.cl_slot_limit ?? 2;
+  const packages = subData?.packages as any;
+  const cvLimit = packages?.cv_slot_limit ?? 2;
+  const clLimit = packages?.cl_slot_limit ?? 2;
   const limit = type === 'cv' ? cvLimit : clLimit;
 
   // 2. Count current completed documents

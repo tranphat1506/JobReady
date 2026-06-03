@@ -50,9 +50,10 @@ export default async function CreditsPage() {
   };
 
   const activeSub = subscriptions?.find(s => s.status === 'ACTIVE');
-  const currentPlanName = activeSub?.packages?.name ?? 'FREE';
-  const cvLimit = activeSub?.packages?.cv_slot_limit ?? 2;
-  const clLimit = activeSub?.packages?.cl_slot_limit ?? 2;
+  const packages = activeSub?.packages as any;
+  const currentPlanName = packages?.name ?? 'FREE';
+  const cvLimit = packages?.cv_slot_limit ?? 2;
+  const clLimit = packages?.cl_slot_limit ?? 2;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
