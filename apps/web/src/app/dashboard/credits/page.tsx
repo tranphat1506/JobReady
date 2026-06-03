@@ -1,147 +1,163 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { Clock, CreditCard, Activity, CheckCircle2, XCircle } from 'lucide-react';
+import { getTranslations } from '@/lib/getTranslations';
+import { Clock, CreditCard, CheckCircle2, XCircle, BarChart3, Receipt } from 'lucide-react';
 
-export const metadata = {
-  title: 'Credits & History - JobReady',
-  description: 'Manage your credits and view generation history',
-};
+export async function generateMetadata() {
+  const { t } = await getTranslations();
+  return {
+    title: `${t('credits.title')} - JobReady`,
+  };
+}
 
 export default async function CreditsPage() {
   const supabase = await createClient();
+  const { t } = await getTranslations();
+
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
 
-  if (!user) {
-    redirect('/login');
-  }
-
-  // Fetch user logs
-  const { data: logs, error } = await supabase
+  // AI usage logs (no token data exposed)
+  const { data: logs } = await supabase
     .from('ai_generation_logs')
-    .select('*')
+    .select('id, action_type, status, error_message, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  // Calculate statistics
-  const totalGenerations = logs?.length || 0;
-  // For now, assume 1 action = 1 credit used. 
-  // In the future, this can be linked to the subscriptions and packages table.
-  const creditsUsed = totalGenerations; 
-  
-  const successfulGenerations = logs?.filter(log => log.status === 'success').length || 0;
+  // Payment history from subscriptions
+  const { data: subscriptions } = await supabase
+    .from('subscriptions')
+    .select('id, status, start_date, end_date, package_id, packages(name, price)')
+    .eq('user_id', user.id)
+    .order('start_date', { ascending: false });
+
+  const total = logs?.length ?? 0;
+  const success = logs?.filter(l => l.status === 'success').length ?? 0;
 
   const getActionLabel = (action: string) => {
-    switch (action) {
-      case 'generate_cv': return 'Tạo CV (AI)';
-      case 'generate_cover_letter': return 'Tạo Cover Letter (AI)';
-      case 'generate_both': return 'Tạo CV & Cover Letter (AI)';
-      case 'parse_master_profile': return 'Trích xuất Master Profile (AI)';
-      default: return action;
-    }
+    const key = `credits.history.action.${action}`;
+    const label = t(key);
+    return label === key ? action : label;
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-5xl mx-auto space-y-8">
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">Credits & Lịch sử</h1>
-        <p className="text-zinc-500 mt-2">Thống kê việc sử dụng trí tuệ nhân tạo (AI) và lịch sử tiêu thụ Credit của bạn.</p>
+        <h1 className="text-2xl font-bold text-zinc-900">{t('credits.title')}</h1>
+        <p className="text-sm text-zinc-500 mt-1">{t('credits.subtitle')}</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
-              <CreditCard className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-zinc-500">Credits Đã Sử Dụng</p>
-              <h3 className="text-3xl font-bold text-zinc-900">{creditsUsed}</h3>
-            </div>
-          </div>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white border border-zinc-200 rounded-xl p-5">
+          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.used')}</p>
+          <p className="text-4xl font-bold text-zinc-900">{total}</p>
+          <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.credits')}</p>
         </div>
-
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
-              <Activity className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-zinc-500">Lượt Tạo Sinh (Generations)</p>
-              <h3 className="text-3xl font-bold text-zinc-900">{totalGenerations}</h3>
-            </div>
-          </div>
+        <div className="bg-white border border-zinc-200 rounded-xl p-5">
+          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.success')}</p>
+          <p className="text-4xl font-bold text-zinc-900">{success}</p>
+          <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.of')} {total} {t('credits.stats.times')}</p>
         </div>
-
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-zinc-500">Thành công</p>
-              <h3 className="text-3xl font-bold text-zinc-900">{successfulGenerations}</h3>
-            </div>
-          </div>
+        <div className="bg-white border border-zinc-200 rounded-xl p-5">
+          <p className="text-xs text-zinc-500 mb-1 font-medium uppercase tracking-wide">{t('credits.stats.currentPlan')}</p>
+          <p className="text-2xl font-bold text-primary mt-1">FREE</p>
+          <p className="text-xs text-zinc-400 mt-1">{t('credits.stats.upgradeCta')}</p>
         </div>
       </div>
 
-      {/* History Table */}
-      <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-zinc-200 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-zinc-400" />
-          <h2 className="text-lg font-semibold text-zinc-900">Lịch sử giao dịch AI</h2>
+      {/* AI Usage History */}
+      <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-zinc-100 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-zinc-400" />
+          <span className="text-sm font-semibold text-zinc-800">{t('credits.history.title')}</span>
         </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+
+        {(!logs || logs.length === 0) ? (
+          <div className="py-14 text-center">
+            <BarChart3 className="w-7 h-7 text-zinc-300 mx-auto mb-3" />
+            <p className="text-sm text-zinc-500">{t('credits.history.empty')}</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-100">
+            {logs.map((log) => (
+              <div key={log.id} className="flex items-center justify-between px-5 py-3.5 hover:bg-zinc-50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${log.status === 'success' ? 'bg-green-500' : 'bg-red-400'}`} />
+                  <div>
+                    <p className="text-sm font-medium text-zinc-800">{getActionLabel(log.action_type)}</p>
+                    <p className="text-xs text-zinc-400">
+                      {new Date(log.created_at).toLocaleString('vi-VN', { dateStyle: 'medium', timeStyle: 'short' })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  {log.status === 'success' ? (
+                    <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> {t('credits.history.status.success')}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-xs text-red-500 font-medium" title={log.error_message ?? ''}>
+                      <XCircle className="w-3.5 h-3.5" /> {t('credits.history.status.failed')}
+                    </span>
+                  )}
+                  <span className="text-xs font-semibold text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-md">
+                    {t('credits.history.creditUsed')}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Payment History */}
+      <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-zinc-100 flex items-center gap-2">
+          <Receipt className="w-4 h-4 text-zinc-400" />
+          <span className="text-sm font-semibold text-zinc-800">{t('credits.billing.title')}</span>
+        </div>
+
+        {(!subscriptions || subscriptions.length === 0) ? (
+          <div className="py-14 text-center">
+            <CreditCard className="w-7 h-7 text-zinc-300 mx-auto mb-3" />
+            <p className="text-sm text-zinc-500">{t('credits.billing.empty')}</p>
+          </div>
+        ) : (
+          <table className="w-full text-left text-sm">
             <thead>
-              <tr className="bg-zinc-50 border-b border-zinc-200 text-xs uppercase tracking-wider text-zinc-500">
-                <th className="px-6 py-4 font-semibold">Thời gian</th>
-                <th className="px-6 py-4 font-semibold">Hành động</th>
-                <th className="px-6 py-4 font-semibold">Trạng thái</th>
-                <th className="px-6 py-4 font-semibold text-right">Credit sử dụng</th>
+              <tr className="border-b border-zinc-100 bg-zinc-50 text-xs text-zinc-500 uppercase tracking-wide">
+                <th className="px-5 py-3 font-semibold">{t('credits.billing.columns.date')}</th>
+                <th className="px-5 py-3 font-semibold">{t('credits.billing.columns.package')}</th>
+                <th className="px-5 py-3 font-semibold text-right">{t('credits.billing.columns.amount')}</th>
+                <th className="px-5 py-3 font-semibold text-right">{t('credits.billing.columns.status')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-200">
-              {(!logs || logs.length === 0) ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-zinc-500">
-                    Bạn chưa thực hiện tạo sinh AI nào.
+            <tbody className="divide-y divide-zinc-100">
+              {subscriptions.map((sub: any) => (
+                <tr key={sub.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="px-5 py-3.5 text-zinc-600">
+                    {new Date(sub.start_date).toLocaleDateString('vi-VN')}
+                  </td>
+                  <td className="px-5 py-3.5 font-medium text-zinc-800">{sub.packages?.name ?? '-'}</td>
+                  <td className="px-5 py-3.5 text-right text-zinc-700">
+                    {sub.packages?.price != null
+                      ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(sub.packages.price)
+                      : '-'}
+                  </td>
+                  <td className="px-5 py-3.5 text-right">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
+                      sub.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-zinc-100 text-zinc-500'
+                    }`}>
+                      {sub.status}
+                    </span>
                   </td>
                 </tr>
-              ) : (
-                logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600">
-                      {new Date(log.created_at).toLocaleString('vi-VN', { 
-                        dateStyle: 'medium', 
-                        timeStyle: 'short' 
-                      })}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-medium text-zinc-900">{getActionLabel(log.action_type)}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {log.status === 'success' ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Thành công
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700" title={log.error_message || 'Lỗi không xác định'}>
-                          <XCircle className="w-3.5 h-3.5" /> Thất bại
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-zinc-900">
-                      -1 Credit
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
     </div>
   );

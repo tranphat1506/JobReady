@@ -475,5 +475,43 @@
     "subtitle": "Store and edit your CVs and Cover Letters.",
     "createNew": "Create New",
     "search": "Search documents..."
+  },
+  "credits": {
+    "title": "Credits & History",
+    "subtitle": "Track your AI usage and billing history.",
+    "stats": {
+      "used": "Used",
+      "credits": "credits",
+      "success": "Successful",
+      "of": "/",
+      "times": "uses",
+      "currentPlan": "Current Plan",
+      "upgradeCta": "Upgrade for more usage"
+    },
+    "history": {
+      "title": "AI Usage History",
+      "empty": "No activity has been recorded yet.",
+      "status": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "action": {
+        "generate_cv": "Generate CV",
+        "generate_cover_letter": "Generate Cover Letter",
+        "generate_both": "Generate CV & Cover Letter",
+        "parse_master_profile": "Extract Profile"
+      },
+      "creditUsed": "-1 credit"
+    },
+    "billing": {
+      "title": "Payment History",
+      "empty": "No payment transactions yet.",
+      "columns": {
+        "date": "Date",
+        "package": "Package",
+        "amount": "Amount",
+        "status": "Status"
+      }
+    }
   }
 }

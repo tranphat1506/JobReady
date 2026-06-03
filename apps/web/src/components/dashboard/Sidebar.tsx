@@ -23,7 +23,7 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
     { name: t('dashboard.nav.createCv') || 'Tạo CV', href: '/dashboard', icon: FileCode2 },
     { name: t('dashboard.nav.masterProfile') || 'Hồ Sơ Master', href: '/dashboard/profile', icon: UserCircle },
     { name: t('dashboard.nav.manageFiles') || 'Quản lý File', href: '/dashboard/files', icon: FolderKanban },
-    { name: t('dashboard.nav.billing') || 'Gói cước', href: '/dashboard/billing', icon: CreditCard },
+    { name: t('dashboard.nav.billing') || 'Credits & Lịch sử', href: '/dashboard/credits', icon: CreditCard },
   ]
 
   const handleLogout = async () => {

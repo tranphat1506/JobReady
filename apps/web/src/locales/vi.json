@@ -475,5 +475,43 @@
     "subtitle": "Lưu trữ và chỉnh sửa các CV, Cover Letter của bạn.",
     "createNew": "Tạo mới",
     "search": "Tìm kiếm tài liệu..."
+  },
+  "credits": {
+    "title": "Credits & Lịch sử",
+    "subtitle": "Theo dõi mức sử dụng AI của tài khoản bạn.",
+    "stats": {
+      "used": "Đã dùng",
+      "credits": "credits",
+      "success": "Thành công",
+      "of": "/",
+      "times": "lượt",
+      "currentPlan": "Gói hiện tại",
+      "upgradeCta": "Nâng cấp để dùng nhiều hơn"
+    },
+    "history": {
+      "title": "Lịch sử sử dụng AI",
+      "empty": "Chưa có hoạt động nào được ghi lại.",
+      "status": {
+        "success": "Thành công",
+        "failed": "Thất bại"
+      },
+      "action": {
+        "generate_cv": "Tạo CV",
+        "generate_cover_letter": "Tạo Cover Letter",
+        "generate_both": "Tạo CV & Cover Letter",
+        "parse_master_profile": "Trích xuất hồ sơ"
+      },
+      "creditUsed": "-1 credit"
+    },
+    "billing": {
+      "title": "Lịch sử thanh toán",
+      "empty": "Chưa có giao dịch thanh toán nào.",
+      "columns": {
+        "date": "Ngày",
+        "package": "Gói",
+        "amount": "Số tiền",
+        "status": "Trạng thái"
+      }
+    }
   }
 }
