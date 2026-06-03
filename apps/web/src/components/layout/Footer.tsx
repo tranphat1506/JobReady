@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
               <AppIcon className="w-7 h-7 bg-primary rounded-sm [&>i]:text-[1rem]" />
-              <span className="text-xl font-bold font-sans tracking-tight text-zinc-900">CareerGo.</span>
+              <span className="text-xl font-bold font-sans tracking-tight text-zinc-900">JobReady.</span>
             </Link>
             <p className="text-zinc-600 mb-8 leading-relaxed max-w-sm">
               {t('layout.footer.description')}
@@ -29,7 +29,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3 text-zinc-600">
                 <Mail className="w-5 h-5 text-zinc-400" />
-                <span>support@careergo.vn</span>
+                <span>support@jobready.vn</span>
               </div>
             </div>
           </div>

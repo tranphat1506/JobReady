@@ -20,15 +20,15 @@ interface Props {
 }
 
 // ── Shared UI Atoms (Matched to project theme) ────────────────────────────
-const inpBox = "w-full px-3 py-2 border border-zinc-200 rounded-sm text-sm text-zinc-900 bg-white placeholder-zinc-400 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-all";
-const lbl = "block text-[11px] font-bold tracking-widest uppercase text-zinc-500 mb-1.5";
-const cardCls = "bg-white rounded-sm border border-zinc-200 p-6 mb-6 relative";
+const inpBox = "w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 bg-white placeholder-zinc-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm";
+const lbl = "block text-xs font-semibold text-zinc-700 mb-1.5";
+const cardCls = "bg-white rounded-xl border border-zinc-200 p-6 mb-6 relative shadow-sm";
 
 const SectionHeading = ({ children, onAdd, addLabel }: { children: React.ReactNode, onAdd?: () => void, addLabel?: string }) => (
   <div className="flex items-center justify-between mb-4">
     <h2 className="text-lg font-bold tracking-tight text-zinc-900">{children}</h2>
     {onAdd && (
-      <button type="button" onClick={onAdd} className="text-[11px] font-bold tracking-widest uppercase bg-zinc-900 text-white px-3 py-1.5 rounded-sm hover:bg-zinc-800 transition-colors">
+      <button type="button" onClick={onAdd} className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm">
         {addLabel || '+ Add'}
       </button>
     )}
@@ -38,7 +38,7 @@ const SectionHeading = ({ children, onAdd, addLabel }: { children: React.ReactNo
 const RemoveBtn = ({ onClick, label }: { onClick: () => void, label?: string }) => {
   const { t } = useTranslation();
   return (
-    <button type="button" onClick={onClick} className="absolute top-4 right-4 text-[10px] font-bold tracking-widest uppercase text-zinc-400 hover:text-red-500 transition-colors">
+    <button type="button" onClick={onClick} className="absolute top-4 right-4 text-xs font-semibold text-zinc-400 hover:text-red-500 transition-colors">
       {label || t('profile.actions.remove')}
     </button>
   );
@@ -64,10 +64,10 @@ const PillInput = ({ value = [], onChange, placeholder }: { value: string[], onC
   const removeTag = (tag: string) => onChange(value.filter(t => t !== tag));
 
   return (
-    <div className="w-full bg-white border border-zinc-200 rounded-sm p-1.5 focus-within:border-zinc-400 focus-within:ring-1 focus-within:ring-zinc-400 transition-all min-h-9.5">
+    <div className="w-full bg-white border border-zinc-300 rounded-lg p-1.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all min-h-[42px] shadow-sm">
       <div className="flex flex-wrap gap-1.5 items-center">
         {value.map((tag, i) => (
-          <span key={i} className="inline-flex items-center px-2 py-0.5 rounded-sm bg-zinc-100 text-zinc-900 text-[11px] font-medium border border-zinc-200">
+          <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700 text-xs font-medium border border-zinc-200">
             {tag}
             <button type="button" onClick={() => removeTag(tag)} className="ml-1.5 text-zinc-400 hover:text-zinc-900"><X size={12} /></button>
           </span>
@@ -91,7 +91,7 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
   return (
     <div className="mt-4 border-l-2 border-zinc-200 pl-4 space-y-4">
       {fields.map((item, k) => (
-        <div key={item.id} className="relative bg-zinc-50 rounded-sm p-4 border border-zinc-200">
+        <div key={item.id} className="relative bg-zinc-50/50 rounded-xl p-4 border border-zinc-200">
           {fields.length > 1 && (
             <button type="button" onClick={() => remove(k)} className="absolute top-3 right-3 text-zinc-400 hover:text-red-500 font-bold text-xs"><X size={14} /></button>
           )}
@@ -110,8 +110,8 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
             </div>
             <div className="md:col-span-2">
               <label className="flex items-center gap-2 cursor-pointer mt-1">
-                <input type="checkbox" {...register(`experience.${nestIndex}.roles.${k}.current`)} className="w-4 h-4 rounded-sm border-zinc-300 text-zinc-900 focus:ring-zinc-900" />
-                <span className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold">{t('profile.fields.current')}</span>
+                <input type="checkbox" {...register(`experience.${nestIndex}.roles.${k}.current`)} className="w-4 h-4 rounded text-primary border-zinc-300 focus:ring-primary" />
+                <span className="text-xs text-zinc-700 font-semibold">{t('profile.fields.current')}</span>
               </label>
             </div>
             <div className="md:col-span-2">
@@ -121,7 +121,7 @@ const ExperienceRoles = ({ control, register, nestIndex }: any) => {
           </div>
         </div>
       ))}
-      <button type="button" onClick={() => append({ title: '', startDate: '', endDate: '', description: '', current: false })} className="text-[11px] font-bold tracking-widest uppercase text-zinc-500 hover:text-zinc-900 flex items-center gap-1 mt-2">
+      <button type="button" onClick={() => append({ title: '', startDate: '', endDate: '', description: '', current: false })} className="text-xs font-semibold text-primary hover:text-primary/80 flex items-center gap-1 mt-2 transition-colors">
         + {t('profile.fields.position')}
       </button>
     </div>
@@ -310,16 +310,16 @@ export default function MasterProfileForm({ initialData }: Props) {
             <button
               type="button"
               onClick={() => setShowImport(!showImport)}
-              className="flex items-center gap-2 bg-zinc-100 text-zinc-900 font-bold tracking-widest uppercase text-[11px] py-2.5 px-4 rounded-sm border border-zinc-200 hover:bg-zinc-200 transition-all"
+              className="flex items-center gap-2 bg-white text-zinc-700 font-semibold text-sm py-2 px-4 rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm"
             >
-              <Sparkles size={14} /> {showImport ? t('profile.actions.remove') : t('profile.importAi.title')}
+              <Sparkles size={16} className="text-primary" /> {showImport ? t('profile.actions.remove') : t('profile.importAi.title')}
             </button>
             <button
               onClick={handleSubmit(onSubmit)}
               disabled={isSaving || (!isDirty && !avatarFile)}
-              className="flex items-center gap-2 bg-zinc-900 text-white font-bold tracking-widest uppercase text-[11px] py-2.5 px-6 rounded-sm border border-zinc-900 hover:bg-zinc-800 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 bg-primary text-white font-semibold text-sm py-2 px-6 rounded-lg hover:opacity-90 transition-all disabled:opacity-50 shadow-sm"
             >
-              <Save size={14} /> {isSaving ? t('profile.saving') : t('profile.save')}
+              <Save size={16} /> {isSaving ? t('profile.saving') : t('profile.save')}
             </button>
           </div>
         </div>
@@ -369,7 +369,7 @@ export default function MasterProfileForm({ initialData }: Props) {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 text-[11px] font-bold tracking-widest uppercase whitespace-nowrap transition-colors border-b-2 ${activeTab === tab.id ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-500 hover:text-zinc-900'
+              className={`px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-zinc-500 hover:text-zinc-700'
                 }`}
             >
               {tab.label}
@@ -436,9 +436,9 @@ export default function MasterProfileForm({ initialData }: Props) {
               <p className="text-sm text-zinc-500 mb-6">{t('profile.fields.items')}</p>
               <div className="flex flex-wrap gap-2">
                 {skillFields.map((field, i) => (
-                  <div key={field.id} className="flex items-center bg-zinc-50 border border-zinc-200 rounded-sm pr-1">
-                    <input {...register(`skills.${i}.name`)} className="px-3 py-1.5 bg-transparent text-sm font-medium text-zinc-800 outline-none w-32 md:w-auto" placeholder="..." />
-                    <button type="button" onClick={() => removeSkill(i)} className="text-zinc-400 hover:text-red-500 p-1"><X size={14} /></button>
+                  <div key={field.id} className="flex items-center bg-zinc-50 border border-zinc-300 rounded-lg pr-1">
+                    <input {...register(`skills.${i}.name`)} className="px-3 py-2 bg-transparent text-sm font-medium text-zinc-800 outline-none w-32 md:w-auto rounded-l-lg focus:ring-2 focus:ring-primary/20 transition-all" placeholder="..." />
+                    <button type="button" onClick={() => removeSkill(i)} className="text-zinc-400 hover:text-red-500 p-2"><X size={14} /></button>
                   </div>
                 ))}
               </div>

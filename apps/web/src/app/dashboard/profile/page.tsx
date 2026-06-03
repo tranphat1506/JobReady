@@ -4,7 +4,7 @@ import MasterProfileForm from '@/components/dashboard/MasterProfileForm';
 import { defaultProfileData } from '@/types/profile';
 
 export const metadata = {
-  title: 'Master Profile | CareerGo',
+  title: 'Master Profile | JobReady',
 };
 
 export default async function ProfilePage() {

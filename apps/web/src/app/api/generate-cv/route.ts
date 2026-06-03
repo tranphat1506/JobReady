@@ -48,8 +48,11 @@ export const POST = withErrorHandler(async (req: Request) => {
     // To generate a new one, user can just delete the cache file.
     if (fs.existsSync(cacheFile)) {
       console.log(`[DEV CACHE] Returning cached CV output for user ${userId}`);
-      const cachedData = fs.readFileSync(cacheFile, 'utf8');
-      return NextResponse.json(JSON.parse(cachedData));
+      const cachedDataStr = fs.readFileSync(cacheFile, 'utf8');
+      const cachedData = JSON.parse(cachedDataStr);
+      if (goal === 'cv') delete cachedData.coverLetter;
+      if (goal === 'cover_letter') delete cachedData.cv;
+      return NextResponse.json(cachedData);
     }
   }
 

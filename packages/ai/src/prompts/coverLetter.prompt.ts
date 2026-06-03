@@ -25,6 +25,7 @@ export function buildCoverLetterPrompt(
     }
 
     - 'personal' should be extracted from the RAW CV. Extract 'fullName', 'email', 'phone', etc.
+    - Set 'personal.jobTitle' to exactly match the target role title specified in the Job Description, demonstrating alignment.
     - 'recipient' should be extracted from the Job Description. If company name or recruiter name is not found, leave as empty string or a generic term (e.g. "Hiring Manager").
     - 'date' should be today's date formatted appropriately in ${targetLanguage}.
     - 'salutation' should be a professional greeting in ${targetLanguage}.

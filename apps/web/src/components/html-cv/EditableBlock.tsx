@@ -3,8 +3,11 @@ import React from 'react';
 export function EditableBlock({ id, isActive, onClick, children }: any) {
   return (
     <div 
-      className={`relative group cursor-pointer transition-colors p-1 -m-1 rounded-md ${isActive ? 'bg-blue-50/50 ring-2 ring-blue-400' : 'hover:bg-zinc-50'}`}
-      onClick={(e) => { e.stopPropagation(); onClick(id); }}
+      className={`relative group select-none transition-colors p-1 -m-1 rounded-md ${isActive ? 'bg-blue-50/50 ring-2 ring-blue-400' : 'hover:bg-zinc-50 hover:cursor-pointer'}`}
+      onClick={(e) => { 
+        e.stopPropagation(); 
+        onClick(id); 
+      }}
     >
       {children}
       {isActive && (

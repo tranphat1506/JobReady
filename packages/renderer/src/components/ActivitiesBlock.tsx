@@ -20,9 +20,11 @@ export const ActivitiesBlock = ({ title, data }: ActivitiesBlockProps) => {
             <Text style={{ flex: 1, paddingRight: 10 }}>{act.organization}</Text>
             <Text style={{ flexShrink: 0 }}>{act.startDate} - {act.endDate}</Text>
           </View>
-          <View style={styles.itemSubHeader}>
-            <Text>{act.role}</Text>
-          </View>
+          {act.role && act.role.trim() !== '' && act.role.trim().toUpperCase() !== 'N/A' ? (
+            <View style={styles.itemSubHeader}>
+              <Text>{act.role}</Text>
+            </View>
+          ) : null}
           {act.description ? act.description.map((desc, j) => (
             <View key={j} style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>•</Text>

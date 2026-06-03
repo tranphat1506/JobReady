@@ -12,20 +12,20 @@ export function HTMLCoverLetterTemplate({ data, activeBlock, onBlockClick }: Pro
   const personal = data.personal || {} as any;
   const recipient = data.recipient || {} as any;
   const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
-  
+
   return (
-    <div className="w-full h-full bg-white text-black p-[40pt] font-['Lora',serif] text-[11pt] leading-[1.5] box-border">
+    <div className="w-full h-full bg-white text-black p-[40pt] font-['Lora',serif] text-[11pt] leading-normal box-border">
       <EditableBlock id="personal" isActive={activeBlock === 'personal'} onClick={onBlockClick}>
         <div className="mb-[20pt]">
-          <div className="flex flex-col justify-center min-h-[30pt]">
+          <div className="flex flex-col justify-center min-h-10">
             <h1 className="text-[20pt] font-bold uppercase mb-[5pt]">{personal.fullName || 'YOUR NAME'}</h1>
           </div>
           {isValid(personal.jobTitle) && (
-            <div className="min-h-[18pt] mb-[5pt] flex flex-col justify-center">
+            <div className="min-h-6 mb-[5pt] flex flex-col justify-center">
               <div className="text-[12pt] text-[#555]">{personal.jobTitle}</div>
             </div>
           )}
-          <div className="text-[10pt] text-[#333] leading-[1.5]">
+          <div className="text-[10pt] text-[#333] leading-normal">
             {isValid(personal.phone) && <div>{personal.phone}</div>}
             {isValid(personal.email) && <div>{personal.email}</div>}
             {isValid(personal.location) && <div>{personal.location}</div>}
@@ -45,10 +45,10 @@ export function HTMLCoverLetterTemplate({ data, activeBlock, onBlockClick }: Pro
         </div>
       </EditableBlock>
       <EditableBlock id="opening" isActive={activeBlock === 'opening'} onClick={onBlockClick}>
-        <div className="mb-[15pt] text-[11pt]">{data.salutation}</div>
+        <div className="mb-5 text-[11pt]">{data.salutation}</div>
       </EditableBlock>
       <EditableBlock id="body" isActive={activeBlock === 'body'} onClick={onBlockClick}>
-        <div className="mb-[15pt] text-[11pt] text-justify">
+        <div className="mb-5 text-[11pt] text-justify">
           <div className="mb-[10pt]">{data.opening}</div>
           {(data.bodyParagraphs || []).map((para, i) => (
             <div key={i} className="mb-[10pt]">{para}</div>

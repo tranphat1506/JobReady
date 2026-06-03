@@ -22,7 +22,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <AppIcon className="w-7 h-7 bg-primary rounded-sm [&>i]:text-[1rem]" />
-          <span className="text-xl font-bold font-sans tracking-tight text-zinc-900">CareerGo.</span>
+          <span className="text-xl font-bold font-sans tracking-tight text-zinc-900">JobReady.</span>
         </Link>
 
         {/* Navigation (Desktop) */}

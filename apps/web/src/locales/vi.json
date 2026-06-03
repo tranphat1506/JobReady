@@ -82,14 +82,14 @@
       "terms": "Điều khoản sử dụng",
       "privacyPolicy": "Quy định chung",
       "connect": "Kết nối với chúng tôi",
-      "copyright": "© 2026 CareerGo. Đã đăng ký bản quyền."
+      "copyright": "© 2026 JobReady. Đã đăng ký bản quyền."
     }
   },
   "landing": {
     "hero": {
       "badge": "NỀN TẢNG TẠO CV CHUẨN ATS",
       "title": "Tạo CV Chuẩn ATS & Cover Letter Chuyên Nghiệp Bằng AI",
-      "subtitle": "Chỉ với vài thao tác đơn giản, CareerGo giúp bạn sở hữu một bản hồ sơ xin việc hoàn hảo, khớp 100% với yêu cầu của nhà tuyển dụng. Nâng cao 80% cơ hội trúng tuyển ngay hôm nay.",
+      "subtitle": "Chỉ với vài thao tác đơn giản, JobReady giúp bạn sở hữu một bản hồ sơ xin việc hoàn hảo, khớp 100% với yêu cầu của nhà tuyển dụng. Nâng cao 80% cơ hội trúng tuyển ngay hôm nay.",
       "ctaPrimary": "Tạo CV Miễn Phí",
       "ctaSecondary": "Xem Hướng Dẫn",
       "noCreditCard": "Không cần thẻ tín dụng",
@@ -198,7 +198,7 @@
       "f2Title": "Chấm Điểm Chuẩn ATS",
       "f2Desc": "Hệ thống sẽ quét và mô phỏng lại cách các bộ lọc ATS hoạt động để chấm điểm CV của bạn, đồng thời chỉ ra các lỗi cần khắc phục ngay lập tức.",
       "f3Title": "Viết Cover Letter Tự Động",
-      "f3Desc": "CareerGo tự động soạn thảo Cover Letter cá nhân hóa cho từng công ty, thể hiện rõ thế mạnh của bạn dựa trên kinh nghiệm thực tế.",
+      "f3Desc": "JobReady tự động soạn thảo Cover Letter cá nhân hóa cho từng công ty, thể hiện rõ thế mạnh của bạn dựa trên kinh nghiệm thực tế.",
       "f4Title": "Dịch Thuật Đa Ngôn Ngữ",
       "f4Desc": "Dễ dàng chuyển đổi toàn bộ nội dung CV của bạn sang Tiếng Anh, Tiếng Việt hoặc các ngôn ngữ khác chỉ với một cú click chuột."
     },
@@ -215,10 +215,10 @@
     "faq": {
       "title": "Giải Đáp Thắc Mắc Thường Gặp (FAQ)",
       "subtitle": "HỖ TRỢ ỨNG VIÊN",
-      "q1": "Tạo CV trên CareerGo có hoàn toàn miễn phí không?",
+      "q1": "Tạo CV trên JobReady có hoàn toàn miễn phí không?",
       "a1": "Có. Chúng tôi cung cấp gói sử dụng miễn phí cho phép ứng viên tạo và tải xuống CV không giới hạn số lần cho bản cơ bản. Nếu bạn muốn sử dụng các tính năng AI nâng cao (như viết Cover Letter tự động), bạn có thể nâng cấp lên gói Pro.",
       "q2": "CV chuẩn ATS là gì và tại sao lại quan trọng?",
-      "a2": "ATS (Applicant Tracking System) là phần mềm lọc hồ sơ tự động được 90% các công ty lớn sử dụng. Nếu CV của bạn có định dạng phức tạp (chứa nhiều hình ảnh, cột đôi phức tạp), ATS sẽ không đọc được chữ và tự động loại hồ sơ của bạn. CV tại CareerGo được thiết kế riêng để vượt qua bài kiểm tra này.",
+      "a2": "ATS (Applicant Tracking System) là phần mềm lọc hồ sơ tự động được 90% các công ty lớn sử dụng. Nếu CV của bạn có định dạng phức tạp (chứa nhiều hình ảnh, cột đôi phức tạp), ATS sẽ không đọc được chữ và tự động loại hồ sơ của bạn. CV tại JobReady được thiết kế riêng để vượt qua bài kiểm tra này.",
       "q3": "Dữ liệu cá nhân của tôi có được bảo mật không?",
       "a3": "Tuyệt đối an toàn. Mọi dữ liệu cá nhân, thông tin liên hệ và lịch sử làm việc của bạn đều được mã hóa trên máy chủ đám mây chuẩn quốc tế. Chúng tôi cam kết không bán dữ liệu cho bất kỳ bên thứ ba nào."
     },
@@ -430,6 +430,33 @@
     "endDate": "Đến tháng/năm",
     "recipientName": "Tên người nhận",
     "date": "Ngày tháng",
-    "signOff": "Chữ ký / Lời kết"
+    "signOff": "Chữ ký / Lời kết",
+    "linkName": "Tên (VD: GitHub)",
+    "linkUrl": "URL (VD: https://github.com/...)",
+    "addLink": "Thêm liên kết",
+    "avatar": "Ảnh đại diện (URL)",
+    "dob": "Ngày sinh",
+    "gender": "Giới tính",
+    "portfolio": "Portfolio (URL)",
+    "links": "Liên kết",
+    "certName": "Tên chứng chỉ",
+    "issuer": "Tổ chức cấp",
+    "awardTitle": "Tên giải thưởng",
+    "organization": "Tổ chức",
+    "activityDescription": "Mô tả hoạt động",
+    "refName": "Họ tên",
+    "contactInfo": "Thông tin liên hệ",
+    "language": "Ngôn ngữ",
+    "proficiency": "Mức độ thành thạo",
+    "hobbies": "Sở thích",
+    "matchAnalysis": "Phân tích độ phù hợp (JD Match)",
+    "matchStatus": "Trạng thái",
+    "matchScoreDesc": "Điểm số do AI đánh giá dựa trên Job Description.",
+    "missingSkills": "Kỹ năng cần bổ sung",
+    "aiFeedback": "Lời khuyên từ AI",
+    "relevant": "Đạt yêu cầu",
+    "irrelevant": "Chưa đạt",
+    "clickToView": "Xem chi tiết",
+    "editHint": "Nhấp trực tiếp vào tài liệu để chỉnh sửa"
   }
 }

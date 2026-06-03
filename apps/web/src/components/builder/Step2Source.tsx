@@ -22,8 +22,8 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 max-w-3xl mx-auto">
-      <div className="mb-6 border-b-2 border-black pb-2">
-        <h2 className="text-xl font-bold text-black uppercase tracking-wider">{t('builder.step2Title') || 'Nguồn Dữ Liệu'}</h2>
+      <div className="mb-6 border-b border-zinc-200 pb-2">
+        <h2 className="text-xl font-bold text-zinc-900 tracking-tight">{t('builder.step2Title') || 'Nguồn Dữ Liệu'}</h2>
         <p className="text-zinc-500 text-sm mt-1">{t('builder.step2Subtitle') || 'AI sẽ dùng thông tin từ đâu?'}</p>
       </div>
 
@@ -31,23 +31,23 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
         {/* Lựa chọn 1: Master Profile */}
         <div
           onClick={() => updateState({ sourceType: 'master_profile' })}
-          className={`cursor-pointer border-2 p-4 transition-all duration-200 ${state.sourceType === 'master_profile'
-              ? 'border-black bg-zinc-100'
-              : 'border-zinc-200 hover:border-black'
+          className={`cursor-pointer border p-4 rounded-xl transition-all duration-200 ${state.sourceType === 'master_profile'
+              ? 'border-primary bg-primary/5 ring-1 ring-primary shadow-sm'
+              : 'border-zinc-200 bg-white hover:border-primary hover:shadow-sm'
             }`}
         >
           <div className="flex items-start gap-4">
-            <div className={`p-3 border-2 ${state.sourceType === 'master_profile' ? 'border-black bg-black text-white' : 'border-zinc-200 bg-white text-zinc-400'}`}>
+            <div className={`p-3 rounded-lg transition-colors ${state.sourceType === 'master_profile' ? 'bg-primary text-white' : 'bg-zinc-100 text-zinc-500'}`}>
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`font-bold text-sm uppercase tracking-wide mb-1 ${state.sourceType === 'master_profile' ? 'text-black' : 'text-zinc-700'}`}>
+              <h3 className={`font-semibold text-sm mb-1 ${state.sourceType === 'master_profile' ? 'text-primary' : 'text-zinc-900'}`}>
                 {t('builder.useMasterProfile') || 'Dùng Master Profile'}
               </h3>
               <p className="text-xs text-zinc-500 mb-2">
                 {t('builder.useMasterProfileDesc') || 'Lấy toàn bộ thông tin đã lưu trên hệ thống.'}
               </p>
-              <span className="inline-block px-2 py-0.5 bg-black text-white text-[10px] font-bold uppercase tracking-wider">
+              <span className="inline-block px-2.5 py-1 bg-primary text-white text-[10px] font-semibold rounded-md">
                 {t('builder.recommended') || 'Khuyên dùng'}
               </span>
             </div>
@@ -62,17 +62,17 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
               fileInputRef.current?.click();
             }
           }}
-          className={`cursor-pointer border-2 p-4 transition-all duration-200 ${state.sourceType === 'upload'
-              ? 'border-black bg-zinc-100'
-              : 'border-zinc-200 hover:border-black'
+          className={`cursor-pointer border p-4 rounded-xl transition-all duration-200 ${state.sourceType === 'upload'
+              ? 'border-primary bg-primary/5 ring-1 ring-primary shadow-sm'
+              : 'border-zinc-200 bg-white hover:border-primary hover:shadow-sm'
             }`}
         >
           <div className="flex items-start gap-4">
-            <div className={`p-3 border-2 ${state.sourceType === 'upload' ? 'border-black bg-black text-white' : 'border-zinc-200 bg-white text-zinc-400'}`}>
+            <div className={`p-3 rounded-lg transition-colors ${state.sourceType === 'upload' ? 'bg-primary text-white' : 'bg-zinc-100 text-zinc-500'}`}>
               <UploadCloud className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h3 className={`font-bold text-sm uppercase tracking-wide mb-1 ${state.sourceType === 'upload' ? 'text-black' : 'text-zinc-700'}`}>
+              <h3 className={`font-semibold text-sm mb-1 ${state.sourceType === 'upload' ? 'text-primary' : 'text-zinc-900'}`}>
                 {t('builder.uploadPdf') || 'Tải CV cũ lên (PDF)'}
               </h3>
               <p className="text-xs text-zinc-500 mb-3">
@@ -80,7 +80,7 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
               </p>
 
               {state.sourceType === 'upload' && (
-                <div className="mt-2 border-2 border-black p-1 bg-white">
+                <div className="mt-2 border border-primary p-1 bg-white rounded-lg">
                   <input
                     type="file"
                     accept=".pdf"
@@ -90,7 +90,7 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
                   />
                   <button
                     onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                    className="w-full py-1.5 bg-zinc-100 text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200"
+                    className="w-full py-2 bg-zinc-100 text-zinc-900 text-xs font-semibold rounded-md hover:bg-zinc-200 transition-colors"
                   >
                     {state.file ? state.file.name : (t('builder.selectPdf') || 'Chọn file PDF')}
                   </button>
@@ -104,14 +104,14 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
       <div className="flex justify-between pt-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-black px-4 py-2 hover:bg-zinc-100 font-bold uppercase tracking-widest text-xs border-2 border-transparent hover:border-zinc-300 transition-colors"
+          className="flex items-center gap-2 text-zinc-500 px-4 py-2 hover:bg-zinc-100 font-semibold text-sm rounded-lg border border-transparent hover:text-zinc-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> {t('builder.back') || 'Quay lại'}
         </button>
         <button
           onClick={onNext}
           disabled={state.sourceType === 'upload' && !state.file}
-          className="flex items-center gap-2 bg-black text-white px-6 py-2.5 font-bold uppercase tracking-widest text-xs hover:bg-zinc-800 transition-colors border-2 border-black disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 font-semibold text-sm rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           {t('builder.next') || 'Tiếp tục'} <ArrowRight className="w-4 h-4" />
         </button>

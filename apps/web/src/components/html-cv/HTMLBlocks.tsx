@@ -64,7 +64,7 @@ export const HTMLATSSimpleHeader = ({ data, activeBlock, onBlockClick }: any) =>
     contacts.push({ label: 'Portfolio', value: cleanUrl });
   }
   if (isValid(data.location)) contacts.push({ label: 'Địa chỉ', value: data.location });
-  
+
   if (data.links) {
     data.links.forEach((link: any) => {
       if (isValid(link.url) && isValid(link.name)) {
@@ -167,6 +167,7 @@ export const HTMLExperienceBlock = ({ title, data, activeBlock, onBlockClick }: 
 };
 
 export const HTMLProjectsBlock = ({ title, data, activeBlock, onBlockClick }: any) => {
+  const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
   if (!data || data.length === 0) return null;
   return (
     <EditableBlock id="projects" isActive={activeBlock === 'projects'} onClick={onBlockClick}>
@@ -176,15 +177,29 @@ export const HTMLProjectsBlock = ({ title, data, activeBlock, onBlockClick }: an
       {data.map((proj: any, i: number) => (
         <div key={i} className={s.itemContainer}>
           <div className={s.itemHeader}>
-            <span>
-              {proj.name}
-              {proj.links && proj.links.length > 0 && ` - ${proj.links[0].url.replace(/^https?:\/\/(www\.)?/, '')}`}
+            <span className="flex-1 pr-[10pt]">
+              {proj.name} {proj.role ? `(${proj.role})` : '(Project)'}
             </span>
-            <span>{proj.startDate} - {proj.endDate || 'Present'}</span>
+            <span className="shrink-0">{proj.startDate} - {proj.endDate || 'Present'}</span>
           </div>
-          <div className={s.itemSubHeader}>
-            <span>{proj.role}</span>
-          </div>
+          {proj.links && proj.links.length > 0 && (
+            <div className={s.itemSubHeader}>
+              <span>
+                {proj.links.map((linkObj: any, index: number) => {
+                  if (!isValid(linkObj.url)) return null;
+                  const url = linkObj.url.startsWith('http') ? linkObj.url : `https://${linkObj.url}`;
+                  const display = linkObj.name ? `${linkObj.name}: ` : '';
+                  return (
+                    <React.Fragment key={index}>
+                      <span>{display}</span>
+                      <a href={url} className={s.link}>{linkObj.url.replace(/^https?:\/\/(www\.)?/, '')}</a>
+                      {index < proj.links.length - 1 ? <span>  •  </span> : null}
+                    </React.Fragment>
+                  );
+                })}
+              </span>
+            </div>
+          )}
           {proj.description && proj.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>
@@ -228,7 +243,7 @@ export const HTMLCertificationsBlock = ({ title, data, activeBlock, onBlockClick
           <div className="flex flex-row justify-between">
             <div>
               <span className="font-bold">{cert.name}</span>
-              {cert.issuer && <span className="italic"> - {cert.issuer}</span>}
+              {isValid(cert.issuer) && <span className="italic"> - {cert.issuer}</span>}
             </div>
             <span className="font-bold">{cert.date}</span>
           </div>
@@ -251,7 +266,7 @@ export const HTMLAwardsBlock = ({ title, data, activeBlock, onBlockClick }: any)
             <span>{award.title}</span>
             <span>{award.date}</span>
           </div>
-          {award.issuer && <div className="italic">{award.issuer}</div>}
+          {isValid(award.issuer) && <div className="italic">{award.issuer}</div>}
         </div>
       ))}
     </EditableBlock>
@@ -271,7 +286,7 @@ export const HTMLActivitiesBlock = ({ title, data, activeBlock, onBlockClick }: 
             <span>{act.organization}</span>
             <span>{act.startDate} - {act.endDate || 'Present'}</span>
           </div>
-          {act.role && <div className="italic mb-[3pt]">{act.role}</div>}
+          {isValid(act.role) && <div className="italic mb-1">{act.role}</div>}
           {act.description && act.description.map((desc: string, j: number) => (
             <div key={j} className={s.bulletPoint}>
               <div className={s.bulletDot}>•</div>

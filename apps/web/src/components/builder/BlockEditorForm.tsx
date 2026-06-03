@@ -93,6 +93,50 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
     </div>
   );
 
+  const LinkArrayField = ({ label, items, path }: any) => (
+    <div className="mb-3">
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{label}</label>
+      {(items || []).map((item: any, idx: number) => (
+        <div key={idx} className="flex gap-1 mb-1.5 items-start">
+          <div className="flex-1 space-y-1">
+            <input
+              type="text"
+              placeholder={t('builder.linkName') || "Tên (VD: GitHub)"}
+              className="w-full p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors"
+              value={item.name || ''}
+              onChange={(e) => handleChange([...path, idx.toString(), 'name'], e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder={t('builder.linkUrl') || "URL (VD: https://github.com/...)"}
+              className="w-full p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors"
+              value={item.url || ''}
+              onChange={(e) => handleChange([...path, idx.toString(), 'url'], e.target.value)}
+            />
+          </div>
+          <button
+            onClick={() => {
+              const newItems = [...items];
+              newItems.splice(idx, 1);
+              handleChange(path, newItems);
+            }}
+            className="p-2 border border-zinc-200 hover:bg-red-50 text-red-400 hover:text-red-600 hover:border-red-200 transition-colors"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        </div>
+      ))}
+      <button
+        onClick={() => {
+          const newItems = [...(items || []), { name: '', url: '' }];
+          handleChange(path, newItems);
+        }}
+        className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 hover:bg-black hover:text-white hover:border-black transition-colors flex items-center gap-1 mt-1"
+      >
+        <Plus className="w-3 h-3" /> {t('builder.addLink') || 'Thêm liên kết'}
+      </button>
+    </div>
+  );
 
   const TitleEditor = () => {
     if (onTitleChange === undefined || activeBlock === 'personal' || activeBlock === 'recipient') return null;
@@ -115,13 +159,20 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
   if (activeBlock === 'personal') {
     return (
       <div className="space-y-1">
+        <InputField label={t('builder.avatar') || "Ảnh đại diện (URL)"} value={localData?.avatar} path={['avatar']} />
         <InputField label={t('builder.fullName') || "Họ và Tên"} value={localData?.fullName} path={['fullName']} />
         <InputField label={t('builder.jobTitle') || "Vị trí / Chức danh"} value={localData?.jobTitle} path={['jobTitle']} />
+        <div className="grid grid-cols-2 gap-2">
+           <InputField label={t('builder.dob') || "Ngày sinh"} value={localData?.dob} path={['dob']} />
+           <InputField label={t('builder.gender') || "Giới tính"} value={localData?.gender} path={['gender']} />
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <InputField label={t('builder.email') || "Email"} value={localData?.email} path={['email']} />
           <InputField label={t('builder.phone') || "Số điện thoại"} value={localData?.phone} path={['phone']} />
         </div>
         <InputField label={t('builder.address') || "Địa chỉ"} value={localData?.location} path={['location']} />
+        <InputField label={t('builder.portfolio') || "Portfolio"} value={localData?.portfolio} path={['portfolio']} />
+        <LinkArrayField label={t('builder.links') || "Các liên kết khác"} items={localData?.links} path={['links']} />
       </div>
     );
   }
@@ -161,7 +212,17 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
     );
   }
 
-  // Arrays (Education, Experience, Projects)
+  // Hobbies is an array of strings, handle explicitly
+  if (activeBlock === 'hobbies') {
+    return (
+      <>
+        <TitleEditor />
+        <StringArrayField label={t('builder.hobbies') || "Sở thích"} items={localData} path={[]} />
+      </>
+    );
+  }
+
+  // Arrays (Education, Experience, Projects, Certifications, Awards, Activities, References, Languages)
   if (Array.isArray(localData)) {
     return (
       <>
@@ -212,6 +273,7 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                     <InputField label={t('builder.startDate') || "Từ tháng/năm"} value={item.startDate} path={[idx.toString(), 'startDate']} />
                     <InputField label={t('builder.endDate') || "Đến tháng/năm"} value={item.endDate} path={[idx.toString(), 'endDate']} />
                   </div>
+                  <LinkArrayField label={t('builder.links') || "Liên kết dự án"} items={item.links} path={[idx.toString(), 'links']} />
                   <StringArrayField label={t('builder.projectDescription') || "Mô tả dự án"} items={item.description} path={[idx.toString(), 'description']} />
                 </>
               )}
@@ -225,11 +287,55 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                       className="w-full p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-15"
                       value={item.items ? item.items.join(', ') : ''}
                       onChange={(e) => {
-                        const arr = e.target.value.split(',').map(s => s.trim()).filter(s => s);
-                        handleChange([idx.toString(), 'items'], arr);
+                         const arr = e.target.value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
+                         handleChange([idx.toString(), 'items'], arr);
                       }}
                     />
                   </div>
+                </>
+              )}
+
+              {activeBlock === 'certifications' && (
+                <>
+                  <InputField label={t('builder.certName') || "Tên chứng chỉ"} value={item.name} path={[idx.toString(), 'name']} />
+                  <InputField label={t('builder.issuer') || "Tổ chức cấp"} value={item.issuer} path={[idx.toString(), 'issuer']} />
+                  <InputField label={t('builder.date') || "Thời gian"} value={item.date} path={[idx.toString(), 'date']} />
+                </>
+              )}
+
+              {activeBlock === 'awards' && (
+                <>
+                  <InputField label={t('builder.awardTitle') || "Tên giải thưởng"} value={item.title} path={[idx.toString(), 'title']} />
+                  <InputField label={t('builder.issuer') || "Tổ chức cấp"} value={item.issuer} path={[idx.toString(), 'issuer']} />
+                  <InputField label={t('builder.date') || "Thời gian"} value={item.date} path={[idx.toString(), 'date']} />
+                </>
+              )}
+
+              {activeBlock === 'activities' && (
+                <>
+                  <InputField label={t('builder.organization') || "Tổ chức"} value={item.organization} path={[idx.toString(), 'organization']} />
+                  <InputField label={t('builder.role') || "Vai trò"} value={item.role} path={[idx.toString(), 'role']} />
+                  <div className="grid grid-cols-2 gap-2">
+                    <InputField label={t('builder.startDate') || "Từ tháng/năm"} value={item.startDate} path={[idx.toString(), 'startDate']} />
+                    <InputField label={t('builder.endDate') || "Đến tháng/năm"} value={item.endDate} path={[idx.toString(), 'endDate']} />
+                  </div>
+                  <StringArrayField label={t('builder.activityDescription') || "Mô tả hoạt động"} items={item.description} path={[idx.toString(), 'description']} />
+                </>
+              )}
+
+              {activeBlock === 'references' && (
+                <>
+                  <InputField label={t('builder.refName') || "Họ Tên"} value={item.name} path={[idx.toString(), 'name']} />
+                  <InputField label={t('builder.position') || "Chức vụ"} value={item.position} path={[idx.toString(), 'position']} />
+                  <InputField label={t('builder.company') || "Công ty"} value={item.company} path={[idx.toString(), 'company']} />
+                  <InputField label={t('builder.contactInfo') || "Thông tin liên hệ"} value={item.contactInfo} path={[idx.toString(), 'contactInfo']} />
+                </>
+              )}
+
+              {activeBlock === 'languages' && (
+                <>
+                  <InputField label={t('builder.language') || "Ngôn ngữ"} value={item.language} path={[idx.toString(), 'language']} />
+                  <InputField label={t('builder.proficiency') || "Mức độ thành thạo"} value={item.proficiency} path={[idx.toString(), 'proficiency']} />
                 </>
               )}
             </div>
@@ -239,8 +345,13 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
             onClick={() => {
               const newItem = activeBlock === 'education' ? { institution: '', degree: '', startDate: '', endDate: '' } :
                 activeBlock === 'experience' ? { company: '', position: '', startDate: '', endDate: '', description: [] } :
-                  activeBlock === 'projects' ? { name: '', role: '', startDate: '', endDate: '', description: [] } :
-                    activeBlock === 'skills' ? { category: '', items: [] } : {};
+                  activeBlock === 'projects' ? { name: '', role: '', startDate: '', endDate: '', links: [], description: [] } :
+                    activeBlock === 'skills' ? { category: '', items: [] } :
+                      activeBlock === 'certifications' ? { name: '', issuer: '', date: '' } :
+                        activeBlock === 'awards' ? { title: '', issuer: '', date: '' } :
+                          activeBlock === 'activities' ? { organization: '', role: '', startDate: '', endDate: '', description: [] } :
+                            activeBlock === 'references' ? { name: '', position: '', company: '', contactInfo: '' } :
+                              activeBlock === 'languages' ? { language: '', proficiency: '' } : {};
               onChange([...localData, newItem]);
             }}
             className="w-full p-2.5 border border-dashed border-zinc-300 text-zinc-400 font-bold text-[10px] tracking-widest uppercase hover:bg-black hover:border-black hover:text-white transition-colors flex items-center justify-center gap-2"

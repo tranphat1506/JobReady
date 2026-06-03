@@ -20,7 +20,7 @@ export const AwardsBlock = ({ title, data }: AwardsBlockProps) => {
             <Text style={{ textTransform: 'uppercase', flex: 1, paddingRight: 10 }}>{award.title}</Text>
             {award.date ? <Text style={{ flexShrink: 0 }}>{award.date}</Text> : null}
           </View>
-          {award.issuer ? (
+          {award.issuer && award.issuer.trim() !== '' && award.issuer.trim().toUpperCase() !== 'N/A' ? (
             <View style={styles.itemSubHeader}>
               <Text>{award.issuer}</Text>
             </View>

@@ -103,7 +103,7 @@ export default function DashboardPage() {
     <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0 font-sans">
       <div className="mb-8 border-b border-zinc-200 pb-5 flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-black tracking-tight uppercase">
+          <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">
             {t('builder.title') || 'AI Resume Builder'}
           </h1>
           <p className="mt-2 text-zinc-500 font-medium text-sm">
@@ -117,11 +117,11 @@ export default function DashboardPage() {
         {/* LEFT COLUMN: WIZARD */}
         <div className="lg:col-span-5 flex flex-col space-y-8">
 
-          {/* Progress Indicator (Black & White style) */}
+          {/* Progress Indicator (SaaS style) */}
           <div className="relative">
             <div className="absolute left-0 top-4 transform -translate-y-1/2 w-full h-0.5 bg-zinc-200 z-0"></div>
             <div
-              className="absolute left-0 top-4 transform -translate-y-1/2 h-0.5 bg-black z-0 transition-all duration-500 ease-out"
+              className="absolute left-0 top-4 transform -translate-y-1/2 h-0.5 bg-primary z-0 transition-all duration-500 ease-out"
               style={{ width: `${((currentStep - 1) / 4) * 100}%` }}
             />
 
@@ -132,14 +132,14 @@ export default function DashboardPage() {
                 return (
                   <div key={step.id} className="flex flex-col items-center">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 border-2 ${isCompleted ? 'bg-black text-white border-black' :
-                          isCurrent ? 'bg-white text-black border-black ring-4 ring-zinc-100' :
-                            'bg-white text-zinc-300 border-zinc-200'
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-all duration-300 border-2 ${isCompleted ? 'bg-primary text-white border-primary' :
+                          isCurrent ? 'bg-white text-primary border-primary ring-4 ring-primary/20' :
+                            'bg-white text-zinc-400 border-zinc-200'
                         }`}
                     >
                       {isCompleted ? <Check className="w-4 h-4" /> : step.id}
                     </div>
-                    <span className={`mt-2 text-[10px] font-bold uppercase tracking-wider hidden sm:block ${isCurrent ? 'text-black' : 'text-zinc-400'}`}>
+                    <span className={`mt-2 text-xs font-medium hidden sm:block ${isCurrent ? 'text-primary font-semibold' : 'text-zinc-500'}`}>
                       {step.title}
                     </span>
                   </div>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Wizard Content Box */}
-          <div className="bg-white border-2 border-zinc-200 p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm">
             {currentStep === 1 && (
               <Step1Goal state={state} updateState={updateState} onNext={handleNext} />
             )}
@@ -177,18 +177,18 @@ export default function DashboardPage() {
 
         {/* RIGHT COLUMN: PREVIEW (HIDDEN IN STEP 5 AS IT TAKES FULL WIDTH) */}
         {currentStep < 5 && (
-          <div className="lg:col-span-7 transition-all duration-500 min-h-175 border-2 border-zinc-200 bg-zinc-50 flex flex-col shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+          <div className="lg:col-span-7 transition-all duration-500 min-h-[400px] border border-zinc-200 rounded-xl bg-slate-50 flex flex-col shadow-sm overflow-hidden">
             {currentStep < 4 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-zinc-400">
                 <FileCode2 className="w-12 h-12 mb-4 opacity-50" />
-                <p className="font-medium text-sm tracking-widest uppercase">{t('dashboard.previewArea') || 'Preview Area'}</p>
+                <p className="font-semibold text-sm">{t('dashboard.previewArea') || 'Preview Area'}</p>
                 <p className="text-xs mt-2 max-w-xs">{t('dashboard.previewAreaDesc') || 'Hoàn thành các bước bên trái để AI tiến hành tạo và hiển thị tài liệu tại đây.'}</p>
               </div>
             ) : (
-              <div className="flex-1 w-full h-full p-8 flex items-center justify-center bg-zinc-50">
+              <div className="flex-1 w-full h-full p-8 flex items-center justify-center bg-slate-50">
                 <div className="text-center text-zinc-400">
                   <LayoutTemplate className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p className="font-medium text-sm tracking-widest uppercase">{t('dashboard.chooseTemplate') || 'Chọn Mẫu & Tiếp Tục'}</p>
+                  <p className="font-semibold text-sm">{t('dashboard.chooseTemplate') || 'Chọn Mẫu & Tiếp Tục'}</p>
                 </div>
               </div>
             )}

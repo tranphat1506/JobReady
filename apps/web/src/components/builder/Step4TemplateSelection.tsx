@@ -49,8 +49,8 @@ export function Step4TemplateSelection({
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300 pb-12">
-      <div className="mb-6 border-b-2 border-black pb-4">
-        <h2 className="text-2xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+      <div className="mb-6 border-b border-zinc-200 pb-4">
+        <h2 className="text-2xl font-bold text-zinc-900 tracking-tight flex items-center gap-2">
           <LayoutTemplate className="w-6 h-6" /> {t('builder.step4Title') || 'Chọn Mẫu Giao Diện'}
         </h2>
         <p className="text-zinc-500 text-sm mt-1">
@@ -60,21 +60,21 @@ export function Step4TemplateSelection({
 
       {showCV && (
         <div className="space-y-4">
-          <h3 className="font-bold uppercase tracking-widest text-sm flex items-center gap-2">
-            <FileText className="w-4 h-4" /> {t('builder.cvTemplateLabel') || 'Mẫu CV (Sơ yếu lý lịch)'}
+          <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-800">
+            <FileText className="w-4 h-4 text-primary" /> {t('builder.cvTemplateLabel') || 'Mẫu CV (Sơ yếu lý lịch)'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CV_TEMPLATES.map(template => (
               <div
                 key={template.id}
                 onClick={() => setCvTemplate(template.id)}
-                className={`cursor-pointer border-2 p-4 flex flex-col gap-3 transition-all ${cvTemplate === template.id
-                    ? 'border-black bg-zinc-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-1'
-                    : 'border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'
+                className={`cursor-pointer border p-4 flex flex-col gap-3 rounded-xl transition-all ${cvTemplate === template.id
+                    ? 'border-primary bg-primary/5 ring-1 ring-primary shadow-sm -translate-y-1'
+                    : 'border-zinc-200 bg-white hover:border-primary hover:shadow-sm'
                   }`}
               >
                 {/* Visual Mockup */}
-                <div className={`w-full aspect-[1/1.4] rounded border-2 p-4 flex flex-col gap-2 ${template.mockupClass}`}>
+                <div className={`w-full aspect-[1/1.4] rounded-lg border p-4 flex flex-col gap-2 ${template.mockupClass}`}>
                   <div className="h-4 bg-zinc-300 rounded-sm w-3/4 mx-auto mb-2"></div>
                   <div className="w-full h-2 bg-zinc-200 rounded-sm"></div>
                   <div className="flex justify-between items-center w-full">
@@ -96,20 +96,20 @@ export function Step4TemplateSelection({
 
       {showCL && (
         <div className="space-y-4">
-          <h3 className="font-bold uppercase tracking-widest text-sm flex items-center gap-2">
-            <FileText className="w-4 h-4" /> {t('builder.clTemplateLabel') || 'Mẫu Cover Letter (Thư ngỏ)'}
+          <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-800">
+            <FileText className="w-4 h-4 text-primary" /> {t('builder.clTemplateLabel') || 'Mẫu Cover Letter (Thư ngỏ)'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CL_TEMPLATES.map(template => (
               <div
                 key={template.id}
                 onClick={() => setClTemplate(template.id)}
-                className={`cursor-pointer border-2 p-4 flex flex-col gap-3 transition-all ${clTemplate === template.id
-                    ? 'border-black bg-zinc-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-1'
-                    : 'border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'
+                className={`cursor-pointer border p-4 flex flex-col gap-3 rounded-xl transition-all ${clTemplate === template.id
+                    ? 'border-primary bg-primary/5 ring-1 ring-primary shadow-sm -translate-y-1'
+                    : 'border-zinc-200 bg-white hover:border-primary hover:shadow-sm'
                   }`}
               >
-                <div className={`w-full aspect-[1/1.4] rounded border-2 p-4 flex flex-col gap-2 ${template.mockupClass}`}>
+                <div className={`w-full aspect-[1/1.4] rounded-lg border p-4 flex flex-col gap-2 ${template.mockupClass}`}>
                   <div className="w-1/2 h-3 bg-zinc-300 rounded-sm mb-4"></div>
                   <div className="w-full h-2 bg-zinc-200 rounded-sm mt-4"></div>
                   <div className="w-full h-2 bg-zinc-200 rounded-sm"></div>
@@ -127,16 +127,16 @@ export function Step4TemplateSelection({
         </div>
       )}
 
-      <div className="flex gap-4 pt-4 border-t-2 border-zinc-100">
+      <div className="flex gap-4 pt-4 border-t border-zinc-200 mt-8">
         <button
           onClick={onPrev}
-          className="flex-1 flex items-center justify-center gap-2 text-black px-6 py-3 hover:bg-zinc-100 font-bold uppercase tracking-widest text-xs border-2 border-transparent transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 text-zinc-500 px-6 py-3 hover:bg-zinc-100 font-semibold text-sm rounded-lg border border-transparent transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> {t('builder.back') || 'Quay lại'}
         </button>
         <button
           onClick={onNext}
-          className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-6 py-3 hover:bg-zinc-800 font-bold uppercase tracking-widest text-xs transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-y-1 hover:translate-x-1"
+          className="flex-1 flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
         >
           {t('builder.next') || 'Tiếp tục'} <ArrowRight className="w-4 h-4" />
         </button>

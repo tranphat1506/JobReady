@@ -19,8 +19,9 @@ export function buildCVPrompt(
     // Structured Master Profile path — no hallucination allowed
     specificInstructions = `
       1. Analyze the Job Description keywords and tailor the CV content to highlight matching skills.
-      2. DO NOT hallucinate or invent anything not present in the Master Profile. Only rephrase and reorder existing content.
-      3. The input is a structured JSON (Master Profile) — use it as the single source of truth for all personal info, skills, experience, projects, and education.`;
+      2. Modify the 'personal.jobTitle' to accurately match the target role title specified in the Job Description, demonstrating the candidate's alignment.
+      3. DO NOT hallucinate or invent experiences or skills not present in the Master Profile. Only rephrase and reorder existing content.
+      4. Use the Master Profile as the single source of truth for other personal info, experience, projects, and education.`;
     candidateContext = `--- MASTER PROFILE (Structured JSON) ---\n${JSON.stringify(masterProfile, null, 2)}`;
   } else if (rawCV && rawCV.trim().length > 0) {
     // Legacy: raw CV text path

@@ -82,14 +82,14 @@
       "terms": "Terms of Service",
       "privacyPolicy": "General Policy",
       "connect": "Connect With Us",
-      "copyright": "© 2026 CareerGo. All rights reserved."
+      "copyright": "© 2026 JobReady. All rights reserved."
     }
   },
   "landing": {
     "hero": {
       "badge": "ATS-FRIENDLY CV PLATFORM",
       "title": "Create ATS-Friendly CVs & Professional Cover Letters with AI",
-      "subtitle": "With just a few simple steps, CareerGo helps you own a perfect job application, matching 100% with the employer's requirements. Increase your hiring chances by 80% today.",
+      "subtitle": "With just a few simple steps, JobReady helps you own a perfect job application, matching 100% with the employer's requirements. Increase your hiring chances by 80% today.",
       "ctaPrimary": "Create Free CV",
       "ctaSecondary": "Watch Tutorial",
       "noCreditCard": "No credit card required",
@@ -198,7 +198,7 @@
       "f2Title": "ATS Scoring & Checking",
       "f2Desc": "The system simulates how ATS filters work to score your CV, pointing out formatting issues and missing keywords that need immediate fixing.",
       "f3Title": "Automated Cover Letters",
-      "f3Desc": "CareerGo automatically generates highly personalized cover letters for each company, clearly highlighting your strengths.",
+      "f3Desc": "JobReady automatically generates highly personalized cover letters for each company, clearly highlighting your strengths.",
       "f4Title": "Multi-Language Translation",
       "f4Desc": "Easily translate your entire CV content to English, Vietnamese, or other languages with just a single click."
     },
@@ -215,10 +215,10 @@
     "faq": {
       "title": "Frequently Asked Questions (FAQ)",
       "subtitle": "CANDIDATE SUPPORT",
-      "q1": "Is creating a CV on CareerGo completely free?",
+      "q1": "Is creating a CV on JobReady completely free?",
       "a1": "Yes. We offer a free plan that allows candidates to create and download standard CVs unlimited times. If you want to use advanced AI features (like automatic cover letter generation), you can upgrade to the Pro plan.",
       "q2": "What is an ATS-friendly CV and why is it important?",
-      "a2": "ATS (Applicant Tracking System) is automated screening software used by 90% of large companies. If your CV has complex formatting (contains many images, complex dual columns), the ATS cannot read the text and automatically rejects your profile. CVs at CareerGo are specifically designed to pass this test.",
+      "a2": "ATS (Applicant Tracking System) is automated screening software used by 90% of large companies. If your CV has complex formatting (contains many images, complex dual columns), the ATS cannot read the text and automatically rejects your profile. CVs at JobReady are specifically designed to pass this test.",
       "q3": "Is my personal data secure?",
       "a3": "Absolutely safe. All your personal data, contact information, and work history are encrypted on international standard cloud servers. We promise never to sell data to any third party."
     },
@@ -430,6 +430,33 @@
     "endDate": "End Date",
     "recipientName": "Recipient Name",
     "date": "Date",
-    "signOff": "Sign-off / Signature"
+    "signOff": "Sign Off",
+    "linkName": "Name (e.g. GitHub)",
+    "linkUrl": "URL (e.g. https://github.com/...)",
+    "addLink": "Add link",
+    "avatar": "Avatar (URL)",
+    "dob": "Date of Birth",
+    "gender": "Gender",
+    "portfolio": "Portfolio (URL)",
+    "links": "Links",
+    "certName": "Certification Name",
+    "issuer": "Issuer",
+    "awardTitle": "Award Title",
+    "organization": "Organization",
+    "activityDescription": "Activity Description",
+    "refName": "Reference Name",
+    "contactInfo": "Contact Info",
+    "language": "Language",
+    "proficiency": "Proficiency",
+    "hobbies": "Hobbies",
+    "matchAnalysis": "Match Analysis (JD Match)",
+    "matchStatus": "Status",
+    "matchScoreDesc": "Score evaluated by AI based on Job Description.",
+    "missingSkills": "Missing Skills",
+    "aiFeedback": "AI Feedback",
+    "relevant": "Relevant",
+    "irrelevant": "Irrelevant",
+    "clickToView": "Click to view",
+    "editHint": "Click directly on the document to edit"
   }
 }

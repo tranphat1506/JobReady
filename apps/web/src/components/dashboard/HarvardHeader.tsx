@@ -29,7 +29,7 @@ export function HarvardHeader({ user }: { user: { email?: string, full_name?: st
       {/* 1. Tiêu đề lớn (Name/Brand) */}
       <div className="text-center mb-2">
         <Link href="/" className="text-4xl font-bold font-sans tracking-widest uppercase text-black">
-          CareerGo.
+          JobReady.
         </Link>
       </div>
 
@@ -56,9 +56,8 @@ export function HarvardHeader({ user }: { user: { email?: string, full_name?: st
             <Link
               key={item.href}
               href={item.href}
-              className={`text-sm tracking-widest uppercase font-sans ${
-                isActive ? 'font-bold text-black border-b border-black pb-1' : 'text-black hover:underline'
-              }`}
+              className={`text-sm tracking-widest uppercase font-sans ${isActive ? 'font-bold text-black border-b border-black pb-1' : 'text-black hover:underline'
+                }`}
             >
               {item.name}
             </Link>
