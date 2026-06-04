@@ -1,9 +1,36 @@
 import { inngest } from "../client";
 import { AIParser } from "@cv-generator/ai";
 import { getCachedSystemSettings } from "@/actions/settings";
+import fs from "fs";
+import path from "path";
 
 export const generateCvWorker = inngest.createFunction(
-  { id: "generate-cv-job", triggers: [{ event: "cv/generate" }] },
+  {
+    id: "generate-cv-job",
+    triggers: [{ event: "cv/generate" }],
+    retries: 1, // Retry 1 lần nếu thất bại, rồi thôi
+    onFailure: async ({ error, event }) => {
+      // Khi đã hết retry, ghi log lỗi vào DB để UI bắt được qua Realtime
+      const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
+      const supabase = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+        { auth: { persistSession: false } }
+      );
+      await supabase.from("ai_generation_logs").insert({
+        user_id: (event.data as any).userId,
+        action_type: `generate_${(event.data as any).goal}`,
+        status: "failed",
+        error_message: error.message,
+        cost_usd: 0,
+        tokens_prompt: 0,
+        tokens_completion: 0,
+        latency_ms: 0,
+        model_used: "unknown",
+      });
+      console.error("[generateCvWorker] Failed after all retries:", error.message);
+    },
+  },
   async ({ event, step }: { event: any; step: any }) => {
     const {
       userId,
@@ -30,7 +57,7 @@ export const generateCvWorker = inngest.createFunction(
     // For now, let's just create an admin client inline.
     const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
     const supabase = createSupabaseClient(supabaseUrl, supabaseKey, {
       auth: { persistSession: false }
     });
@@ -51,7 +78,8 @@ export const generateCvWorker = inngest.createFunction(
       .single();
 
     if (userError || !userData) {
-      throw new Error("Cannot fetch user credits.");
+      console.error("[generateCvWorker] Fetch user credits error:", userError);
+      throw new Error(`Cannot fetch user credits. ${userError?.message || ""}`);
     }
 
     if (userData.credits < totalCost) {
@@ -60,18 +88,26 @@ export const generateCvWorker = inngest.createFunction(
 
     let masterProfile: object | undefined;
     let actualRawCV = rawCV;
+    let actualProfileId = profileId;
 
-    if (sourceType === "master_profile") {
+    if (sourceType === "master_profile" || !actualProfileId) {
       const { data: profileRecord, error: profileError } = await supabase
         .from("master_profiles")
-        .select("content")
+        .select("id, content")
         .eq("user_id", userId)
         .single();
 
-      if (profileError || !profileRecord || !profileRecord.content) {
+      if (!profileError && profileRecord) {
+        if (sourceType === "master_profile") {
+          masterProfile = profileRecord.content;
+          if (!profileRecord.content) {
+            throw new Error("Master Profile is empty.");
+          }
+        }
+        actualProfileId = profileRecord.id;
+      } else if (sourceType === "master_profile") {
         throw new Error("Master Profile not found.");
       }
-      masterProfile = profileRecord.content;
     }
 
     // 2. Run AI Parser
@@ -79,34 +115,61 @@ export const generateCvWorker = inngest.createFunction(
     let responseData: any = {};
     const startTime = Date.now();
     let totalUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
-
-    if (goal === "cv" || goal === "both") {
-      console.log(`[AI-Worker] Generating Tailored CV for user ${userId}...`);
-      const cvResult = await aiParser.parseAndTailorCV(
-        jobDescription,
-        actualRawCV,
-        targetLanguage,
-        masterProfile,
-        toneOfVoice
-      );
-      responseData.cv = cvResult.data;
-      totalUsage.promptTokens += cvResult.usage.promptTokens;
-      totalUsage.completionTokens += cvResult.usage.completionTokens;
+    
+    // --- DEV CACHING LOGIC ---
+    const isDev = process.env.NODE_ENV === "development";
+    let cacheFile = "";
+    let isCached = false;
+    let cachedData: any = null;
+    
+    if (isDev) {
+      const cacheDir = path.join(process.cwd(), ".cache");
+      if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+      cacheFile = path.join(cacheDir, `ai-cv-output-${userId}.json`);
+      if (fs.existsSync(cacheFile)) {
+        console.log(`[DEV CACHE] Using cached CV output for user ${userId}`);
+        cachedData = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
+        if (goal === "cv") delete cachedData.coverLetter;
+        if (goal === "cover_letter") delete cachedData.cv;
+        isCached = true;
+      }
     }
 
-    if (goal === "cover_letter" || goal === "both") {
-      console.log(`[AI-Worker] Generating Cover Letter for user ${userId}...`);
-      const clContext = masterProfile
-        ? `[Master Profile JSON]\n${JSON.stringify(masterProfile, null, 2)}`
-        : actualRawCV || "";
-      const clResult = await aiParser.parseAndTailorCoverLetter(
-        jobDescription,
-        clContext,
-        targetLanguage
-      );
-      responseData.coverLetter = clResult.data;
-      totalUsage.promptTokens += clResult.usage.promptTokens;
-      totalUsage.completionTokens += clResult.usage.completionTokens;
+    if (isCached) {
+      responseData = cachedData;
+    } else {
+      if (goal === "cv" || goal === "both") {
+        console.log(`[AI-Worker] Generating Tailored CV for user ${userId}...`);
+        const cvResult = await aiParser.parseAndTailorCV(
+          jobDescription,
+          actualRawCV,
+          targetLanguage,
+          masterProfile,
+          toneOfVoice
+        );
+        responseData.cv = cvResult.data;
+        totalUsage.promptTokens += cvResult.usage.promptTokens;
+        totalUsage.completionTokens += cvResult.usage.completionTokens;
+      }
+
+      if (goal === "cover_letter" || goal === "both") {
+        console.log(`[AI-Worker] Generating Cover Letter for user ${userId}...`);
+        const clContext = masterProfile
+          ? `[Master Profile JSON]\n${JSON.stringify(masterProfile, null, 2)}`
+          : actualRawCV || "";
+        const clResult = await aiParser.parseAndTailorCoverLetter(
+          jobDescription,
+          clContext,
+          targetLanguage
+        );
+        responseData.coverLetter = clResult.data;
+        totalUsage.promptTokens += clResult.usage.promptTokens;
+        totalUsage.completionTokens += clResult.usage.completionTokens;
+      }
+
+      if (isDev) {
+        fs.writeFileSync(cacheFile, JSON.stringify(responseData, null, 2));
+      }
     }
 
     const latency = Date.now() - startTime;
@@ -131,7 +194,8 @@ export const generateCvWorker = inngest.createFunction(
           .from("resumes")
           .insert({
             user_id: userId,
-            title,
+            profile_id: actualProfileId, // Required by not-null constraint
+            name: title,
             type: docType,
             template_id: docType === "cv" ? cvTemplate || "ats-simple" : clTemplate || "cl-simple",
             job_id: savedJobId || null,
@@ -147,19 +211,11 @@ export const generateCvWorker = inngest.createFunction(
           .insert({
             resume_id: resumeData.id,
             content: data,
-            version_name: "AI Generated",
-            is_draft: true,
           })
           .select("id")
           .single();
 
         if (versionError) throw versionError;
-
-        // Update resume with current_version_id
-        await supabase
-          .from("resumes")
-          .update({ current_version_id: versionData.id })
-          .eq("id", resumeData.id);
 
         return resumeData.id;
       }
