@@ -47,6 +47,7 @@ export function Step5ReviewEdit({
   const [zoom, setZoom] = useState<number>(0.85);
   const [showMatchAnalysis, setShowMatchAnalysis] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [status, setStatus] = useState<string>(initialStatus);
   
   // Document Names
@@ -136,6 +137,7 @@ export function Step5ReviewEdit({
     if (!newCv.sectionTitles) newCv.sectionTitles = {};
     newCv.sectionTitles[activeBlock] = newTitle;
     setResult({ ...result, cv: newCv });
+    setHasChanges(true);
   };
 
   const handleFormChange = (newData: any) => {
@@ -162,6 +164,7 @@ export function Step5ReviewEdit({
       }
       setResult({ ...result, coverLetter: newCL });
     }
+    setHasChanges(true);
   };
 
   const handleSave = async () => {
@@ -176,6 +179,7 @@ export function Step5ReviewEdit({
       
       const redirectId = cvId || clId;
       setStatus('completed');
+      setHasChanges(false);
       
       if (redirectId) {
         toast.success(t('builder.saveSuccess') || 'Đã lưu tài liệu thành công!');
@@ -246,7 +250,10 @@ export function Step5ReviewEdit({
               <input 
                 type="text" 
                 value={activeDoc === 'cv' ? cvName : clName}
-                onChange={(e) => activeDoc === 'cv' ? setCvName(e.target.value) : setClName(e.target.value)}
+                onChange={(e) => {
+                  activeDoc === 'cv' ? setCvName(e.target.value) : setClName(e.target.value);
+                  setHasChanges(true);
+                }}
                 className="w-full h-full bg-transparent px-3 text-sm font-semibold text-zinc-800 focus:outline-none placeholder:font-normal"
                 placeholder="Tên tài liệu..."
               />
@@ -254,8 +261,10 @@ export function Step5ReviewEdit({
             
             <button
               onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center justify-center h-9 px-4 gap-2 bg-primary text-white rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity shadow-sm disabled:opacity-50"
+              disabled={isSaving || !hasChanges}
+              className={`flex items-center justify-center h-9 px-4 gap-2 rounded-lg font-semibold text-sm transition-opacity ${
+                hasChanges ? 'bg-primary text-white hover:opacity-90 shadow-sm' : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
+              }`}
             >
               {isSaving && (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
