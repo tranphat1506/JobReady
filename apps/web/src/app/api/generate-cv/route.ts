@@ -3,6 +3,7 @@ import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
 import { ErrorCodes } from '@/lib/errors/errorCodes';
 import { createClient } from '@/utils/supabase/server';
+import { getCachedSystemSettings } from '@/actions/settings';
 import { PDFParse } from 'pdf-parse';
 import { inngest } from '@/inngest/client';
 
@@ -65,6 +66,29 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw new ValidationError('Invalid sourceType');
   }
 
+  // --- RESERVE CREDITS UPFRONT ---
+  const settingsMap = await getCachedSystemSettings();
+  const getPrice = (k: string) => (settingsMap[k] ? Number(settingsMap[k]) : 0);
+  
+  let totalCost = 0;
+  if (goal === "cv") totalCost = getPrice("price_generate_cv");
+  else if (goal === "cover_letter") totalCost = getPrice("price_generate_cl");
+  else totalCost = getPrice("price_generate_cv") + getPrice("price_generate_cl");
+
+  // Call the atomic reservation RPC
+  const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
+    p_user_id: userId,
+    p_cost: totalCost,
+    p_action_type: `generate_${goal}`
+  });
+
+  if (reserveError) {
+    if (reserveError.message.includes('Insufficient credits')) {
+      throw new ValidationError('Bạn không đủ Credit để thực hiện chức năng này.');
+    }
+    throw new ApiError('Failed to reserve credits', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  }
+
   // --- DISPATCH INNGEST EVENT ---
   await inngest.send({
     name: 'cv/generate',
@@ -82,7 +106,8 @@ export const POST = withErrorHandler(async (req: Request) => {
       existingCvId,
       existingClId,
       rawCV,
-      masterProfile
+      masterProfile,
+      logId
     },
   });
 

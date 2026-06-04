@@ -16,22 +16,25 @@ export const parseProfileWorker = inngest.createFunction(
         process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
         { auth: { persistSession: false } }
       );
-      await supabase.from("ai_generation_logs").insert({
+      
+      const logId = (event.data as any).logId;
+      if (logId) {
+        await supabase.rpc('finalize_ai_job', {
+          p_log_id: logId,
+          p_success: false,
+          p_error_message: error.message
+        });
+      }
+      await supabase.from("activity_logs").insert({
         user_id: (event.data as any).userId,
-        action_type: "parse_master_profile",
-        status: "failed",
-        error_message: error.message,
-        credits_used: 0,
-        tokens_prompt: 0,
-        tokens_completion: 0,
-        latency_ms: 0,
-        model_used: "unknown",
+        action: `API_ERROR_PARSE_PROFILE_JOB`,
+        new_state: { error_message: error.message },
       });
       console.error("[parseProfileWorker] Failed after all retries:", error.message);
     },
   },
   async ({ event, step }: { event: any; step: any }) => {
-    const { userId, contentToParse } = event.data;
+    const { userId, contentToParse, logId } = event.data;
 
     const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -40,23 +43,7 @@ export const parseProfileWorker = inngest.createFunction(
       auth: { persistSession: false }
     });
 
-    const settingsMap = await getCachedSystemSettings();
-    const totalCost = settingsMap.price_parse_profile ? Number(settingsMap.price_parse_profile) : 0;
-
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('credits')
-      .eq('id', userId)
-      .single();
-
-    if (userError || !userData) {
-      console.error("[parseProfileWorker] Fetch user credits error:", userError);
-      throw new Error(`Cannot fetch user credits. ${userError?.message || ""}`);
-    }
-
-    if (userData.credits < totalCost) {
-      throw new Error(`Insufficient credits. Required: ${totalCost}, Have: ${userData.credits}`);
-    }
+    // Credits are already deducted at the API layer
 
     const aiParser = new AIParser(process.env.GEMINI_API_KEY!);
     
@@ -108,16 +95,17 @@ export const parseProfileWorker = inngest.createFunction(
       throw upsertError;
     }
 
-    // Log & Deduct Credits
-    await supabase.rpc('log_ai_and_deduct_credits', {
-      p_user_id: userId,
-      p_cost: totalCost,
-      p_action_type: 'parse_master_profile',
-      p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
-      p_prompt_tokens: result.usage.promptTokens,
-      p_completion_tokens: result.usage.completionTokens,
-      p_latency_ms: latency
-    });
+    // Finalize Job
+    if (logId) {
+      await supabase.rpc('finalize_ai_job', {
+        p_log_id: logId,
+        p_success: true,
+        p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+        p_prompt_tokens: result.usage.promptTokens,
+        p_completion_tokens: result.usage.completionTokens,
+        p_latency_ms: latency
+      });
+    }
 
     return { success: true };
   }

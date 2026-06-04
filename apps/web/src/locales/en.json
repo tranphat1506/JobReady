@@ -543,7 +543,9 @@
         "generate_cv": "Generate CV",
         "generate_cover_letter": "Generate Cover Letter",
         "generate_both": "Generate CV & Cover Letter",
-        "parse_master_profile": "Extract Profile"
+        "parse_master_profile": "Extract Profile",
+        "generate_cv_api_error": "API Error: Generate CV",
+        "parse_master_profile_api_error": "API Error: Extract Profile"
       },
       "columns": {
         "task": "Task",

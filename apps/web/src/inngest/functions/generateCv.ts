@@ -11,22 +11,26 @@ export const generateCvWorker = inngest.createFunction(
     retries: 1, // Retry 1 lần nếu thất bại, rồi thôi
     onFailure: async ({ error, event }) => {
       // Khi đã hết retry, ghi log lỗi vào DB để UI bắt được qua Realtime
+      // Call finalize_ai_job to mark as failed and REFUND credits
       const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
       const supabase = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
         { auth: { persistSession: false } }
       );
-      await supabase.from("ai_generation_logs").insert({
+      
+      const logId = (event.data as any).logId;
+      if (logId) {
+        await supabase.rpc('finalize_ai_job', {
+          p_log_id: logId,
+          p_success: false,
+          p_error_message: error.message
+        });
+      }
+      await supabase.from("activity_logs").insert({
         user_id: (event.data as any).userId,
-        action_type: `generate_${(event.data as any).goal}`,
-        status: "failed",
-        error_message: error.message,
-        credits_used: 0,
-        tokens_prompt: 0,
-        tokens_completion: 0,
-        latency_ms: 0,
-        model_used: "unknown",
+        action: `API_ERROR_GENERATE_CV_JOB`,
+        new_state: { error_message: error.message },
       });
       console.error("[generateCvWorker] Failed after all retries:", error.message);
     },
@@ -45,16 +49,14 @@ export const generateCvWorker = inngest.createFunction(
       clTemplate,
       existingCvId,
       existingClId,
+      existingCvId,
+      existingClId,
       rawCV, // Optional, only if uploaded
+      logId, // The reserved log ID
     } = event.data;
 
     // We can't easily pass Supabase Auth context inside a background job since it's not a Next.js request.
-    // We will use the service role key or just normal client but impersonate or skip RLS.
-    // Fortunately, createClient() here in Inngest might run into issues with cookies().
-    // So we should use the service role key for admin tasks in background jobs.
-    
-    // Instead of importing createClient which relies on cookies(), we need a service role client.
-    // For now, let's just create an admin client inline.
+    // We will use the service role key for admin tasks in background jobs.
     const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -62,29 +64,7 @@ export const generateCvWorker = inngest.createFunction(
       auth: { persistSession: false }
     });
 
-    // 1. Fetch User Credits & Master Profile
-    let totalCost = 0;
-    const settingsMap = await getCachedSystemSettings();
-    const getPrice = (k: string) => (settingsMap[k] ? Number(settingsMap[k]) : 0);
-
-    if (goal === "cv") totalCost = getPrice("price_generate_cv");
-    else if (goal === "cover_letter") totalCost = getPrice("price_generate_cl");
-    else totalCost = getPrice("price_generate_cv") + getPrice("price_generate_cl");
-
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("credits")
-      .eq("id", userId)
-      .single();
-
-    if (userError || !userData) {
-      console.error("[generateCvWorker] Fetch user credits error:", userError);
-      throw new Error(`Cannot fetch user credits. ${userError?.message || ""}`);
-    }
-
-    if (userData.credits < totalCost) {
-      throw new Error(`Insufficient credits. Required: ${totalCost}, Have: ${userData.credits}`);
-    }
+    // 1. Fetch Master Profile (Credits are already deducted at the API layer)
 
     let masterProfile: object | undefined;
     let actualRawCV = rawCV;
@@ -250,16 +230,17 @@ export const generateCvWorker = inngest.createFunction(
       finalClId = await saveDoc(responseData.coverLetter, "cover_letter", clName, existingClId);
     }
 
-    // 4. Log Usage & Deduct Credits
-    await supabase.rpc("log_ai_and_deduct_credits", {
-      p_user_id: userId,
-      p_cost: totalCost,
-      p_action_type: `generate_${goal}`,
-      p_model_used: process.env.GEMINI_MODEL || "gemini-flash-latest",
-      p_prompt_tokens: totalUsage.promptTokens,
-      p_completion_tokens: totalUsage.completionTokens,
-      p_latency_ms: latency,
-    });
+    // 4. Finalize Job (Marks as success and logs tokens)
+    if (logId) {
+      await supabase.rpc("finalize_ai_job", {
+        p_log_id: logId,
+        p_success: true,
+        p_model_used: process.env.GEMINI_MODEL || "gemini-flash-latest",
+        p_prompt_tokens: totalUsage.promptTokens,
+        p_completion_tokens: totalUsage.completionTokens,
+        p_latency_ms: latency,
+      });
+    }
 
     return { success: true, cvId: finalCvId, clId: finalClId };
   }

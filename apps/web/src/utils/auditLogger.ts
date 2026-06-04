@@ -1,4 +1,5 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient as createServerClient } from '@/utils/supabase/server';
+import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 
 interface AuditLogOptions {
@@ -19,14 +20,19 @@ export async function logUserActivity({
   newState = null,
 }: AuditLogOptions) {
   try {
-    const supabase = await createClient();
     const headersList = await headers();
+    
+    // Create an admin client to bypass RLS for logging
+    const adminSupabase = createSupabaseAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     
     // Get IP address, fallback to empty string
     const forwardedFor = headersList.get('x-forwarded-for');
     const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : headersList.get('x-real-ip') || '';
 
-    const { error } = await supabase.from('activity_logs').insert({
+    const { error } = await adminSupabase.from('activity_logs').insert({
       user_id: userId,
       action: `APP_${action.toUpperCase()}`,
       previous_state: previousState,
@@ -55,7 +61,7 @@ export function withAuditLog<T extends (...args: any[]) => Promise<any>>(
       return await fn(...args);
     } catch (error: any) {
       try {
-        const supabase = await createClient();
+        const supabase = await createServerClient();
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {

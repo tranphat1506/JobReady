@@ -543,7 +543,9 @@
         "generate_cv": "Tạo CV",
         "generate_cover_letter": "Tạo Cover Letter",
         "generate_both": "Tạo CV & Cover Letter",
-        "parse_master_profile": "Trích xuất hồ sơ"
+        "parse_master_profile": "Trích xuất hồ sơ",
+        "generate_cv_api_error": "Lỗi API Tạo CV",
+        "parse_master_profile_api_error": "Lỗi API Trích xuất hồ sơ"
       },
       "columns": {
         "task": "Tác vụ",
