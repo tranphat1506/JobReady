@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/useTranslation';
-import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink } from 'lucide-react';
+import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink, RefreshCw } from 'lucide-react';
 import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedDocument, getUserLimits } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -180,12 +180,24 @@ export default function FilesPage() {
               <div>Cover Letter: <span className={limits.clUsed >= limits.clLimit ? "text-red-500" : "text-zinc-900"}>{limits.clUsed}</span>/{limits.clLimit}</div>
             </div>
           )}
-          <Link
-            href="/dashboard"
-            className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
-          >
-            <FilePlus2 className="w-4 h-4" /> {t('files.createNew') || 'Tạo mới'}
-          </Link>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchDocuments}
+              disabled={loading}
+              className="flex items-center justify-center bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-600 p-2.5 rounded-lg transition-all shadow-sm disabled:opacity-50"
+              title={t('files.refresh') || 'Làm mới'}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : ''}`} />
+            </button>
+
+            <Link
+              href="/dashboard"
+              className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
+            >
+              <FilePlus2 className="w-4 h-4" /> {t('files.createNew') || 'Tạo mới'}
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -248,7 +260,7 @@ export default function FilesPage() {
             {hasDrafts && (
               <div className="mb-5 flex items-start gap-2 text-xs text-orange-700 bg-orange-50 border border-orange-200 rounded-lg px-4 py-3">
                 <Clock className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{t('files.draftNotice') || '* Các tài liệu DRAFT sẽ tự động bị xoá sau 24 giờ.'}</span>
+                <span>{t('files.draftNotice') || '* Các tài liệu NHÁP sẽ tự động bị xoá sau 24 giờ.'}</span>
               </div>
             )}
 
@@ -335,7 +347,7 @@ export default function FilesPage() {
                             <h3 className="font-semibold text-zinc-900 text-sm truncate flex-1 min-w-0" title={doc.name}>{doc.name}</h3>
                           )}
                           {isDraft && (
-                            <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0">DRAFT</span>
+                            <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0 uppercase">{t('files.draftLabel') || 'NHÁP'}</span>
                           )}
                         </div>
                       )}
