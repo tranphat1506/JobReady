@@ -40,6 +40,8 @@ export const POST = withErrorHandler(async (req: Request) => {
   // --- DEV CACHING LOGIC ---
   const isDev = process.env.NODE_ENV === 'development';
   let cacheFile = '';
+  let isCached = false;
+  let cachedData: any = null;
   
   if (isDev) {
     const cacheDir = path.join(process.cwd(), '.cache');
@@ -49,9 +51,10 @@ export const POST = withErrorHandler(async (req: Request) => {
     cacheFile = path.join(cacheDir, `ai-master-profile-${userId}.json`);
     
     if (fs.existsSync(cacheFile)) {
-      console.log(`[DEV CACHE] Returning cached Master Profile for user ${userId}`);
-      const cachedData = fs.readFileSync(cacheFile, 'utf8');
-      return NextResponse.json(JSON.parse(cachedData));
+      console.log(`[DEV CACHE] Using cached Master Profile for user ${userId} to save API calls, but will still save to DB`);
+      const cachedDataStr = fs.readFileSync(cacheFile, 'utf8');
+      cachedData = JSON.parse(cachedDataStr);
+      isCached = true;
     }
   }
 
@@ -95,9 +98,16 @@ export const POST = withErrorHandler(async (req: Request) => {
   
   console.log(`[AI] Parsing Master Profile for user ${userId}...`);
   const startTime = Date.now();
-  const parsedResult = await aiParser.parseMasterProfile(contentToParse);
-  const parsedData = parsedResult.data;
-  const usage = parsedResult.usage;
+  let parsedData: any = null;
+  let usage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+  
+  if (isCached) {
+    parsedData = cachedData;
+  } else {
+    const parsedResult = await aiParser.parseMasterProfile(contentToParse);
+    parsedData = parsedResult.data;
+    usage = parsedResult.usage;
+  }
   const latency = Date.now() - startTime;
 
   // --- ATOMIC SAVE TO DB ---
@@ -125,8 +135,8 @@ export const POST = withErrorHandler(async (req: Request) => {
     console.error('Failed to execute atomic log and deduct credits:', rpcError);
   }
 
-  // Save cache in dev
-  if (isDev && cacheFile) {
+  // Save cache in dev only if it was a real generation
+  if (isDev && !isCached) {
     fs.writeFileSync(cacheFile, JSON.stringify(parsedData, null, 2), 'utf8');
     console.log(`[DEV CACHE] Saved Master Profile cache for user ${userId}`);
   }

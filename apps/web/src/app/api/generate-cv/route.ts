@@ -44,6 +44,8 @@ export const POST = withErrorHandler(async (req: Request) => {
   // --- DEV CACHING LOGIC ---
   const isDev = process.env.NODE_ENV === 'development';
   let cacheFile = '';
+  let isCached = false;
+  let cachedData: any = null;
   
   if (isDev) {
     const cacheDir = path.join(process.cwd(), '.cache');
@@ -57,12 +59,12 @@ export const POST = withErrorHandler(async (req: Request) => {
     // but for now we'll return cache if it exists to save API cost. 
     // To generate a new one, user can just delete the cache file.
     if (fs.existsSync(cacheFile)) {
-      console.log(`[DEV CACHE] Returning cached CV output for user ${userId}`);
+      console.log(`[DEV CACHE] Using cached CV output for user ${userId} to save API calls, but will still save to DB`);
       const cachedDataStr = fs.readFileSync(cacheFile, 'utf8');
-      const cachedData = JSON.parse(cachedDataStr);
+      cachedData = JSON.parse(cachedDataStr);
       if (goal === 'cv') delete cachedData.coverLetter;
       if (goal === 'cover_letter') delete cachedData.cv;
-      return NextResponse.json(cachedData);
+      isCached = true;
     }
   }
 
@@ -139,26 +141,30 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   const aiParser = new AIParser(process.env.GEMINI_API_KEY);
-  const responseData: any = {};
+  let responseData: any = {};
   
   const startTime = Date.now();
   let totalUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
   
-  if (goal === 'cv' || goal === 'both') {
-    console.log(`[AI] Generating Tailored CV for user ${userId} (Source: ${sourceType}, Tone: ${toneOfVoice})...`);
-    const cvResult = await aiParser.parseAndTailorCV(jobDescription, rawCV, targetLanguage, masterProfile, toneOfVoice);
-    responseData.cv = cvResult.data;
-    totalUsage.promptTokens += cvResult.usage.promptTokens;
-    totalUsage.completionTokens += cvResult.usage.completionTokens;
-  }
-  
-  if (goal === 'cover_letter' || goal === 'both') {
-    console.log(`[AI] Generating Cover Letter for user ${userId}...`);
-    const clContext = masterProfile ? `[Master Profile JSON]\n${JSON.stringify(masterProfile, null, 2)}` : (rawCV || '');
-    const clResult = await aiParser.parseAndTailorCoverLetter(jobDescription, clContext, targetLanguage);
-    responseData.coverLetter = clResult.data;
-    totalUsage.promptTokens += clResult.usage.promptTokens;
-    totalUsage.completionTokens += clResult.usage.completionTokens;
+  if (isCached) {
+    responseData = cachedData;
+  } else {
+    if (goal === 'cv' || goal === 'both') {
+      console.log(`[AI] Generating Tailored CV for user ${userId} (Source: ${sourceType}, Tone: ${toneOfVoice})...`);
+      const cvResult = await aiParser.parseAndTailorCV(jobDescription, rawCV, targetLanguage, masterProfile, toneOfVoice);
+      responseData.cv = cvResult.data;
+      totalUsage.promptTokens += cvResult.usage.promptTokens;
+      totalUsage.completionTokens += cvResult.usage.completionTokens;
+    }
+    
+    if (goal === 'cover_letter' || goal === 'both') {
+      console.log(`[AI] Generating Cover Letter for user ${userId}...`);
+      const clContext = masterProfile ? `[Master Profile JSON]\n${JSON.stringify(masterProfile, null, 2)}` : (rawCV || '');
+      const clResult = await aiParser.parseAndTailorCoverLetter(jobDescription, clContext, targetLanguage);
+      responseData.coverLetter = clResult.data;
+      totalUsage.promptTokens += clResult.usage.promptTokens;
+      totalUsage.completionTokens += clResult.usage.completionTokens;
+    }
   }
 
   const latency = Date.now() - startTime;
@@ -194,8 +200,8 @@ export const POST = withErrorHandler(async (req: Request) => {
     console.error('Failed to execute atomic log and deduct credits:', rpcError);
   }
 
-  // Save cache in dev
-  if (isDev && cacheFile) {
+  // Save cache in dev only if it was a real generation
+  if (isDev && !isCached) {
     fs.writeFileSync(cacheFile, JSON.stringify(responseData, null, 2), 'utf8');
     console.log(`[DEV CACHE] Saved CV output cache for user ${userId}`);
   }
