@@ -3,8 +3,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { getCachedSystemSettings } from './settings';
 import { revalidatePath } from 'next/cache';
+import { withAuditLog } from '@/utils/auditLogger';
 
-export async function buySlot(type: 'cv' | 'cl') {
+export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -44,4 +45,4 @@ export async function buySlot(type: 'cv' | 'cl') {
   revalidatePath('/dashboard/cover-letters');
 
   return { success: true, cost };
-}
+});

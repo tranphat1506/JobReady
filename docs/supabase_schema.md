@@ -91,10 +91,10 @@ Tracks AI usage for analytics and billing.
 - `created_at` (TIMESTAMPTZ)
 
 ### 9. `activity_logs`
-System activity audit log.
+System activity audit log. Automatically populated via Postgres Triggers to track data changes, and via App layer for network/user context.
 - `id` (UUID, Primary Key)
 - `user_id` (UUID, Not Null) - References `users(id)`
-- `action` (TEXT, Not Null)
+- `action` (TEXT, Not Null) - Formats: `CLIENT_UPDATE_USERS`, `SYSTEM_UPDATE_USERS`, `APP_INITIATE_CHECKOUT`
 - `previous_state` (JSONB)
 - `new_state` (JSONB)
 - `ip_address` (TEXT)
@@ -109,5 +109,20 @@ System activity audit log.
 - `processed_at` (TIMESTAMPTZ)
 - `created_at` (TIMESTAMPTZ)
 
-## Security (Row Level Security)
+## Views
+
+### 1. `user_service_usages_view`
+Secure view built on top of `ai_generation_logs` to hide internal AI metrics (model, tokens, latency) from the client application.
+- Exposes: `id`, `user_id`, `action_type`, `status`, `error_message`, `created_at`, `credits_used`
+- Security: Uses `security_invoker=on` to inherit table RLS.
+
+## Security (Row Level Security & Triggers)
+
+### Row Level Security
 RLS is enabled on all tables by default. Policies restrict access so that users can only read/write their own records based on `user_id`.
+
+### Audit Triggers
+Postgres Triggers are configured on critical tables to automatically record state changes into `activity_logs`:
+- **`users`**: Logs changes to `credits`, `unlocked_cv_slots`, `unlocked_cl_slots`.
+- **`subscriptions`**: Logs any insert or update (e.g., plan upgrades, cancellations).
+- **`master_profiles` & `resume_versions`**: Logs modifications to the `content` JSON to allow full document rollback.

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Wand2 } from 'lucide-react'
+import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Wand2, Activity } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import { AppIcon } from '@/components/ui/AppIcon'
@@ -25,6 +25,10 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
     { name: t('dashboard.nav.manageFiles') || 'Quản lý File', href: '/dashboard/files', icon: FolderKanban },
     { name: t('dashboard.nav.billing') || 'Lịch sử thanh toán', href: '/dashboard/billing', icon: CreditCard },
     { name: t('dashboard.nav.usages') || 'Lịch sử sử dụng AI', href: '/dashboard/usages', icon: Wand2 },
+  ]
+
+  const devNavigation = [
+    { name: 'System Audit Logs', href: '/dashboard/dev-audit', icon: Activity },
   ]
 
   const handleLogout = async () => {
@@ -102,6 +106,30 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
               </Link>
             )
           })}
+
+          {!isCollapsed && (
+            <div className="pt-6">
+              <div className="text-xs font-semibold text-zinc-400 px-3 uppercase tracking-wider">Dev Tools</div>
+              <div className="mt-2 space-y-1">
+                {devNavigation.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center gap-3 py-2.5 text-sm transition-colors rounded-lg px-3 ${isActive
+                        ? 'bg-rose-50/50 text-rose-600 font-semibold'
+                        : 'text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900'
+                        }`}
+                    >
+                      <item.icon className={`h-5 w-5 ${isActive ? 'text-rose-600' : 'text-zinc-400'}`} />
+                      <span>{item.name}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </nav>
 
         {/* Bottom Actions (User, Lang, Logout) */}

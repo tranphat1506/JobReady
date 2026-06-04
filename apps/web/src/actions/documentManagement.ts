@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
+import { withAuditLog } from '@/utils/auditLogger';
 
 export interface SavedDocument {
   id: string;
@@ -117,7 +118,7 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
   }
 }
 
-export async function saveDocument(
+export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
   data: CVSchema | CoverLetterSchema,
   type: 'cv' | 'cover_letter',
   name: string,
@@ -126,7 +127,7 @@ export async function saveDocument(
   templateId?: string,
   status: string = 'completed',
   idToUpdate?: string
-) {
+) => {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -237,7 +238,7 @@ export async function saveDocument(
   if (versionError) throw versionError;
 
   return resumeId;
-}
+});
 
 export async function getResumeById(id: string) {
   const supabase = await createClient();
