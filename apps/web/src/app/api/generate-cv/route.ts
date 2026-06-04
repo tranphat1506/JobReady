@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server';
 import { PDFParse } from 'pdf-parse';
 import fs from 'fs';
 import path from 'path';
+import { saveDocument } from '@/actions/documentManagement';
 
 export const POST = withErrorHandler(async (req: Request) => {
   const supabase = await createClient();
@@ -26,6 +27,14 @@ export const POST = withErrorHandler(async (req: Request) => {
   const sourceType = (formData.get('sourceType') as string) || 'master_profile';
   const goal = (formData.get('goal') as string) || 'both';
   const toneOfVoice = formData.get('toneOfVoice') as string | undefined;
+
+  // New fields for atomic save
+  const profileId = formData.get('profileId') as string | undefined;
+  const savedJobId = formData.get('savedJobId') as string | undefined;
+  const cvTemplate = formData.get('cvTemplate') as string | undefined;
+  const clTemplate = formData.get('clTemplate') as string | undefined;
+  const existingCvId = formData.get('cvId') as string | undefined;
+  const existingClId = formData.get('clId') as string | undefined;
 
   if (!jobDescription || typeof jobDescription !== 'string') {
     throw new ValidationError('jobDescription is required');
@@ -138,6 +147,22 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   const latency = Date.now() - startTime;
+
+  // --- ATOMIC SAVE TO DB ---
+  let finalCvId = existingCvId;
+  let finalClId = existingClId;
+  
+  if (responseData.cv) {
+    const cvName = responseData.cv.personal?.fullName ? `CV - ${responseData.cv.personal.fullName}` : 'Untitled CV';
+    finalCvId = await saveDocument(responseData.cv, 'cv', cvName, profileId, savedJobId, cvTemplate, 'draft', existingCvId);
+    responseData.cvId = finalCvId;
+  }
+  
+  if (responseData.coverLetter) {
+    const clName = responseData.coverLetter.personal?.fullName ? `Cover Letter - ${responseData.coverLetter.personal.fullName}` : 'Untitled Cover Letter';
+    finalClId = await saveDocument(responseData.coverLetter, 'cover_letter', clName, profileId, savedJobId, clTemplate, 'draft', existingClId);
+    responseData.clId = finalClId;
+  }
 
   // Log to Supabase silently
   supabase.from('ai_generation_logs').insert({

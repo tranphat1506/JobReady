@@ -8,7 +8,7 @@ import { Step2Source } from '@/components/builder/Step2Source';
 import { Step3Customize } from '@/components/builder/Step3Customize';
 import { Step4TemplateSelection } from '@/components/builder/Step4TemplateSelection';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
-import { saveDocument, saveJobDescription } from '@/actions/documentManagement';
+import { saveJobDescription } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -71,6 +71,22 @@ export default function DashboardPage() {
       if (state.sourceType === 'upload' && state.file) {
         formData.append('file', state.file);
       }
+      // Save JD first to get ID
+      let savedJobId = undefined;
+      if (state.jobDescription.trim()) {
+        try {
+          savedJobId = await saveJobDescription(state.jobDescription, 'Custom JD');
+          if (savedJobId) formData.append('savedJobId', savedJobId);
+        } catch (e) {
+          console.error('Failed to save JD:', e);
+        }
+      }
+
+      // Add templates to form data for atomic saving
+      formData.append('cvTemplate', cvTemplate);
+      formData.append('clTemplate', clTemplate);
+      if (cvId) formData.append('cvId', cvId);
+      if (clId) formData.append('clId', clId);
 
       const response = await fetch('/api/generate-cv', {
         method: 'POST',
@@ -85,25 +101,8 @@ export default function DashboardPage() {
       const data = await response.json();
       setResult(data);
 
-      // Save JD and Drafts automatically
-      let savedJobId = undefined;
-      if (state.jobDescription.trim()) {
-        try {
-          savedJobId = await saveJobDescription(state.jobDescription, 'Custom JD');
-        } catch (e) {
-          console.error('Failed to save JD:', e);
-        }
-      }
-
-      if (data.cv) {
-        const id = await saveDocument(data.cv, 'cv', data.cv.personal?.fullName ? `CV - ${data.cv.personal.fullName}` : 'Untitled CV', undefined, savedJobId, cvTemplate, 'draft');
-        setCvId(id || null);
-      }
-
-      if (data.coverLetter) {
-        const id = await saveDocument(data.coverLetter, 'cover_letter', data.coverLetter.personal?.fullName ? `Cover Letter - ${data.coverLetter.personal.fullName}` : 'Untitled Cover Letter', undefined, savedJobId, clTemplate, 'draft');
-        setClId(id || null);
-      }
+      if (data.cvId) setCvId(data.cvId);
+      if (data.clId) setClId(data.clId);
 
       setCurrentStep(4);
       toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
@@ -195,12 +194,8 @@ export default function DashboardPage() {
                 setClTemplate={setClTemplate}
                 showCV={showCV}
                 showCL={showCL}
-                onPrev={() => setCurrentStep(3)}
                 onNext={async () => {
-                  // We update the templates for the drafts one last time
-                  if (cvId) await saveDocument(result!.cv!, 'cv', result!.cv!.personal?.fullName ? `CV - ${result!.cv!.personal.fullName}` : 'Untitled CV', undefined, undefined, cvTemplate, 'draft', cvId);
-                  if (clId) await saveDocument(result!.coverLetter!, 'cover_letter', result!.coverLetter!.personal?.fullName ? `Cover Letter - ${result!.coverLetter!.personal.fullName}` : 'Untitled Cover Letter', undefined, undefined, clTemplate, 'draft', clId);
-
+                  // The API already saved the drafts, so we can just navigate.
                   if (cvId) {
                     // If both exist, open CL in new tab then navigate to CV
                     if (clId) {

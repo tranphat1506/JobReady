@@ -85,6 +85,16 @@ export const POST = withErrorHandler(async (req: Request) => {
   const usage = parsedResult.usage;
   const latency = Date.now() - startTime;
 
+  // --- ATOMIC SAVE TO DB ---
+  // Overwrite the existing master_profile
+  const { error: upsertError } = await supabase
+    .from('master_profiles')
+    .upsert({ user_id: userId, content: parsedData }, { onConflict: 'user_id' });
+    
+  if (upsertError) {
+    throw new ApiError('Không thể lưu thông tin vào CSDL sau khi phân tích.', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  }
+
   // Log to Supabase silently
   supabase.from('ai_generation_logs').insert({
     user_id: userId,

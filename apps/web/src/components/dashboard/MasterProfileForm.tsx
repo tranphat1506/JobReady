@@ -7,13 +7,8 @@ import { MasterProfileSchema, MasterProfileData } from '@/types/profile';
 import { createClient } from '@/utils/supabase/client';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useRouter } from 'next/navigation';
-import { PDFParse } from 'pdf-parse';
 import { Sparkles, Save, Upload, X } from 'lucide-react';
 import AvatarCropperModal from './AvatarCropperModal';
-
-if (typeof window !== 'undefined') {
-  PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf.worker.min.mjs');
-}
 
 interface Props {
   initialData: MasterProfileData;
@@ -205,11 +200,7 @@ export default function MasterProfileForm({ initialData }: Props) {
     try {
       const fd = new FormData();
       if (importFile) {
-        const buffer = new Uint8Array(await importFile.arrayBuffer());
-        const parser = new PDFParse({ data: buffer });
-        const pdfData = await parser.getText();
-        await parser.destroy();
-        fd.append('text', pdfData.text);
+        fd.append('file', importFile);
       } else {
         fd.append('text', importText);
       }
@@ -226,7 +217,7 @@ export default function MasterProfileForm({ initialData }: Props) {
       setImportText('');
       setImportFile(null);
       setShowImport(false);
-      setMessage({ type: 'success', text: t('profile.importAi.success') });
+      setMessage({ type: 'success', text: 'Trích xuất và lưu dữ liệu tự động thành công!' });
       setTimeout(() => setMessage(null), 6000);
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
