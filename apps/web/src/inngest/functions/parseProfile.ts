@@ -105,6 +105,13 @@ export const parseProfileWorker = inngest.createFunction(
         p_completion_tokens: result.usage.completionTokens,
         p_latency_ms: latency
       });
+      
+      // Log semantic activity
+      await supabase.from('activity_logs').insert({
+        user_id: userId,
+        action: `APP_AI_PARSE_PROFILE_SUCCESS`,
+        new_state: { }
+      });
     }
 
     return { success: true };

@@ -93,11 +93,19 @@ export default function DashboardClient({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const channel = supabase.channel('ai-generation-completion');
+      // Generate a unique channel name for this request to avoid "already subscribed" errors
+      const channelName = `ai-generation-completion-${Date.now()}`;
+      const channel = supabase.channel(channelName);
+      
+      // We listen for 'UPDATE' because the new reservation logic inserts the 'pending' row upfront,
+      // and the Inngest background job UPDATES it to 'success' or 'failed'.
       channel.on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'ai_generation_logs', filter: `user_id=eq.${user.id}` },
+        { event: 'UPDATE', schema: 'public', table: 'ai_generation_logs', filter: `user_id=eq.${user.id}` },
         async (payload) => {
+          // Ignore updates that are just setting it to pending
+          if (payload.new.status === 'pending') return;
+          
           // AI generation finished! 
           setIsLoading(false);
           supabase.removeChannel(channel);

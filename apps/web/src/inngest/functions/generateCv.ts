@@ -49,8 +49,6 @@ export const generateCvWorker = inngest.createFunction(
       clTemplate,
       existingCvId,
       existingClId,
-      existingCvId,
-      existingClId,
       rawCV, // Optional, only if uploaded
       logId, // The reserved log ID
     } = event.data;
@@ -239,6 +237,13 @@ export const generateCvWorker = inngest.createFunction(
         p_prompt_tokens: totalUsage.promptTokens,
         p_completion_tokens: totalUsage.completionTokens,
         p_latency_ms: latency,
+      });
+      
+      // Log semantic activity
+      await supabase.from('activity_logs').insert({
+        user_id: userId,
+        action: `APP_AI_GENERATE_CV_SUCCESS`,
+        new_state: { cv_id: finalCvId, cl_id: finalClId }
       });
     }
 
