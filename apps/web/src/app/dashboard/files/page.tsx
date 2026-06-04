@@ -139,7 +139,14 @@ export default function FilesPage() {
       router.push(`/dashboard/edit/${ids[0]}`);
     } else {
       // Bulk operation: open all in new tabs, keep current page still and clear selection
-      ids.forEach(id => window.open(`/dashboard/edit/${id}`, '_blank'));
+      let isBlocked = false;
+      ids.forEach(id => {
+        const win = window.open(`/dashboard/edit/${id}`, '_blank');
+        if (!win) isBlocked = true;
+      });
+      if (isBlocked) {
+        toast.error('Trình duyệt đã chặn mở nhiều Tab cùng lúc. Vui lòng cấp quyền Pop-up cho trang web!', { duration: 5000 });
+      }
       setSelected(new Set());
     }
   };

@@ -186,8 +186,11 @@ export default function DashboardClient({ hasMasterProfile }: DashboardClientPro
                   // The API already saved the drafts, so we can just navigate.
                   if (cvId && clId) {
                     // Bulk operation (CV + Cover Letter)
-                    window.open(`/dashboard/edit/${cvId}`, '_blank');
-                    window.open(`/dashboard/edit/${clId}`, '_blank');
+                    const cvWin = window.open(`/dashboard/edit/${cvId}`, '_blank');
+                    const clWin = window.open(`/dashboard/edit/${clId}`, '_blank');
+                    if (!cvWin || !clWin) {
+                      toast.error('Trình duyệt đã chặn Tab mới. Bạn có thể mở lại tài liệu ở danh sách bên dưới!', { duration: 5000 });
+                    }
                     handleReset();
                     router.push('/dashboard/files');
                   } else if (cvId) {
