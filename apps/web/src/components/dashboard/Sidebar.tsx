@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Wand2 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import { AppIcon } from '@/components/ui/AppIcon'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
-export function Sidebar({ user }: { user: { email?: string, full_name?: string, plan?: string } }) {
+export function Sidebar({ user }: { user: { email?: string, full_name?: string, plan?: string, credits?: number, limits?: any } }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -23,7 +23,8 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
     { name: t('dashboard.nav.createCv') || 'Tạo CV', href: '/dashboard', icon: FileCode2 },
     { name: t('dashboard.nav.masterProfile') || 'Hồ Sơ Master', href: '/dashboard/profile', icon: UserCircle },
     { name: t('dashboard.nav.manageFiles') || 'Quản lý File', href: '/dashboard/files', icon: FolderKanban },
-    { name: t('dashboard.nav.billing') || 'Credits & Lịch sử', href: '/dashboard/credits', icon: CreditCard },
+    { name: t('dashboard.nav.billing') || 'Lịch sử thanh toán', href: '/dashboard/billing', icon: CreditCard },
+    { name: t('dashboard.nav.usages') || 'Lịch sử sử dụng AI', href: '/dashboard/usages', icon: Wand2 },
   ]
 
   const handleLogout = async () => {
@@ -129,6 +130,22 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
             >
               <span className="text-[10px] font-bold">{language.toUpperCase()}</span>
             </button>
+          )}
+
+          {/* Mini-dashboard: Credits & Limits */}
+          {!isCollapsed && user?.limits && (
+            <div className="mb-3 px-3 py-2 border border-primary/20 bg-primary/5 rounded-lg">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="bg-primary/20 p-1 rounded-md">
+                  <CreditCard className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <span className="text-xs font-bold text-zinc-900">{user.credits || 0} Credits</span>
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-semibold text-zinc-600">
+                <span>CV: {user.limits.cvUsed}/{user.limits.cvLimit}</span>
+                <span>CL: {user.limits.clUsed}/{user.limits.clLimit}</span>
+              </div>
+            </div>
           )}
 
           {/* User Card */}

@@ -24,7 +24,8 @@
       "createCv": "Tạo CV bằng AI",
       "masterProfile": "Hồ sơ",
       "manageFiles": "Quản lý File",
-      "billing": "Credits & Lịch sử"
+      "billing": "Lịch sử thanh toán",
+      "usages": "Lịch sử sử dụng AI"
     },
     "user": {
       "currentPlan": "Gói hiện tại:",
@@ -522,10 +523,17 @@
       "of": "/",
       "times": "lượt",
       "currentPlan": "Gói hiện tại",
-      "upgradeCta": "Nâng cấp để dùng nhiều hơn"
+      "upgradeCta": "Nâng cấp để dùng nhiều hơn",
+      "balance": "Số dư Credits",
+      "balanceDesc": "Sử dụng cho các tác vụ gọi AI",
+      "storageLimit": "Giới hạn Lưu trữ",
+      "cvSlots": "CV Slots",
+      "clSlots": "CL Slots",
+      "upgradeBtn": "Nâng cấp gói"
     },
     "history": {
       "title": "Lịch sử sử dụng AI",
+      "subtitle": "Theo dõi lịch sử gọi AI và chi phí Credit tương ứng.",
       "empty": "Chưa có hoạt động nào được ghi lại.",
       "status": {
         "success": "Thành công",
@@ -537,11 +545,28 @@
         "generate_both": "Tạo CV & Cover Letter",
         "parse_master_profile": "Trích xuất hồ sơ"
       },
+      "columns": {
+        "task": "Tác vụ",
+        "model": "Model AI",
+        "tokens": "Tokens",
+        "time": "Thời gian",
+        "latency": "Tốc độ",
+        "credit": "Credit",
+        "status": "Trạng thái"
+      },
+      "all": "Tất cả",
+      "filterBy": "Lọc theo:",
+      "pages": "Trang {page} / {total}",
+      "tasks": "{count} tác vụ",
       "creditUsed": "-1 credit"
     },
     "billing": {
       "title": "Lịch sử thanh toán",
+      "subtitle": "Theo dõi các giao dịch mua gói hoặc mua Slot của bạn.",
       "empty": "Chưa có giao dịch thanh toán nào.",
+      "transactions": "{count} giao dịch",
+      "all": "Tất cả",
+      "filterBy": "Lọc theo:",
       "columns": {
         "date": "Ngày",
         "package": "Gói",

@@ -61,18 +61,14 @@ export async function getUserLimits() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: subData } = await supabase
-    .from('subscriptions')
-    .select('packages ( cv_slot_limit, cl_slot_limit )')
-    .eq('user_id', user.id)
-    .eq('status', 'ACTIVE')
-    .order('created_at', { ascending: false })
-    .limit(1)
+  const { data: userData } = await supabase
+    .from('users')
+    .select('unlocked_cv_slots, unlocked_cl_slots')
+    .eq('id', user.id)
     .single();
 
-  const packages = subData?.packages as any;
-  const cvLimit = packages?.cv_slot_limit ?? 2;
-  const clLimit = packages?.cl_slot_limit ?? 2;
+  const cvLimit = userData?.unlocked_cv_slots ?? 1;
+  const clLimit = userData?.unlocked_cl_slots ?? 1;
 
   const { data: cvData } = await supabase
     .from('resumes')
@@ -97,19 +93,15 @@ export async function getUserLimits() {
 }
 
 export async function checkUserLimit(supabase: any, userId: string, type: 'cv' | 'cover_letter') {
-  // 1. Get user limits from active subscription
-  const { data: subData } = await supabase
-    .from('subscriptions')
-    .select('packages ( cv_slot_limit, cl_slot_limit )')
-    .eq('user_id', userId)
-    .eq('status', 'ACTIVE')
-    .order('created_at', { ascending: false })
-    .limit(1)
+  // 1. Get user limits from users table
+  const { data: userData } = await supabase
+    .from('users')
+    .select('unlocked_cv_slots, unlocked_cl_slots')
+    .eq('id', userId)
     .single();
 
-  const packages = subData?.packages as any;
-  const cvLimit = packages?.cv_slot_limit ?? 2;
-  const clLimit = packages?.cl_slot_limit ?? 2;
+  const cvLimit = userData?.unlocked_cv_slots ?? 1;
+  const clLimit = userData?.unlocked_cl_slots ?? 1;
   const limit = type === 'cv' ? cvLimit : clLimit;
 
   // 2. Count current completed documents
@@ -121,7 +113,7 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     .eq('status', 'completed');
 
   if ((count || 0) >= limit) {
-    throw new Error(`Bạn đã đạt giới hạn lưu trữ tối đa ${limit} tài liệu ${type.toUpperCase()}. Vui lòng nâng cấp gói để mở rộng.`);
+    throw new Error(`Bạn đã đạt giới hạn lưu trữ tối đa ${limit} tài liệu ${type.toUpperCase()}. Vui lòng mua thêm Slot bằng Credit để tiếp tục.`);
   }
 }
 

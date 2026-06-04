@@ -24,7 +24,8 @@
       "createCv": "Create CV with AI",
       "masterProfile": "Master Profile",
       "manageFiles": "Manage Files",
-      "billing": "Credits & Billing"
+      "billing": "Billing History",
+      "usages": "AI Usages"
     },
     "user": {
       "currentPlan": "Current Plan:",
@@ -522,10 +523,17 @@
       "of": "/",
       "times": "uses",
       "currentPlan": "Current Plan",
-      "upgradeCta": "Upgrade for more usage"
+      "upgradeCta": "Upgrade for more usage",
+      "balance": "Credits Balance",
+      "balanceDesc": "Used for AI generation tasks",
+      "storageLimit": "Storage Limit",
+      "cvSlots": "CV Slots",
+      "clSlots": "CL Slots",
+      "upgradeBtn": "Upgrade Plan"
     },
     "history": {
       "title": "AI Usage History",
+      "subtitle": "Track your AI usage history and corresponding Credit costs.",
       "empty": "No activity has been recorded yet.",
       "status": {
         "success": "Success",
@@ -537,11 +545,28 @@
         "generate_both": "Generate CV & Cover Letter",
         "parse_master_profile": "Extract Profile"
       },
+      "columns": {
+        "task": "Task",
+        "model": "AI Model",
+        "tokens": "Tokens",
+        "time": "Time",
+        "latency": "Speed",
+        "credit": "Credit",
+        "status": "Status"
+      },
+      "all": "All",
+      "filterBy": "Filter by:",
+      "pages": "Page {page} / {total}",
+      "tasks": "{count} tasks",
       "creditUsed": "-1 credit"
     },
     "billing": {
       "title": "Payment History",
+      "subtitle": "Track your package or Slot purchase transactions.",
       "empty": "No payment transactions yet.",
+      "transactions": "{count} transactions",
+      "all": "All",
+      "filterBy": "Filter by:",
       "columns": {
         "date": "Date",
         "package": "Package",

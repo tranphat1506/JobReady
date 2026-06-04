@@ -21,7 +21,7 @@ export const parseProfileWorker = inngest.createFunction(
         action_type: "parse_master_profile",
         status: "failed",
         error_message: error.message,
-        cost_usd: 0,
+        credits_used: 0,
         tokens_prompt: 0,
         tokens_completion: 0,
         latency_ms: 0,

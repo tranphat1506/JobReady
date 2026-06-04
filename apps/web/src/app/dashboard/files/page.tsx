@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/useTranslation';
-import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink, RefreshCw } from 'lucide-react';
+import { FileText, Trash2, Edit2, Copy, Search, FolderKanban, FilePlus2, Loader2, AlertCircle, Clock, CheckSquare, Square, ExternalLink, RefreshCw, PlusCircle } from 'lucide-react';
 import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedDocument, getUserLimits } from '@/actions/documentManagement';
+import { buySlot } from '@/actions/store';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -33,6 +34,10 @@ export default function FilesPage() {
   // Bulk select
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  // Buy Slot Modal State
+  const [buyingSlotType, setBuyingSlotType] = useState<'cv' | 'cl' | null>(null);
+  const [isBuying, setIsBuying] = useState(false);
 
   useEffect(() => { fetchDocuments(); }, []);
 
@@ -82,11 +87,11 @@ export default function FilesPage() {
     // Check limits before duplicating
     if (limits) {
       if (doc.type === 'cv' && limits.cvUsed >= limits.cvLimit) {
-        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.cvLimit} CV. Vui lòng nâng cấp gói để tiếp tục.`);
+        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.cvLimit} CV. Vui lòng mua thêm Slot để tiếp tục.`);
         return;
       }
       if (doc.type === 'cover_letter' && limits.clUsed >= limits.clLimit) {
-        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.clLimit} Cover Letter. Vui lòng nâng cấp gói để tiếp tục.`);
+        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.clLimit} Cover Letter. Vui lòng mua thêm Slot để tiếp tục.`);
         return;
       }
     }
@@ -98,6 +103,30 @@ export default function FilesPage() {
       fetchDocuments();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi nhân bản', { id: 'dup' });
+    }
+  };
+
+  const handleBuySlot = (type: 'cv' | 'cl') => {
+    setBuyingSlotType(type);
+  };
+
+  const confirmBuySlot = async () => {
+    if (!buyingSlotType) return;
+    setIsBuying(true);
+    
+    const isCV = buyingSlotType === 'cv';
+    const name = isCV ? 'CV' : 'Cover Letter';
+
+    try {
+      toast.loading('Đang xử lý giao dịch...', { id: 'buySlot' });
+      await buySlot(buyingSlotType);
+      toast.success(`Đã mua thành công 1 Slot ${name}!`, { id: 'buySlot' });
+      fetchDocuments();
+      setBuyingSlotType(null);
+    } catch (err: any) {
+      toast.error(err.message || 'Giao dịch thất bại', { id: 'buySlot' });
+    } finally {
+      setIsBuying(false);
     }
   };
 
@@ -175,9 +204,19 @@ export default function FilesPage() {
         <div className="flex items-center gap-6">
           {limits && (
             <div className="flex items-center gap-4 text-xs font-semibold text-zinc-500 bg-zinc-50 border border-zinc-200 px-4 py-2 rounded-lg">
-              <div>CV: <span className={limits.cvUsed >= limits.cvLimit ? "text-red-500" : "text-zinc-900"}>{limits.cvUsed}</span>/{limits.cvLimit}</div>
+              <div className="flex items-center gap-1.5">
+                CV: <span className={limits.cvUsed >= limits.cvLimit ? "text-red-500" : "text-zinc-900"}>{limits.cvUsed}</span>/{limits.cvLimit}
+                <button onClick={() => handleBuySlot('cv')} className="text-zinc-400 hover:text-primary transition-colors" title="Mua thêm Slot CV (50 Credits)">
+                  <PlusCircle className="w-3.5 h-3.5" />
+                </button>
+              </div>
               <div className="w-px h-3 bg-zinc-300"></div>
-              <div>Cover Letter: <span className={limits.clUsed >= limits.clLimit ? "text-red-500" : "text-zinc-900"}>{limits.clUsed}</span>/{limits.clLimit}</div>
+              <div className="flex items-center gap-1.5">
+                Cover Letter: <span className={limits.clUsed >= limits.clLimit ? "text-red-500" : "text-zinc-900"}>{limits.clUsed}</span>/{limits.clLimit}
+                <button onClick={() => handleBuySlot('cl')} className="text-zinc-400 hover:text-primary transition-colors" title="Mua thêm Slot Cover Letter (30 Credits)">
+                  <PlusCircle className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           )}
           
@@ -435,6 +474,42 @@ export default function FilesPage() {
               <button onClick={handleDelete} className="px-4 py-2 font-semibold text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition-colors">
                 {t('files.deleteConfirmBtn') || 'Xoá Tài Liệu'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Buy Slot Modal */}
+      {buyingSlotType && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4 mx-auto">
+                <FilePlus2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-center text-zinc-900 mb-2">
+                Mua thêm Slot {buyingSlotType === 'cv' ? 'CV' : 'Cover Letter'}
+              </h3>
+              <p className="text-center text-zinc-500 mb-6 text-sm">
+                Bạn có chắc chắn muốn sử dụng <span className="font-bold text-rose-600">{buyingSlotType === 'cv' ? 50 : 30} Credits</span> để mở khóa vĩnh viễn 1 vị trí lưu trữ mới cho {buyingSlotType === 'cv' ? 'CV' : 'Cover Letter'} của bạn không?
+              </p>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setBuyingSlotType(null)}
+                  disabled={isBuying}
+                  className="flex-1 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-semibold rounded-xl transition-colors disabled:opacity-50"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  onClick={confirmBuySlot}
+                  disabled={isBuying}
+                  className="flex-1 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                >
+                  {isBuying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Mua ngay'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

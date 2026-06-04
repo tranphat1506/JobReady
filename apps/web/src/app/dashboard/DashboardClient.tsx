@@ -8,7 +8,7 @@ import { Step2Source } from '@/components/builder/Step2Source';
 import { Step3Customize } from '@/components/builder/Step3Customize';
 import { Step4TemplateSelection } from '@/components/builder/Step4TemplateSelection';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
-import { saveJobDescription } from '@/actions/documentManagement';
+import { getCachedSystemSettings } from '@/actions/settings';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -71,17 +71,6 @@ export default function DashboardClient({
       if (state.sourceType === 'upload' && state.file) {
         formData.append('file', state.file);
       }
-      // Save JD first to get ID
-      let savedJobId = undefined;
-      if (state.jobDescription.trim()) {
-        try {
-          savedJobId = await saveJobDescription(state.jobDescription, 'Custom JD');
-          if (savedJobId) formData.append('savedJobId', savedJobId);
-        } catch (e) {
-          console.error('Failed to save JD:', e);
-        }
-      }
-
       // Add templates to form data for atomic saving
       formData.append('cvTemplate', cvTemplate);
       formData.append('clTemplate', clTemplate);
@@ -99,7 +88,6 @@ export default function DashboardClient({
       }
 
       // 202 Accepted - Inngest is processing
-      toast('⏳ Hệ thống AI đang xử lý... Vui lòng đợi trong giây lát.', { duration: 5000, icon: '🤖' });
       
       // We start listening to Supabase Realtime for when ai_generation_logs receives a new entry for this user
       const { data: { user } } = await supabase.auth.getUser();
@@ -114,7 +102,11 @@ export default function DashboardClient({
           setIsLoading(false);
           supabase.removeChannel(channel);
           
-          toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
+          if (payload.new.status === 'failed') {
+            toast.error(payload.new.error_message || 'Có lỗi xảy ra trong quá trình xử lý nền.');
+            return; // Stay on Step 3
+          }
+          
           setCurrentStep(4);
           
           // Fetch the latest documents to set their IDs
@@ -155,21 +147,7 @@ export default function DashboardClient({
   return (
     <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0 font-sans">
 
-      {/* AI Processing Overlay */}
-      {isLoading && currentStep === 3 && (
-        <div className="fixed inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center gap-5 max-w-sm text-center">
-            <div className="relative w-16 h-16">
-              <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-primary animate-spin"></div>
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-zinc-900">AI đang xử lý...</p>
-              <p className="text-sm text-zinc-500 mt-1">Hệ thống đang chạy nền. Bạn sẽ được chuyển sang bước tiếp theo ngay khi xong.</p>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       <div className="mb-8 border-b border-zinc-200 pb-5 flex justify-between items-end">
         <div>

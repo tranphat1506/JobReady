@@ -10,6 +10,8 @@ Extends the native `auth.users` table to store application-specific user data.
 - `email` (TEXT, Unique, Not Null)
 - `full_name` (TEXT)
 - `preferences` (JSONB) - Default: `{}`
+- `unlocked_cv_slots` (INTEGER) - Default: `1`
+- `unlocked_cl_slots` (INTEGER) - Default: `1`
 - `created_at` (TIMESTAMPTZ)
 - `updated_at` (TIMESTAMPTZ)
 
@@ -17,8 +19,8 @@ Extends the native `auth.users` table to store application-specific user data.
 Subscription packages available in the system.
 - `id` (UUID, Primary Key)
 - `name` (TEXT, Not Null)
-- `price` (INTEGER, Not Null)
-- `generation_limit` (INTEGER, Not Null)
+- `price` (DECIMAL)
+- `credits_per_month` (INTEGER)
 - `is_active` (BOOLEAN) - Default: `true`
 - `created_at` (TIMESTAMPTZ)
 - `updated_at` (TIMESTAMPTZ)
@@ -28,8 +30,8 @@ Tracks user subscriptions.
 - `id` (UUID, Primary Key)
 - `user_id` (UUID, Not Null) - References `users(id)`
 - `package_id` (UUID, Not Null) - References `packages(id)`
-- `provider` (TEXT)
-- `provider_subscription_id` (TEXT)
+- `stripe_customer_id` (TEXT)
+- `stripe_subscription_id` (TEXT)
 - `status` (TEXT, Not Null) - Default: `ACTIVE`
 - `start_date` (TIMESTAMPTZ)
 - `end_date` (TIMESTAMPTZ, Not Null)
@@ -85,7 +87,7 @@ Tracks AI usage for analytics and billing.
 - `model_used` (TEXT, Not Null)
 - `tokens_prompt` (INTEGER, Not Null)
 - `tokens_completion` (INTEGER, Not Null)
-- `cost_usd` (DECIMAL, Not Null)
+- `credits_used` (INTEGER, Not Null)
 - `created_at` (TIMESTAMPTZ)
 
 ### 9. `activity_logs`

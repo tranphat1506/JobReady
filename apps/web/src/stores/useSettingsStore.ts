@@ -12,10 +12,17 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       language: 'vi',
-      setLanguage: (lang) => set({ language: lang }),
+      setLanguage: (lang) => {
+        // Sync to cookie so Server Components (getTranslations) read the same locale
+        if (typeof document !== 'undefined') {
+          document.cookie = `language=${lang};path=/;max-age=31536000`;
+        }
+        set({ language: lang });
+      },
     }),
     {
       name: 'cv-generator-settings',
     }
   )
 );
+

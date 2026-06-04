@@ -22,7 +22,7 @@ export const generateCvWorker = inngest.createFunction(
         action_type: `generate_${(event.data as any).goal}`,
         status: "failed",
         error_message: error.message,
-        cost_usd: 0,
+        credits_used: 0,
         tokens_prompt: 0,
         tokens_completion: 0,
         latency_ms: 0,
@@ -174,6 +174,21 @@ export const generateCvWorker = inngest.createFunction(
 
     const latency = Date.now() - startTime;
 
+    // 2.5 Save Job Description if provided but not yet saved
+    let finalJobId = savedJobId;
+    if (!finalJobId && jobDescription && jobDescription.trim().length > 0) {
+      const { data: newJd } = await supabase
+        .from("job_descriptions")
+        .insert({
+          user_id: userId,
+          content: jobDescription,
+          title: "Tailored JD (AI Generated)",
+        })
+        .select("id")
+        .single();
+      if (newJd) finalJobId = newJd.id;
+    }
+
     // 3. Save Document
     let finalCvId = existingCvId;
     let finalClId = existingClId;
@@ -198,7 +213,7 @@ export const generateCvWorker = inngest.createFunction(
             name: title,
             type: docType,
             template_id: docType === "cv" ? cvTemplate || "ats-simple" : clTemplate || "cl-simple",
-            job_id: savedJobId || null,
+            job_id: finalJobId || null,
           })
           .select("id")
           .single();

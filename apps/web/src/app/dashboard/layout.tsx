@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { Sidebar } from '@/components/dashboard/Sidebar'
+import { getUserLimits } from '@/actions/documentManagement'
 
 export default async function DashboardLayout({
   children,
@@ -19,14 +20,18 @@ export default async function DashboardLayout({
 
   const { data: dbUser } = await supabase
     .from('users')
-    .select('full_name, email, preferences')
+    .select('full_name, email, preferences, credits')
     .eq('id', user.id)
     .single()
+
+  const limits = await getUserLimits()
 
   const userData = {
     email: user.email,
     full_name: dbUser?.full_name || user.user_metadata?.full_name || 'Người dùng',
     plan: 'FREE',
+    credits: dbUser?.credits || 0,
+    limits
   }
 
   return (
