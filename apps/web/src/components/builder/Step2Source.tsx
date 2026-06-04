@@ -135,8 +135,7 @@ export function Step2Source({ state, updateState, onNext, onBack, hasMasterProfi
           onClick={onNext}
           disabled={
             (state.sourceType === 'upload' && !state.file) || 
-            (state.sourceType === 'master_profile' && isProfileEmpty) ||
-            loadingProfile
+            (state.sourceType === 'master_profile' && isProfileEmpty)
           }
           className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 font-semibold text-sm rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
