@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { createClient } from '@/utils/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Fetches system settings from the database.
@@ -8,7 +8,11 @@ import { createClient } from '@/utils/supabase/server';
  */
 export const getCachedSystemSettings = unstable_cache(
   async () => {
-    const supabase = await createClient();
+    // Use a cookie-less client for cache to avoid Next.js dynamic errors
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createSupabaseClient(supabaseUrl, supabaseKey);
+    
     const { data: settingsData, error } = await supabase.from('system_settings').select('key, value');
     
     if (error || !settingsData) {
