@@ -176,11 +176,11 @@
   }
 
   .glass-card {
-    @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-md;
+    @apply bg-white/3 border border-white/8 backdrop-blur-md;
   }
 
   .glass-card-hover {
-    @apply hover:bg-white/[0.06] hover:border-white/[0.15] transition-all duration-500 shadow-2xl;
+    @apply hover:bg-white/6 hover:border-white/15 transition-all duration-500 shadow-2xl;
   }
 
   .will-change-scroll {

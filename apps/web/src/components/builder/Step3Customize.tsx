@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Sparkles, Briefcase, Zap, AlignLeft } from 'lucide-react';
-import { BuilderState } from '@/app/dashboard/page';
+import { BuilderState } from '@/stores/useBuilderStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface Step3Props {

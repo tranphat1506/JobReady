@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText, Mail, Layers, ArrowRight } from 'lucide-react';
-import { BuilderState } from '@/app/dashboard/page';
+import { BuilderState } from '@/stores/useBuilderStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface Step1Props {

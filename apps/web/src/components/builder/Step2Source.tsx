@@ -1,37 +1,28 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Database, UploadCloud, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-react';
-import { BuilderState } from '@/app/dashboard/page';
+import { BuilderState } from '@/stores/useBuilderStore';
 import { useTranslation } from '@/hooks/useTranslation';
-import { checkMasterProfileEmpty } from '@/actions/documentManagement';
 import Link from 'next/link';
 
 interface Step2Props {
   state: BuilderState;
   updateState: (updates: Partial<BuilderState>) => void;
   onNext: () => void;
-  onBack: () => void;
+  hasMasterProfile: boolean;
 }
 
-export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) {
+export function Step2Source({ state, updateState, onNext, onBack, hasMasterProfile }: Step2Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
   
-  const [isProfileEmpty, setIsProfileEmpty] = useState<boolean>(false);
-  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
+  const isProfileEmpty = !hasMasterProfile;
 
   useEffect(() => {
-    async function checkProfile() {
-      const empty = await checkMasterProfileEmpty();
-      setIsProfileEmpty(empty);
-      setLoadingProfile(false);
-      
-      // If profile is empty and current selection is master_profile, switch to upload to be safe
-      if (empty && state.sourceType === 'master_profile') {
-        updateState({ sourceType: 'upload' });
-      }
+    // If profile is empty and current selection is master_profile, switch to upload to be safe
+    if (isProfileEmpty && state.sourceType === 'master_profile') {
+      updateState({ sourceType: 'upload' });
     }
-    checkProfile();
-  }, [state.sourceType, updateState]);
+  }, [state.sourceType, updateState, isProfileEmpty]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -60,18 +51,14 @@ export function Step2Source({ state, updateState, onNext, onBack }: Step2Props) 
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`font-semibold text-sm mb-1 ${state.sourceType === 'master_profile' ? 'text-primary' : 'text-zinc-900'}`}>
-                {t('builder.useMasterProfile') || 'Dùng Master Profile'}
-              </h3>
-              <p className="text-xs text-zinc-500 mb-2">
-                {t('builder.useMasterProfileDesc') || 'Lấy toàn bộ thông tin đã lưu trên hệ thống.'}
-              </p>
+              <h3 className="font-semibold text-zinc-900">{t('builder.sourceProfile') || 'Dùng Master Profile'}</h3>
+              {isProfileEmpty ? (
+                <p className="text-xs text-amber-600 mt-1 line-clamp-2">{t('builder.sourceProfileEmpty') || 'Bạn chưa có dữ liệu Master Profile.'}</p>
+              ) : (
+                <p className="text-xs text-zinc-500 mt-1 line-clamp-2">{t('builder.sourceProfileDesc') || 'Sử dụng dữ liệu từ Master Profile đã thiết lập.'}</p>
+              )}
               
-              {loadingProfile ? (
-                <span className="inline-block px-2.5 py-1 bg-zinc-100 text-zinc-400 text-[10px] font-semibold rounded-md">
-                  Đang kiểm tra...
-                </span>
-              ) : isProfileEmpty ? (
+              {isProfileEmpty ? (
                 <div className="flex flex-col gap-2 mt-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-600 border border-red-100 text-[10px] font-semibold rounded-md w-fit">
                     <AlertTriangle className="w-3 h-3" /> Master Profile trống!
