@@ -44,7 +44,7 @@ export function HTMLCoverLetterTemplate({ data, activeBlock, onBlockClick }: Pro
           {isValid(recipient.address) && <div className="text-[11pt]">{recipient.address}</div>}
         </div>
       </EditableBlock>
-      <EditableBlock id="opening" isActive={activeBlock === 'opening'} onClick={onBlockClick}>
+      <EditableBlock id="salutation" isActive={activeBlock === 'salutation'} onClick={onBlockClick}>
         <div className="mb-5 text-[11pt]">{data.salutation}</div>
       </EditableBlock>
       <EditableBlock id="body" isActive={activeBlock === 'body'} onClick={onBlockClick}>

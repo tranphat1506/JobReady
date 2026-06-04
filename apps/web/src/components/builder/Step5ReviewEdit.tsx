@@ -153,6 +153,10 @@ export function Step5ReviewEdit({
       const newCL = { ...result.coverLetter } as any;
       if (['personal', 'recipient'].includes(activeBlock)) {
         newCL[activeBlock] = newData;
+      } else if (activeBlock === 'body') {
+        newCL.opening = newData?.opening;
+        newCL.bodyParagraphs = newData?.bodyParagraphs;
+        newCL.closing = newData?.closing;
       } else {
         newCL[activeBlock] = newData;
       }
@@ -318,7 +322,11 @@ export function Step5ReviewEdit({
                 activeBlock={activeBlock}
                 data={activeDoc === 'cv'
                   ? (activeBlock === 'personal' ? result?.cv?.personal : (result?.cv as any)?.[activeBlock])
-                  : (['personal', 'recipient'].includes(activeBlock) ? (result?.coverLetter as any)?.[activeBlock] : (result?.coverLetter as any)?.[activeBlock])
+                  : (['personal', 'recipient'].includes(activeBlock) ? (result?.coverLetter as any)?.[activeBlock] : (
+                      activeBlock === 'body' 
+                        ? { opening: result?.coverLetter?.opening, bodyParagraphs: result?.coverLetter?.bodyParagraphs, closing: result?.coverLetter?.closing } 
+                        : (result?.coverLetter as any)?.[activeBlock]
+                    ))
                 }
                 onChange={handleFormChange}
                 sectionTitle={activeDoc === 'cv' ? result?.cv?.sectionTitles?.[activeBlock as keyof typeof result.cv.sectionTitles] : undefined}
