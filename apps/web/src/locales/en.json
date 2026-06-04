@@ -25,7 +25,7 @@
       "masterProfile": "Master Profile",
       "manageFiles": "Manage Files",
       "billing": "Billing History",
-      "usages": "AI Usages"
+      "usages": "Usages"
     },
     "user": {
       "currentPlan": "Current Plan:",
@@ -532,8 +532,8 @@
       "upgradeBtn": "Upgrade Plan"
     },
     "history": {
-      "title": "AI Usage History",
-      "subtitle": "Track your AI usage history and corresponding Credit costs.",
+      "title": "Usage History",
+      "subtitle": "Track your usage history and corresponding Credit costs.",
       "empty": "No activity has been recorded yet.",
       "status": {
         "success": "Success",

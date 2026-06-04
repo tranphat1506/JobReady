@@ -51,40 +51,6 @@ export function UsagesClient({
       )
     },
     {
-      key: 'model',
-      label: t('credits.history.columns.model') || 'Model AI',
-      sortable: true,
-      sortQueryKey: 'model_used',
-      render: (log) => (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
-          {log.model_used || 'N/A'}
-        </span>
-      )
-    },
-    {
-      key: 'tokens',
-      label: t('credits.history.columns.tokens') || 'Tokens',
-      align: 'right',
-      sortable: true,
-      sortQueryKey: 'tokens_prompt',
-      render: (log) => (
-        <div>
-          <p className="font-medium text-zinc-800">{(log.tokens_prompt + log.tokens_completion).toLocaleString()}</p>
-          <p className="text-[10px] text-zinc-400 mt-0.5 uppercase">{log.tokens_prompt}P + {log.tokens_completion}C</p>
-        </div>
-      )
-    },
-    {
-      key: 'latency',
-      label: t('credits.history.columns.latency') || 'Tốc độ',
-      align: 'right',
-      sortable: true,
-      sortQueryKey: 'latency_ms',
-      render: (log) => (
-        <span className="font-medium text-zinc-600">{log.latency_ms ? `${(log.latency_ms / 1000).toFixed(1)}s` : '-'}</span>
-      )
-    },
-    {
       key: 'credit',
       label: t('credits.history.columns.credit') || 'Credit',
       align: 'right',

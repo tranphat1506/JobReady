@@ -25,7 +25,7 @@
       "masterProfile": "Hồ sơ",
       "manageFiles": "Quản lý File",
       "billing": "Lịch sử thanh toán",
-      "usages": "Lịch sử sử dụng AI"
+      "usages": "Lịch sử sử dụng"
     },
     "user": {
       "currentPlan": "Gói hiện tại:",
@@ -532,8 +532,8 @@
       "upgradeBtn": "Nâng cấp gói"
     },
     "history": {
-      "title": "Lịch sử sử dụng AI",
-      "subtitle": "Theo dõi lịch sử gọi AI và chi phí Credit tương ứng.",
+      "title": "Lịch sử sử dụng",
+      "subtitle": "Theo dõi lịch sử sử dụng và chi phí Credit tương ứng.",
       "empty": "Chưa có hoạt động nào được ghi lại.",
       "status": {
         "success": "Thành công",

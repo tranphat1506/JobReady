@@ -26,10 +26,10 @@ export default async function UsagesPage({ searchParams }: { searchParams: any }
   const logSortOrder = params?.logSortOrder === 'asc' ? 'asc' : 'desc';
   const logOffset = (logPage - 1) * PAGE_SIZE;
 
-  // Query AI usage logs
+  // Query service usages logs from the secure view
   let logsQuery = supabase
-    .from('ai_generation_logs')
-    .select('id, action_type, status, error_message, created_at, tokens_prompt, tokens_completion, model_used, latency_ms, credits_used', { count: 'exact' })
+    .from('user_service_usages_view')
+    .select('id, action_type, status, error_message, created_at, credits_used', { count: 'exact' })
     .eq('user_id', user.id)
     .order(logSortBy, { ascending: logSortOrder === 'asc' })
     .range(logOffset, logOffset + PAGE_SIZE - 1);
