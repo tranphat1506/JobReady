@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AIParser } from '@cv-generator/ai';
+import { getCachedSystemSettings } from '@/actions/settings';
 import { PDFParse } from 'pdf-parse';
 import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
@@ -59,8 +60,8 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   // --- CHECK CREDITS ---
-  const { data: settings } = await supabase.from('system_settings').select('value').eq('key', 'price_parse_profile').single();
-  const totalCost = settings ? Number(settings.value) : 0;
+  const settingsMap = await getCachedSystemSettings();
+  const totalCost = settingsMap.price_parse_profile ? Number(settingsMap.price_parse_profile) : 0;
 
   const { data: userData, error: userError } = await supabase
     .from('users')
@@ -95,28 +96,19 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw new ApiError('Không thể lưu thông tin vào CSDL sau khi phân tích.', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
   }
 
-  // Log to Supabase silently
-  supabase.from('ai_generation_logs').insert({
-    user_id: userId,
-    action_type: 'parse_master_profile',
-    model_used: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
-    tokens_prompt: usage.promptTokens,
-    tokens_completion: usage.completionTokens,
-    cost_usd: 0,
-    latency_ms: latency,
-    status: 'success'
-  }).then(({error}) => {
-    if (error) console.error('Failed to log AI generation:', error);
+  // --- ATOMIC LOG & DEDUCT CREDITS VIA RPC ---
+  const { error: rpcError } = await supabase.rpc('log_ai_and_deduct_credits', {
+    p_user_id: userId,
+    p_cost: totalCost,
+    p_action_type: 'parse_master_profile',
+    p_model_used: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    p_prompt_tokens: usage.promptTokens,
+    p_completion_tokens: usage.completionTokens,
+    p_latency_ms: latency
   });
 
-  // Deduct credits silently
-  if (totalCost > 0) {
-    supabase.from('users')
-      .update({ credits: userData.credits - totalCost })
-      .eq('id', userId)
-      .then(({error}) => {
-        if (error) console.error('Failed to deduct credits:', error);
-      });
+  if (rpcError) {
+    console.error('Failed to execute atomic log and deduct credits:', rpcError);
   }
 
   // Save cache in dev

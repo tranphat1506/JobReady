@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AIParser } from '@cv-generator/ai';
+import { getCachedSystemSettings } from '@/actions/settings';
 import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
 import { ErrorCodes } from '@/lib/errors/errorCodes';
@@ -99,10 +100,9 @@ export const POST = withErrorHandler(async (req: Request) => {
 
   // --- CHECK CREDITS ---
   let totalCost = 0;
-  const { data: settings } = await supabase.from('system_settings').select('key, value');
+  const settingsMap = await getCachedSystemSettings();
   const getPrice = (k: string) => {
-    const s = settings?.find(s => s.key === k);
-    return s ? Number(s.value) : 0;
+    return settingsMap[k] ? Number(settingsMap[k]) : 0;
   };
 
   if (goal === 'cv') totalCost = getPrice('price_generate_cv');
@@ -164,28 +164,19 @@ export const POST = withErrorHandler(async (req: Request) => {
     responseData.clId = finalClId;
   }
 
-  // Log to Supabase silently
-  supabase.from('ai_generation_logs').insert({
-    user_id: userId,
-    action_type: `generate_${goal}`,
-    model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
-    tokens_prompt: totalUsage.promptTokens,
-    tokens_completion: totalUsage.completionTokens,
-    cost_usd: 0,
-    latency_ms: latency,
-    status: 'success'
-  }).then(({error}) => {
-    if (error) console.error('Failed to log AI generation:', error);
+  // --- ATOMIC LOG & DEDUCT CREDITS VIA RPC ---
+  const { error: rpcError } = await supabase.rpc('log_ai_and_deduct_credits', {
+    p_user_id: userId,
+    p_cost: totalCost,
+    p_action_type: `generate_${goal}`,
+    p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+    p_prompt_tokens: totalUsage.promptTokens,
+    p_completion_tokens: totalUsage.completionTokens,
+    p_latency_ms: latency
   });
 
-  // Deduct credits silently
-  if (totalCost > 0) {
-    supabase.from('users')
-      .update({ credits: userData.credits - totalCost })
-      .eq('id', userId)
-      .then(({error}) => {
-        if (error) console.error('Failed to deduct credits:', error);
-      });
+  if (rpcError) {
+    console.error('Failed to execute atomic log and deduct credits:', rpcError);
   }
 
   // Save cache in dev
