@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 
 /**
  * Fetches system settings from the database.
