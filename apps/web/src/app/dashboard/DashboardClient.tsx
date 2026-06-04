@@ -36,13 +36,14 @@ export default function DashboardClient({ hasMasterProfile }: DashboardClientPro
   const [cvTemplate, setCvTemplate] = useState('harvard');
   const [clTemplate, setClTemplate] = useState('standard-cover-letter');
 
-  const { state, updateState } = useBuilderStore();
+  const { state, updateState, resetState } = useBuilderStore();
 
   const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, 4));
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
   const handleReset = () => {
     setCurrentStep(1);
     setResult(null);
+    resetState();
   };
 
   const handleGenerate = async () => {
@@ -183,13 +184,19 @@ export default function DashboardClient({ hasMasterProfile }: DashboardClientPro
                 onPrev={() => setCurrentStep(3)}
                 onNext={async () => {
                   // The API already saved the drafts, so we can just navigate.
-                  if (cvId) {
-                    // If both exist, open CL in new tab then navigate to CV
-                    if (clId) {
-                      window.open(`/dashboard/edit/${clId}`, '_blank');
-                    }
+                  if (cvId && clId) {
+                    // Bulk operation (CV + Cover Letter)
+                    window.open(`/dashboard/edit/${cvId}`, '_blank');
+                    window.open(`/dashboard/edit/${clId}`, '_blank');
+                    handleReset();
+                    router.push('/dashboard/files');
+                  } else if (cvId) {
+                    // Single operation
+                    handleReset();
                     router.push(`/dashboard/edit/${cvId}`);
                   } else if (clId) {
+                    // Single operation
+                    handleReset();
                     router.push(`/dashboard/edit/${clId}`);
                   }
                 }}
