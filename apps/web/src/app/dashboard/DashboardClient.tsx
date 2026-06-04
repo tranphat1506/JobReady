@@ -11,7 +11,8 @@ import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
 import { saveJobDescription } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 const PDFPreview = dynamic(() => import('@/components/builder/PDFPreview'), { ssr: false, loading: () => <div className="w-full h-full bg-zinc-50 animate-pulse flex items-center justify-center text-zinc-400 border border-zinc-200">Loading Preview...</div> });
 
@@ -19,11 +20,23 @@ import { useBuilderStore } from '@/stores/useBuilderStore';
 
 interface DashboardClientProps {
   hasMasterProfile: boolean;
+  cvTemplate?: string;
+  clTemplate?: string;
+  cvId?: string;
+  clId?: string;
 }
 
-export default function DashboardClient({ hasMasterProfile }: DashboardClientProps) {
+export default function DashboardClient({ 
+  hasMasterProfile,
+  cvTemplate: initialCvTemplate,
+  clTemplate: initialClTemplate,
+  cvId: initialCvId,
+  clId: initialClId 
+}: DashboardClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const supabase = createClient();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,19 +98,42 @@ export default function DashboardClient({ hasMasterProfile }: DashboardClientPro
         throw new Error(errorData.message || t('error.system.internal') || 'Có lỗi xảy ra khi tạo CV');
       }
 
-      const data = await response.json();
-      setResult(data);
+      // 202 Accepted - Inngest is processing
+      toast('⏳ Hệ thống AI đang xử lý... Vui lòng đợi trong giây lát.', { duration: 5000, icon: '🤖' });
+      
+      // We start listening to Supabase Realtime for when ai_generation_logs receives a new entry for this user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-      if (data.cvId) setCvId(data.cvId);
-      if (data.clId) setClId(data.clId);
+      const channel = supabase.channel('ai-generation-completion');
+      channel.on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'ai_generation_logs', filter: `user_id=eq.${user.id}` },
+        async (payload) => {
+          // AI generation finished! 
+          setIsLoading(false);
+          supabase.removeChannel(channel);
+          
+          toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
+          setCurrentStep(4);
+          
+          // Optionally fetch the latest CV ID to set it
+          const { data: latestCv } = await supabase
+            .from('resumes')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+            
+          if (latestCv) setCvId(latestCv.id);
+        }
+      ).subscribe();
 
-      setCurrentStep(4);
-      toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
     } catch (error: any) {
+      setIsLoading(false);
       toast.error(error.message);
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -108,11 +144,28 @@ export default function DashboardClient({ hasMasterProfile }: DashboardClientPro
     { id: 4, title: t('dashboard.steps.step4') || 'Chọn Mẫu', desc: t('dashboard.steps.step4Desc') || 'Lựa chọn giao diện hiển thị', icon: <LayoutTemplate className="w-5 h-5" /> }
   ];
 
-  const showCV = result?.cv != null;
-  const showCL = result?.coverLetter != null;
+  // With background jobs, we determine what to show based on the goal, not result
+  const showCV = state.goal === 'cv' || state.goal === 'both';
+  const showCL = state.goal === 'cover_letter' || state.goal === 'both';
 
   return (
     <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0 font-sans">
+
+      {/* AI Processing Overlay */}
+      {isLoading && currentStep === 3 && (
+        <div className="fixed inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center gap-5 max-w-sm text-center">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-primary animate-spin"></div>
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-zinc-900">AI đang xử lý...</p>
+              <p className="text-sm text-zinc-500 mt-1">Hệ thống đang chạy nền. Bạn sẽ được chuyển sang bước tiếp theo ngay khi xong.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mb-8 border-b border-zinc-200 pb-5 flex justify-between items-end">
         <div>

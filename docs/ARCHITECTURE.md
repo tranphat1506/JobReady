@@ -51,3 +51,42 @@ Bằng cách tách thành 3 gói riêng biệt:
 - Giao diện Client chỉ việc import `@cv-generator/schema` (nhẹ) và `@cv-generator/renderer` (chỉ phụ thuộc React).
 - API Server sẽ import `@cv-generator/schema` và `@cv-generator/ai` để gọi Gemini một cách an toàn.
 - Ngăn chặn hoàn toàn lỗi môi trường và rò rỉ API Keys.
+
+## 4. Kiến trúc Async (Background Jobs & Realtime)
+
+Để giải quyết giới hạn Timeout của Vercel (10s - 60s) khi gọi AI và xử lý các tác vụ nặng (Sinh CV, Parse PDF), hệ thống sẽ áp dụng mô hình Queue & Realtime chuẩn Enterprise:
+
+```mermaid
+flowchart TD
+    subgraph Client ["Next.js Client"]
+        UI["UI (Loading / Editor)"]
+    end
+    
+    subgraph Server ["Next.js API"]
+        API["API Route (VD: /api/generate-cv)"]
+    end
+
+    subgraph Queue ["Inngest (Background Jobs)"]
+        Worker["Inngest Worker (Chạy ngầm)"]
+    end
+
+    subgraph Database ["Supabase"]
+        DB["PostgreSQL (resumes / profiles)"]
+        Realtime["Supabase Realtime (WebSockets)"]
+    end
+
+    UI -->|"1. Gửi request"| API
+    API -->|"2. Bắn sự kiện (Event)"| Queue
+    API -.->|"3. Trả về 202 Accepted liền"| UI
+    UI -->|"4. Subscribe lắng nghe DB"| Realtime
+    
+    Queue -->|"5. Chạy AI / Xử lý"| Worker
+    Worker -->|"6. Lưu kết quả"| DB
+    DB -->|"7. Bắn Event chèn dữ liệu mới"| Realtime
+    Realtime -->|"8. Push Notification qua Socket"| UI
+```
+
+### Ưu điểm của mô hình này:
+- **Chống Timeout:** API không còn phải đợi (await) AI gen xong. Trình duyệt nhận được phản hồi ngay lập tức (Non-blocking).
+- **Trải nghiệm Realtime (UX):** Không sử dụng Short-polling (Fetch liên tục gây quá tải). Trình duyệt kết nối Socket tới Supabase và nhận thông báo ngay đúng giây phút CV được tạo xong.
+- **Tính khả thi mở rộng (Scalability & Prioritization):** Khi lưu lượng truy cập lớn, Queue (Inngest) sẽ giúp xếp hàng các yêu cầu. Dễ dàng triển khai logic: User Premium được ưu tiên xử lý trước, User Free chờ khi rảnh rỗi.

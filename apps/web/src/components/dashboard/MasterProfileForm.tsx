@@ -217,15 +217,40 @@ export default function MasterProfileForm({ initialData }: Props) {
         throw new Error(errorMessage);
       }
 
-      reset(data);
-      setImportText('');
-      setImportFile(null);
-      setShowImport(false);
-      setMessage({ type: 'success', text: 'Trích xuất và lưu dữ liệu tự động thành công!' });
-      setTimeout(() => setMessage(null), 6000);
+      // 202 Accepted - Inngest is running in background
+      setMessage({ type: 'success', text: 'AI đang phân tích hồ sơ... Tự động cập nhật khi hoàn thành.' });
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setIsParsing(false); return; }
+
+      // Subscribe to master_profiles changes for this user
+      const channel = supabase.channel('master-profile-parse');
+      channel.on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'master_profiles', filter: `user_id=eq.${user.id}` },
+        async () => {
+          supabase.removeChannel(channel);
+          // Fetch the fresh parsed data from DB
+          const { data: profileRecord } = await supabase
+            .from('master_profiles')
+            .select('content')
+            .eq('user_id', user.id)
+            .single();
+
+          if (profileRecord?.content) {
+            reset(profileRecord.content);
+          }
+          setImportText('');
+          setImportFile(null);
+          setShowImport(false);
+          setMessage({ type: 'success', text: 'Trích xuất và lưu dữ liệu tự động thành công!' });
+          setTimeout(() => setMessage(null), 6000);
+          setIsParsing(false);
+        }
+      ).subscribe();
+
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
-    } finally {
       setIsParsing(false);
     }
   };
