@@ -8,6 +8,7 @@ interface Step2Props {
   state: BuilderState;
   updateState: (updates: Partial<BuilderState>) => void;
   onNext: () => void;
+  onBack: () => void;
   hasMasterProfile: boolean;
 }
 
