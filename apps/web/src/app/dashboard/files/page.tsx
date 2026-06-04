@@ -134,9 +134,14 @@ export default function FilesPage() {
   const handleBulkEdit = () => {
     const ids = [...selected];
     if (ids.length === 0) return;
-    // Open first in current tab, rest in new tabs
-    ids.slice(1).forEach(id => window.open(`/dashboard/edit/${id}`, '_blank'));
-    router.push(`/dashboard/edit/${ids[0]}`);
+    
+    if (ids.length === 1) {
+      router.push(`/dashboard/edit/${ids[0]}`);
+    } else {
+      // Bulk operation: open all in new tabs, keep current page still and clear selection
+      ids.forEach(id => window.open(`/dashboard/edit/${id}`, '_blank'));
+      setSelected(new Set());
+    }
   };
 
   const filteredDocs = documents.filter(doc => {
