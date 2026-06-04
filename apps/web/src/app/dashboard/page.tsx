@@ -194,6 +194,7 @@ export default function DashboardPage() {
                 setClTemplate={setClTemplate}
                 showCV={showCV}
                 showCL={showCL}
+                onPrev={() => setCurrentStep(3)}
                 onNext={async () => {
                   // The API already saved the drafts, so we can just navigate.
                   if (cvId) {
