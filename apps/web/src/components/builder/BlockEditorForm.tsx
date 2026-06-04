@@ -1,6 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+
+const AutoResizeTextarea = ({ className, value, onChange, ...props }: any) => {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = `${ref.current.scrollHeight}px`;
+    }
+  }, [value]);
+
+  return (
+    <textarea
+      ref={ref}
+      className={`${className} resize-none overflow-hidden`}
+      value={value}
+      onChange={(e) => {
+        onChange(e);
+        e.target.style.height = 'auto';
+        e.target.style.height = `${e.target.scrollHeight}px`;
+      }}
+      rows={1}
+      {...props}
+    />
+  );
+};
 
 interface BlockEditorFormProps {
   activeBlock: string;
@@ -43,10 +69,10 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
     <div className="mb-3">
       <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{label}</label>
       {type === "textarea" ? (
-        <textarea
+        <AutoResizeTextarea
           className="w-full p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-20"
           value={value || ''}
-          onChange={(e) => handleChange(path, e.target.value)}
+          onChange={(e: any) => handleChange(path, e.target.value)}
         />
       ) : (
         <input
@@ -64,10 +90,10 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
       <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{label}</label>
       {(items || []).map((item: string, idx: number) => (
         <div key={idx} className="flex gap-1 mb-1.5">
-          <textarea
+          <AutoResizeTextarea
             className="flex-1 p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-10"
             value={item || ''}
-            onChange={(e) => handleChange([...path, idx.toString()], e.target.value)}
+            onChange={(e: any) => handleChange([...path, idx.toString()], e.target.value)}
           />
           <button
             onClick={() => {
@@ -284,10 +310,10 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                   <InputField label={t('builder.skillCategory') || "Loại kỹ năng (Vd: Frontend, Ngôn ngữ...)"} value={item.category} path={[idx.toString(), 'category']} />
                   <div className="mb-3">
                     <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{t('builder.skillsList') || 'Các kỹ năng (cách nhau bằng dấu phẩy)'}</label>
-                    <textarea
+                    <AutoResizeTextarea
                       className="w-full p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-15"
                       value={item.items ? item.items.join(', ') : ''}
-                      onChange={(e) => {
+                      onChange={(e: any) => {
                          const arr = e.target.value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
                          handleChange([idx.toString(), 'items'], arr);
                       }}
@@ -368,10 +394,10 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
   return (
     <div className="text-sm text-zinc-500">
       {t('builder.jsonViewWarning') || 'Đang hiển thị dữ liệu JSON (Chưa hỗ trợ Form UI riêng cho khối này):'}
-      <textarea
+      <AutoResizeTextarea
         className="w-full p-2 font-mono text-xs border border-zinc-300 mt-2 min-h-37.5"
         value={typeof localData === 'string' ? localData : JSON.stringify(localData, null, 2)}
-        onChange={(e) => {
+        onChange={(e: any) => {
           try {
             const val = JSON.parse(e.target.value);
             setLocalData(val);
