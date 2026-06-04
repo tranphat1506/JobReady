@@ -163,6 +163,10 @@ export default function MasterProfileForm({ initialData }: Props) {
   const { fields: skillFields, append: appendSkill, remove: removeSkill } = useFieldArray({ control, name: 'skills' });
   const { fields: certFields, append: appendCert, remove: removeCert } = useFieldArray({ control, name: 'certifications' });
   const { fields: awdFields, append: appendAwd, remove: removeAwd } = useFieldArray({ control, name: 'awards' });
+  const { fields: langFields, append: appendLang, remove: removeLang } = useFieldArray({ control, name: 'languages' });
+  const { fields: actFields, append: appendAct, remove: removeAct } = useFieldArray({ control, name: 'activities' });
+  const { fields: refFields, append: appendRef, remove: removeRef } = useFieldArray({ control, name: 'references' });
+  const { fields: customFields, append: appendCustom, remove: removeCustom } = useFieldArray({ control, name: 'customSections' });
 
   // Avatar upload
   const [avatarPreview, setAvatarPreview] = useState<string | null>((initialData?.personal as any)?.avatar || null);
@@ -285,6 +289,12 @@ export default function MasterProfileForm({ initialData }: Props) {
     { id: 'projects', label: t('profile.sections.projects') },
     { id: 'education', label: t('profile.sections.education') },
     { id: 'certifications', label: t('profile.sections.certifications') },
+    { id: 'awards', label: t('profile.sections.awards') || 'Awards' },
+    { id: 'languages', label: t('profile.sections.languages') || 'Languages' },
+    { id: 'activities', label: t('profile.sections.activities') || 'Activities' },
+    { id: 'references', label: t('profile.sections.references') || 'References' },
+    { id: 'hobbies', label: t('profile.sections.hobbies') || 'Hobbies' },
+    { id: 'customSections', label: t('profile.sections.customSections') || 'More' },
   ];
 
   return (
@@ -534,20 +544,113 @@ export default function MasterProfileForm({ initialData }: Props) {
               ))}
             </div>
 
-            <div>
-              <SectionHeading onAdd={() => appendAwd({ title: '' })} addLabel={t('profile.actions.addAward')}>{t('profile.sections.awards')}</SectionHeading>
-              {awdFields.map((field, i) => (
-                <div key={field.id} className={cardCls}>
-                  <RemoveBtn onClick={() => removeAwd(i)} />
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div><label className={lbl}>{t('profile.fields.awardTitle')}</label><input {...register(`awards.${i}.title`)} className={inpBox} /></div>
-                    <div><label className={lbl}>{t('profile.fields.issuer')}</label><input {...register(`awards.${i}.issuer`)} className={inpBox} /></div>
-                    <div><label className={lbl}>{t('profile.fields.date')}</label><input {...register(`awards.${i}.date`)} className={inpBox} /></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          </div>
+        )}
 
+        {/* TAB: AWARDS */}
+        {activeTab === 'awards' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => appendAwd({ title: '' })} addLabel={t('profile.actions.addAward') || 'Add Award'}>{t('profile.sections.awards') || 'Awards'}</SectionHeading>
+            {awdFields.map((field, i) => (
+              <div key={field.id} className={cardCls}>
+                <RemoveBtn onClick={() => removeAwd(i)} />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div><label className={lbl}>{t('profile.fields.awardTitle') || 'Title'}</label><input {...register(`awards.${i}.title`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.issuer') || 'Issuer'}</label><input {...register(`awards.${i}.issuer`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.date') || 'Date'}</label><input {...register(`awards.${i}.date`)} className={inpBox} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* TAB: LANGUAGES */}
+        {activeTab === 'languages' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => appendLang({ language: '' })} addLabel={t('profile.actions.addLanguage') || 'Add Language'}>{t('profile.sections.languages') || 'Languages'}</SectionHeading>
+            {langFields.map((field, i) => (
+              <div key={field.id} className={cardCls}>
+                <RemoveBtn onClick={() => removeLang(i)} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div><label className={lbl}>{t('profile.fields.language') || 'Language'}</label><input {...register(`languages.${i}.language`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.proficiency') || 'Proficiency'}</label><input {...register(`languages.${i}.proficiency`)} className={inpBox} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* TAB: ACTIVITIES */}
+        {activeTab === 'activities' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => appendAct({ organization: '' })} addLabel={t('profile.actions.addActivity') || 'Add Activity'}>{t('profile.sections.activities') || 'Activities'}</SectionHeading>
+            {actFields.map((field, i) => (
+              <div key={field.id} className={cardCls}>
+                <RemoveBtn onClick={() => removeAct(i)} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div><label className={lbl}>{t('profile.fields.organization') || 'Organization'}</label><input {...register(`activities.${i}.organization`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.role') || 'Role'}</label><input {...register(`activities.${i}.role`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.startDate') || 'Start Date'}</label><input {...register(`activities.${i}.startDate`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.endDate') || 'End Date'}</label><input {...register(`activities.${i}.endDate`)} className={inpBox} /></div>
+                  <div className="md:col-span-2"><label className={lbl}>{t('profile.fields.description') || 'Description'}</label><textarea {...register(`activities.${i}.description`)} rows={3} className={`${inpBox} resize-none`} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* TAB: REFERENCES */}
+        {activeTab === 'references' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => appendRef({ name: '' })} addLabel={t('profile.actions.addReference') || 'Add Reference'}>{t('profile.sections.references') || 'References'}</SectionHeading>
+            {refFields.map((field, i) => (
+              <div key={field.id} className={cardCls}>
+                <RemoveBtn onClick={() => removeRef(i)} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div><label className={lbl}>{t('profile.fields.refName') || 'Name'}</label><input {...register(`references.${i}.name`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.position') || 'Position'}</label><input {...register(`references.${i}.position`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.company') || 'Company'}</label><input {...register(`references.${i}.company`)} className={inpBox} /></div>
+                  <div><label className={lbl}>{t('profile.fields.contactInfo') || 'Contact Info'}</label><input {...register(`references.${i}.contactInfo`)} className={inpBox} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* TAB: HOBBIES */}
+        {activeTab === 'hobbies' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => {}} addLabel="">{t('profile.sections.hobbies') || 'Hobbies'}</SectionHeading>
+            <div className={cardCls}>
+              <label className={lbl}>{t('profile.fields.hobbies') || 'Hobbies (comma separated)'}</label>
+              <textarea {...register('hobbies')} rows={3} className={`${inpBox} resize-none`} placeholder="Reading, Traveling, Cooking..." />
+            </div>
+          </div>
+        )}
+
+        {/* TAB: CUSTOM SECTIONS */}
+        {activeTab === 'customSections' && (
+          <div className="space-y-6">
+            <SectionHeading onAdd={() => appendCustom({ title: '', items: [] })} addLabel={t('profile.actions.addCustomSection') || 'Add Section'}>{t('profile.sections.customSections') || 'More / Custom Sections'}</SectionHeading>
+            {customFields.map((field, i) => (
+              <div key={field.id} className={cardCls}>
+                <RemoveBtn onClick={() => removeCustom(i)} />
+                <div className="mb-4">
+                  <label className={lbl}>{t('profile.fields.customSectionTitle') || 'Section Title'}</label>
+                  <input {...register(`customSections.${i}.title`)} className={inpBox} />
+                </div>
+                <div className="border-t border-zinc-200 pt-4 mt-2">
+                  <label className={lbl}>{t('profile.fields.items') || 'Items'}</label>
+                  <Controller 
+                    control={control} 
+                    name={`customSections.${i}.items` as const} 
+                    render={({ field: { onChange, value } }) => (
+                      <PillInput value={(value as string[]) || []} onChange={onChange} />
+                    )} 
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

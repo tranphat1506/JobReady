@@ -53,15 +53,16 @@ export function buildCVPrompt(
       - 'feedback': short advice for the candidate (in ${targetLanguage}).
     - Translate ALL output content (sectionTitles, labels, bullet points, etc.) strictly into ${targetLanguage}.
     - Extract all available sections: certifications, awards, activities, references, hobbies if present.
+    - If there is any content in the Candidate's data that does not fit into the standard sections above (e.g. Publications, Volunteer Work, Custom Skills, Test Scores, etc.), put it into the 'customSections' array. Use a highly professional title for each custom section translated into ${targetLanguage}.
     - For 'skills.category', use extremely short, 1-2 word names (e.g., 'Languages', 'Frameworks', 'Tools') translated into ${targetLanguage}.
     - Evaluate each skill and append a proficiency rank. Use: Beginner, Novice, Competent, Proficient, Expert — translated into ${targetLanguage} (e.g., Vietnamese: "ReactJS (Thành thạo)").
     - Separate pure working experience into 'experience' and standalone projects into 'projects'. Include 'links' array (github/website/demo) for projects if available.
-    - For education, ensure 'description' includes Major, GPA, and Relevant Courses if available.
+    - For education, ensure 'description' is strictly an ARRAY OF STRINGS (e.g. ["Major: AI", "GPA: 2.75", "Relevant Courses: ..."]). NEVER output a single string.
     - Output MUST be ONLY valid JSON matching this exact schema:
     {
       "matchAnalysis": { "matchScore": 0, "isRelevant": true, "missingSkills": ["string"], "feedback": "string" },
       "labels": { "dob": "string", "portfolio": "string", "link": "string", "phone": "string", "email": "string", "location": "string" },
-      "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string", "certifications": "string", "awards": "string", "activities": "string", "references": "string", "hobbies": "string" },
+      "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string", "certifications": "string", "awards": "string", "activities": "string", "references": "string", "hobbies": "string", "customSections": "string" },
       "personal": { "fullName": "string", "jobTitle": "string", "gender": "string", "avatar": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
       "summary": "string",
       "experience": [{ "company": "string", "position": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
@@ -72,7 +73,8 @@ export function buildCVPrompt(
       "awards": [{ "title": "string", "issuer": "string", "date": "string" }],
       "activities": [{ "organization": "string", "role": "string", "startDate": "string", "endDate": "string", "description": ["string"] }],
       "references": [{ "name": "string", "position": "string", "company": "string", "contactInfo": "string" }],
-      "hobbies": ["string"]
+      "hobbies": ["string"],
+      "customSections": [{ "title": "string", "items": ["string"] }]
     }
 
     --- JOB DESCRIPTION ---

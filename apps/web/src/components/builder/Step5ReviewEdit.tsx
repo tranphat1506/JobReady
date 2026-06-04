@@ -261,9 +261,9 @@ export function Step5ReviewEdit({
             
             <button
               onClick={handleSave}
-              disabled={isSaving || !hasChanges}
+              disabled={isSaving || (!hasChanges && status !== 'draft')}
               className={`flex items-center justify-center h-9 px-4 gap-2 rounded-lg font-semibold text-sm transition-opacity ${
-                hasChanges ? 'bg-primary text-white hover:opacity-90 shadow-sm' : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
+                (hasChanges || status === 'draft') ? 'bg-primary text-white hover:opacity-90 shadow-sm' : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
               }`}
             >
               {isSaving && (

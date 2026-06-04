@@ -82,8 +82,10 @@ export interface SectionTitles {
   certifications?: string;
   awards?: string;
   activities?: string;
+  languages?: string;
   references?: string;
   hobbies?: string;
+  customSections?: string;
 }
 
 export interface MatchAnalysis {
@@ -107,6 +109,11 @@ export interface Language {
   proficiency?: string;
 }
 
+export interface CustomSection {
+  title: string;
+  items: string[];
+}
+
 export interface CVSchema {
   matchAnalysis?: MatchAnalysis;
   labels: Labels;
@@ -123,8 +130,10 @@ export interface CVSchema {
   activities?: Activity[];
   references?: Reference[];
   hobbies?: string[];
+  customSections?: CustomSection[];
 }
 
+// Ensure strict alignment checking logic
 export interface RecipientInfo {
   name?: string;
   title?: string;
@@ -228,4 +237,5 @@ export interface MasterProfileData {
   activities?: LinkedActivity[];
   references?: TaggedReference[];
   hobbies?: string;
+  customSections?: CustomSection[];
 }

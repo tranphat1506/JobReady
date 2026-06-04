@@ -243,9 +243,10 @@
       "languages": "Languages",
       "certifications": "Certifications",
       "awards": "Awards",
-      "activities": "Activities",
+      "activities": "Extracurricular Activities",
       "references": "References",
-      "hobbies": "Hobbies"
+      "hobbies": "Hobbies",
+      "customSections": "Custom Sections (More)"
     },
     "fields": {
       "fullName": "Full Name",
@@ -280,7 +281,9 @@
       "awardTitle": "Award Title",
       "organization": "Organization",
       "refName": "Reference Name",
-      "contactInfo": "Contact Info"
+      "contactInfo": "Contact Info",
+      "customSectionTitle": "Section Title (e.g. Sports, Publications...)",
+      "hobbies": "Hobbies (comma separated)"
     },
     "actions": {
       "addExperience": "+ Add Experience",
@@ -292,6 +295,7 @@
       "addAward": "+ Add Award",
       "addActivity": "+ Add Activity",
       "addReference": "+ Add Reference",
+      "addCustomSection": "+ Add Custom Section",
       "remove": "Remove",
       "cropAvatar": "Crop Avatar (4x6)",
       "cancel": "Cancel",
@@ -427,6 +431,8 @@
     "new": "new",
     "jsonViewWarning": "Showing JSON data (Custom UI form not supported for this block yet):",
     "item": "Item",
+    "items": "Items (bullets)",
+    "sectionTitle": "Section Title",
     "institution": "Institution / School",
     "degree": "Degree / Field of Study",
     "startDate": "Start Date",
@@ -499,7 +505,10 @@
     "selectAll": "Select all",
     "selected": "selected",
     "bulkEdit": "Open",
-    "bulkDelete": "Delete all"
+    "bulkDelete": "Delete all",
+    "timeLeftH": "h",
+    "timeLeftM": "m",
+    "timeLeftMin": "mins"
   },
   "credits": {
     "title": "Credits & History",

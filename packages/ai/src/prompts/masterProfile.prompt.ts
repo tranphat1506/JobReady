@@ -73,7 +73,11 @@ export function buildMasterProfilePrompt(rawCV: string): string {
       company?: string,
       contactInfo?: string
     }>,
-    hobbies?: string
+    hobbies?: string,
+    customSections?: Array<{
+      title: string,
+      items: string[]
+    }>
   }
 
   CRITICAL INSTRUCTIONS:
@@ -82,6 +86,7 @@ export function buildMasterProfilePrompt(rawCV: string): string {
   - RELATIONAL DATA MODEL: You must extract ALL skills found in the document into the global 'skills' array. Then, for each 'experience' and 'project', figure out which of those skills were used and list their names exactly in the 'appliedSkills' array of that specific experience/project.
   - GROUPING: If a person had multiple roles/promotions at the SAME company, do NOT create separate experience entries. Create ONE experience entry for the company, and put all the roles into the 'roles' array.
   - For projects: if there are links (GitHub, website, demo), put them in 'links' as an array of { name, url }.
+  - If there is any content in the CV that does not fit into the standard sections above (e.g. Publications, Volunteer Work, Custom Skills, Test Scores, etc.), put it into the 'customSections' array with a clear title.
   - If some information is missing, leave it as an empty string or omit optional fields.
 
   Here is the CV text to parse:

@@ -328,3 +328,78 @@ export const HTMLActivitiesBlock = ({ title, data, activeBlock, onBlockClick }: 
     </EditableBlock>
   );
 };
+
+export const HTMLLanguagesBlock = ({ title, data, activeBlock, onBlockClick }: any) => {
+  if (!data || data.length === 0) return null;
+  return (
+    <EditableBlock id="languages" isActive={activeBlock === 'languages'} onClick={onBlockClick}>
+      <div className={s.sectionTitleContainer}>
+        <div className={s.sectionTitleText}>{title || 'Languages'}</div>
+      </div>
+      <div className="flex flex-col">
+        {data.map((lang: any, i: number) => (
+          <div key={i} className="flex flex-row">
+            <span className="font-bold w-40">{lang.language}</span>
+            {isValid(lang.proficiency) && <span className="flex-1">{lang.proficiency}</span>}
+          </div>
+        ))}
+      </div>
+    </EditableBlock>
+  );
+};
+
+export const HTMLReferencesBlock = ({ title, data, activeBlock, onBlockClick }: any) => {
+  if (!data || data.length === 0) return null;
+  return (
+    <EditableBlock id="references" isActive={activeBlock === 'references'} onClick={onBlockClick}>
+      <div className={s.sectionTitleContainer}>
+        <div className={s.sectionTitleText}>{title || 'References'}</div>
+      </div>
+      <div className="flex flex-wrap">
+        {data.map((ref: any, i: number) => (
+          <div key={i} className="w-[50%] mb-[10pt] pr-[10pt]">
+            <div className="font-bold">{ref.name}</div>
+            {isValid(ref.position) && <div className="italic">{ref.position}</div>}
+            {isValid(ref.company) && <div>{ref.company}</div>}
+            {isValid(ref.contactInfo) && <div>{ref.contactInfo}</div>}
+          </div>
+        ))}
+      </div>
+    </EditableBlock>
+  );
+};
+
+export const HTMLHobbiesBlock = ({ title, data, activeBlock, onBlockClick }: any) => {
+  if (!data || data.length === 0) return null;
+  return (
+    <EditableBlock id="hobbies" isActive={activeBlock === 'hobbies'} onClick={onBlockClick}>
+      <div className={s.sectionTitleContainer}>
+        <div className={s.sectionTitleText}>{title || 'Hobbies'}</div>
+      </div>
+      <div className="text-justify">
+        {data.join(', ')}
+      </div>
+    </EditableBlock>
+  );
+};
+
+export const HTMLCustomSectionsBlock = ({ data, activeBlock, onBlockClick }: any) => {
+  if (!data || data.length === 0) return null;
+  return (
+    <EditableBlock id="customSections" isActive={activeBlock === 'customSections'} onClick={onBlockClick}>
+      {data.map((sec: any, i: number) => (
+        <div key={i} className="mb-5">
+          <div className={s.sectionTitleContainer}>
+            <div className={s.sectionTitleText}>{sec.title || 'Section'}</div>
+          </div>
+          {sec.items && sec.items.map((item: string, j: number) => (
+            <div key={j} className={s.bulletPoint}>
+              <div className={s.bulletDot}>•</div>
+              <div className={s.bulletText}>{item}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </EditableBlock>
+  );
+};

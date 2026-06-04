@@ -9,7 +9,11 @@ import {
   HTMLSkillsBlock,
   HTMLCertificationsBlock,
   HTMLAwardsBlock,
-  HTMLActivitiesBlock
+  HTMLActivitiesBlock,
+  HTMLLanguagesBlock,
+  HTMLReferencesBlock,
+  HTMLHobbiesBlock,
+  HTMLCustomSectionsBlock
 } from './HTMLBlocks';
 
 interface Props {
@@ -20,7 +24,7 @@ interface Props {
 
 export function HTMLHarvardTemplate({ data, activeBlock, onBlockClick }: Props) {
   const t = data.sectionTitles || {} as any;
-  const layout = (data as any).layout || ['summary', 'education', 'experience', 'projects', 'certifications', 'awards', 'activities', 'skills', 'references', 'hobbies'];
+  const layout = (data as any).layout || ['summary', 'education', 'experience', 'projects', 'certifications', 'awards', 'activities', 'languages', 'skills', 'references', 'hobbies', 'customSections'];
 
   return (
     <div className="w-full h-full bg-white text-black font-['Lora',serif] text-[10pt] leading-[1.2] p-12 box-border">
@@ -47,6 +51,14 @@ export function HTMLHarvardTemplate({ data, activeBlock, onBlockClick }: Props) 
             return <HTMLAwardsBlock key={sectionId} title={t.awards} data={data.awards} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
           case 'activities':
             return <HTMLActivitiesBlock key={sectionId} title={t.activities} data={data.activities} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
+          case 'languages':
+            return <HTMLLanguagesBlock key={sectionId} title={t.languages || 'Languages'} data={data.languages} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
+          case 'references':
+            return <HTMLReferencesBlock key={sectionId} title={t.references} data={data.references} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
+          case 'hobbies':
+            return <HTMLHobbiesBlock key={sectionId} title={t.hobbies} data={data.hobbies} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
+          case 'customSections':
+            return <HTMLCustomSectionsBlock key={sectionId} data={data.customSections} activeBlock={activeBlock} onBlockClick={onBlockClick} />;
           default:
             return null;
         }

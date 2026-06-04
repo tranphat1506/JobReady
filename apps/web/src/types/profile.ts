@@ -107,6 +107,13 @@ export const MasterProfileSchema = z.object({
     })
   ).optional(),
   hobbies: z.string().optional(),
+  customSections: z.array(
+    z.object({
+      id: z.string().optional(),
+      title: z.string().optional().or(z.literal('')),
+      items: z.array(z.string()).optional(),
+    })
+  ).optional(),
 });
 
 export type MasterProfileData = z.infer<typeof MasterProfileSchema>;
@@ -132,4 +139,5 @@ export const defaultProfileData: MasterProfileData = {
   activities: [],
   references: [],
   hobbies: '',
+  customSections: [],
 };

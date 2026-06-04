@@ -85,39 +85,40 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
     </div>
   );
 
-  const StringArrayField = ({ label, items, path }: any) => (
-    <div className="mb-3">
-      <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{label}</label>
-      {(items || []).map((item: string, idx: number) => (
-        <div key={idx} className="flex gap-1 mb-1.5">
-          <AutoResizeTextarea
-            className="flex-1 p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-10"
-            value={item || ''}
-            onChange={(e: any) => handleChange([...path, idx.toString()], e.target.value)}
-          />
-          <button
-            onClick={() => {
-              const newItems = [...items];
-              newItems.splice(idx, 1);
-              handleChange(path, newItems);
-            }}
-            className="p-2 border border-zinc-200 hover:bg-red-50 text-red-400 hover:text-red-600 hover:border-red-200 transition-colors"
-          >
-            <Trash2 className="w-3 h-3" />
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={() => {
-          const newItems = [...(items || []), ''];
-          handleChange(path, newItems);
-        }}
-        className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 hover:bg-black hover:text-white hover:border-black transition-colors flex items-center gap-1 mt-1"
-      >
-        <Plus className="w-3 h-3" /> {t('builder.addRow') || 'Thêm dòng'}
-      </button>
-    </div>
-  );
+  const StringArrayField = ({ label, items, path }: any) => {
+    const arrayItems = Array.isArray(items) ? items : (typeof items === 'string' ? [items] : []);
+    
+    return (
+      <div className="mb-3">
+        <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{label}</label>
+        {arrayItems.map((item: string, idx: number) => (
+          <div key={idx} className="flex gap-1 mb-1.5">
+            <AutoResizeTextarea
+              className="flex-1 p-2 text-xs border border-zinc-200 focus:border-black outline-none bg-zinc-50 focus:bg-white transition-colors min-h-10"
+              value={item || ''}
+              onChange={(e: any) => handleChange([...path, idx.toString()], e.target.value)}
+            />
+            <button
+              onClick={() => {
+                const newItems = [...arrayItems];
+                newItems.splice(idx, 1);
+                handleChange(path, newItems);
+              }}
+              className="p-2 border border-zinc-200 hover:bg-red-50 text-red-400 hover:text-red-600 hover:border-red-200 transition-colors"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={() => handleChange(path, [...arrayItems, ''])}
+          className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black flex items-center gap-1 mt-1"
+        >
+          <div className="w-4 h-4 bg-zinc-100 rounded flex items-center justify-center">+</div> {t('builder.add') || 'Thêm'}
+        </button>
+      </div>
+    );
+  };
 
   const LinkArrayField = ({ label, items, path }: any) => (
     <div className="mb-3">
@@ -365,6 +366,13 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                   <InputField label={t('builder.proficiency') || "Mức độ thành thạo"} value={item.proficiency} path={[idx.toString(), 'proficiency']} />
                 </>
               )}
+
+              {activeBlock === 'customSections' && (
+                <>
+                  <InputField label={t('builder.sectionTitle') || "Tiêu đề mục"} value={item.title} path={[idx.toString(), 'title']} />
+                  <StringArrayField label={t('builder.items') || "Nội dung (các dòng)"} items={item.items} path={[idx.toString(), 'items']} />
+                </>
+              )}
             </div>
           ))}
 
@@ -378,7 +386,8 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
                         activeBlock === 'awards' ? { title: '', issuer: '', date: '' } :
                           activeBlock === 'activities' ? { organization: '', role: '', startDate: '', endDate: '', description: [] } :
                             activeBlock === 'references' ? { name: '', position: '', company: '', contactInfo: '' } :
-                              activeBlock === 'languages' ? { language: '', proficiency: '' } : {};
+                              activeBlock === 'languages' ? { language: '', proficiency: '' } : 
+                                activeBlock === 'customSections' ? { title: '', items: [] } : {};
               onChange([...localData, newItem]);
             }}
             className="w-full p-2.5 border border-dashed border-zinc-300 text-zinc-400 font-bold text-[10px] tracking-widest uppercase hover:bg-black hover:border-black hover:text-white transition-colors flex items-center justify-center gap-2"

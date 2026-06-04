@@ -245,7 +245,8 @@
       "awards": "Giải Thưởng",
       "activities": "Hoạt Động Ngoại Khóa",
       "references": "Người Tham Chiếu",
-      "hobbies": "Sở Thích"
+      "hobbies": "Sở Thích",
+      "customSections": "Mục Tùy Chọn (More)"
     },
     "fields": {
       "fullName": "Họ và tên",
@@ -280,7 +281,9 @@
       "awardTitle": "Tên giải thưởng",
       "organization": "Tổ chức",
       "refName": "Họ tên người tham chiếu",
-      "contactInfo": "Thông tin liên hệ"
+      "contactInfo": "Thông tin liên hệ",
+      "customSectionTitle": "Tiêu đề mục (VD: Giải thể thao, Công bố...)",
+      "hobbies": "Sở thích (Cách nhau bởi dấu phẩy)"
     },
     "actions": {
       "addExperience": "+ Thêm kinh nghiệm",
@@ -292,6 +295,7 @@
       "addAward": "+ Thêm giải thưởng",
       "addActivity": "+ Thêm hoạt động",
       "addReference": "+ Thêm người tham chiếu",
+      "addCustomSection": "+ Thêm mục tùy chọn",
       "remove": "Xóa",
       "cropAvatar": "Cắt Ảnh (4x6)",
       "cancel": "Hủy",
@@ -427,6 +431,8 @@
     "new": "mới",
     "jsonViewWarning": "Đang hiển thị dữ liệu JSON (Chưa hỗ trợ Form UI riêng cho khối này):",
     "item": "Mục",
+    "items": "Nội dung (các gạch đầu dòng)",
+    "sectionTitle": "Tiêu đề mục",
     "institution": "Trường / Cơ sở đào tạo",
     "degree": "Ngành học / Bằng cấp",
     "startDate": "Từ tháng/năm",
@@ -499,7 +505,10 @@
     "selectAll": "Chọn tất cả",
     "selected": "đã chọn",
     "bulkEdit": "Mở",
-    "bulkDelete": "Xoá tất cả"
+    "bulkDelete": "Xoá tất cả",
+    "timeLeftH": "g",
+    "timeLeftM": "p",
+    "timeLeftMin": "phút"
   },
   "credits": {
     "title": "Credits & Lịch sử",

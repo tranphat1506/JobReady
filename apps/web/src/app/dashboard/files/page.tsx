@@ -8,14 +8,14 @@ import { getDocuments, renameDocument, deleteDocument, duplicateDocument, SavedD
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
-function getDraftTimeLeft(updatedAt: string): string {
+function getDraftTimeLeft(updatedAt: string, t: (path: string) => string): string {
   const expiresAt = new Date(new Date(updatedAt).getTime() + 24 * 60 * 60 * 1000);
   const diffMs = expiresAt.getTime() - Date.now();
-  if (diffMs <= 0) return '0 phút';
+  if (diffMs <= 0) return `0 ${t('files.timeLeftMin')}`;
   const hours = Math.floor(diffMs / (1000 * 60 * 60));
   const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-  if (hours > 0) return `${hours}g ${minutes}p`;
-  return `${minutes} phút`;
+  if (hours > 0) return `${hours}${t('files.timeLeftH')} ${minutes}${t('files.timeLeftM')}`;
+  return `${minutes} ${t('files.timeLeftMin')}`;
 }
 
 export default function FilesPage() {
@@ -296,7 +296,7 @@ export default function FilesPage() {
                       {isDraft && (
                         <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded text-[10px] font-semibold text-orange-700">
                           <Clock className="w-3 h-3" />
-                          {getDraftTimeLeft(doc.updated_at)}
+                          {getDraftTimeLeft(doc.updated_at, t)}
                         </div>
                       )}
                       {/* Checkbox overlay */}
