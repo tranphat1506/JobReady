@@ -545,7 +545,9 @@
         "generate_both": "Tạo CV & Cover Letter",
         "parse_master_profile": "Trích xuất hồ sơ",
         "generate_cv_api_error": "Lỗi API Tạo CV",
-        "parse_master_profile_api_error": "Lỗi API Trích xuất hồ sơ"
+        "parse_master_profile_api_error": "Lỗi API Trích xuất hồ sơ",
+        "REFUND": "Hoàn tiền",
+        "PENDING_RESERVATION": "Đang xử lý"
       },
       "columns": {
         "task": "Tác vụ",
@@ -554,7 +556,8 @@
         "time": "Thời gian",
         "latency": "Tốc độ",
         "credit": "Credit",
-        "status": "Trạng thái"
+        "status": "Trạng thái",
+        "balance": "Số dư sau GD"
       },
       "all": "Tất cả",
       "filterBy": "Lọc theo:",

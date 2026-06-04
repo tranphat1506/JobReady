@@ -120,14 +120,14 @@ export default function DashboardClient({
           // Fetch the latest documents to set their IDs
           const { data: latestDocs } = await supabase
             .from('resumes')
-            .select('id, type')
+            .select('id, document_type')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
             .limit(2);
             
           if (latestDocs && latestDocs.length > 0) {
-            const cvDoc = latestDocs.find(d => d.type === 'cv');
-            const clDoc = latestDocs.find(d => d.type === 'cover_letter');
+            const cvDoc = latestDocs.find(d => d.document_type === 'cv');
+            const clDoc = latestDocs.find(d => d.document_type === 'cover_letter');
             if (cvDoc) setCvId(cvDoc.id);
             if (clDoc) setClId(clDoc.id);
           }

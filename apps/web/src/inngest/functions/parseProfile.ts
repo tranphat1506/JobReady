@@ -25,10 +25,10 @@ export const parseProfileWorker = inngest.createFunction(
           p_error_message: error.message
         });
       }
-      await supabase.from("activity_logs").insert({
+      await supabase.from("activity_events").insert({
         user_id: (event.data as any).userId,
-        action: `API_ERROR_PARSE_PROFILE_JOB`,
-        new_state: { error_message: error.message },
+        event_name: `API_ERROR_PARSE_PROFILE_JOB`,
+        metadata: { error_message: error.message }
       });
       console.error("[parseProfileWorker] Failed after all retries:", error.message);
     },
@@ -81,23 +81,40 @@ export const parseProfileWorker = inngest.createFunction(
     
     const latency = Date.now() - startTime;
 
-    // Save to DB
-    const { error: upsertError } = await supabase
+    // Save to DB (1-N relationship: find default or create new)
+    let profileId;
+    const { data: existingProfile } = await supabase
       .from('master_profiles')
-      .upsert({ 
-        user_id: userId, 
-        content: result.data,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' });
+      .select('id')
+      .eq('user_id', userId)
+      .eq('is_default', true)
+      .single();
 
-    if (upsertError) {
-      console.error('[AI-Worker] Failed to save master profile:', upsertError);
-      throw upsertError;
+    if (existingProfile) {
+      const { error: updateError } = await supabase
+        .from('master_profiles')
+        .update({ content: result.data, updated_at: new Date().toISOString() })
+        .eq('id', existingProfile.id);
+      if (updateError) throw updateError;
+      profileId = existingProfile.id;
+    } else {
+      const { data: newProfile, error: insertError } = await supabase
+        .from('master_profiles')
+        .insert({ 
+          user_id: userId, 
+          name: 'Default Profile',
+          is_default: true,
+          content: result.data
+        })
+        .select('id')
+        .single();
+      if (insertError) throw insertError;
+      profileId = newProfile.id;
     }
 
     // Finalize Job
     if (logId) {
-      await supabase.rpc('finalize_ai_job', {
+      const { error: finalizeError } = await supabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: true,
         p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
@@ -105,12 +122,16 @@ export const parseProfileWorker = inngest.createFunction(
         p_completion_tokens: result.usage.completionTokens,
         p_latency_ms: latency
       });
+      if (finalizeError) {
+        console.error("[parseProfileWorker] finalize_ai_job error:", finalizeError);
+        throw finalizeError;
+      }
       
       // Log semantic activity
-      await supabase.from('activity_logs').insert({
+      await supabase.from('activity_events').insert({
         user_id: userId,
-        action: `APP_AI_PARSE_PROFILE_SUCCESS`,
-        new_state: { }
+        event_name: `APP_AI_PARSE_PROFILE_SUCCESS`,
+        metadata: { profile_id: profileId }
       });
     }
 

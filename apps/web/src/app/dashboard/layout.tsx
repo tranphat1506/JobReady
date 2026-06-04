@@ -20,17 +20,18 @@ export default async function DashboardLayout({
 
   const { data: dbUser } = await supabase
     .from('users')
-    .select('full_name, email, preferences, credits')
+    .select('full_name, email, preferences, credits_balance')
     .eq('id', user.id)
     .single()
 
   const limits = await getUserLimits()
 
   const userData = {
+    id: user.id,
     email: user.email,
     full_name: dbUser?.full_name || user.user_metadata?.full_name || 'Người dùng',
     plan: 'FREE',
-    credits: dbUser?.credits || 0,
+    credits: dbUser?.credits_balance || 0,
     limits
   }
 

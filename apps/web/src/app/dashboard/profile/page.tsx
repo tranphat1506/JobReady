@@ -30,7 +30,9 @@ export default async function ProfilePage() {
       .from('master_profiles')
       .insert({
         user_id: user.id,
-        content: defaultProfileData,
+        name: 'Default Profile',
+        is_default: true,
+        content: defaultProfileData
       })
       .select()
       .single();
@@ -39,7 +41,7 @@ export default async function ProfilePage() {
   }
 
   // Fallback to default if content is empty or malformed
-  const initialData = profile?.content || defaultProfileData;
+  const initialData = profile?.content as any || defaultProfileData;
 
   return (
     <div className="w-full">

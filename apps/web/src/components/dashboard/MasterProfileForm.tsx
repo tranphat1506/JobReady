@@ -227,18 +227,13 @@ export default function MasterProfileForm({ initialData }: Props) {
       const channel = supabase.channel('master-profile-parse');
       channel.on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'master_profiles', filter: `user_id=eq.${user.id}` },
-        async () => {
+        { event: '*', schema: 'public', table: 'master_profiles', filter: `user_id=eq.${user.id}` },
+        async (payload) => {
           supabase.removeChannel(channel);
-          // Fetch the fresh parsed data from DB
-          const { data: profileRecord } = await supabase
-            .from('master_profiles')
-            .select('content')
-            .eq('user_id', user.id)
-            .single();
-
-          if (profileRecord?.content) {
-            reset(profileRecord.content);
+          // DB has content, set it
+          const profileContent = (payload.new as any).content;
+          if (profileContent) {
+            reset(profileContent as any);
           }
           setImportText('');
           setImportFile(null);

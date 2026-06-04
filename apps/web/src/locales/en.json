@@ -545,7 +545,9 @@
         "generate_both": "Generate CV & Cover Letter",
         "parse_master_profile": "Extract Profile",
         "generate_cv_api_error": "API Error: Generate CV",
-        "parse_master_profile_api_error": "API Error: Extract Profile"
+        "parse_master_profile_api_error": "API Error: Extract Profile",
+        "REFUND": "Refund",
+        "PENDING_RESERVATION": "Pending"
       },
       "columns": {
         "task": "Task",
@@ -554,7 +556,8 @@
         "time": "Time",
         "latency": "Speed",
         "credit": "Credit",
-        "status": "Status"
+        "status": "Status",
+        "balance": "Balance"
       },
       "all": "All",
       "filterBy": "Filter by:",

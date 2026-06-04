@@ -1,128 +1,133 @@
-# Supabase Database Schema
+# Supabase Schema V2 (Enterprise Architecture)
 
-This document outlines the database schema configured in Supabase migrations.
+This document outlines the V2 database architecture for the CV-Generator SaaS platform. The architecture has been completely redesigned to support robust enterprise features, including a true credit ledger system, atomic AI logging, and segregated audit logs.
 
-## Tables
+## 1. Core Users & Subscriptions
 
-### 1. `users`
-Extends the native `auth.users` table to store application-specific user data.
-- `id` (UUID, Primary Key) - References `auth.users(id)`
-- `email` (TEXT, Unique, Not Null)
+### `users`
+Core user profile synced with Supabase Auth.
+- `id` (UUID, PK) - Maps to `auth.users`
+- `email` (TEXT, UNIQUE)
 - `full_name` (TEXT)
-- `preferences` (JSONB) - Default: `{}`
-- `unlocked_cv_slots` (INTEGER) - Default: `1`
-- `unlocked_cl_slots` (INTEGER) - Default: `1`
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+- `avatar_url` (TEXT)
+- `credits_balance` (INTEGER) - Current disposable balance
+- `preferences` (JSONB) - UI/UX settings
+- `created_at`, `updated_at`, `deleted_at`
 
-### 2. `packages`
-Subscription packages available in the system.
-- `id` (UUID, Primary Key)
-- `name` (TEXT, Not Null)
-- `price` (DECIMAL)
-- `credits_per_month` (INTEGER)
-- `is_active` (BOOLEAN) - Default: `true`
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+### `packages`
+Subscription tiers offered by the platform.
+- `id` (UUID, PK)
+- `name` (TEXT) - e.g., 'Pro', 'Premium'
+- `code` (TEXT, UNIQUE) - e.g., 'PRO'
+- `price` (NUMERIC)
+- `currency` (TEXT) - Default 'VND'
+- `monthly_credits` (INTEGER)
+- `cv_slots`, `cl_slots`, `ats_analysis_limit`, `translation_limit` (INTEGER)
+- `is_active` (BOOLEAN)
 
-### 3. `subscriptions`
-Tracks user subscriptions.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `package_id` (UUID, Not Null) - References `packages(id)`
-- `stripe_customer_id` (TEXT)
-- `stripe_subscription_id` (TEXT)
-- `status` (TEXT, Not Null) - Default: `ACTIVE`
-- `start_date` (TIMESTAMPTZ)
-- `end_date` (TIMESTAMPTZ, Not Null)
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+### `subscriptions`
+User's active/past subscriptions.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `package_id` (UUID, FK -> packages)
+- `provider`, `provider_customer_id`, `provider_subscription_id` (TEXT) - Stripe/VNPay metadata
+- `status` (TEXT) - ACTIVE, EXPIRED, etc.
+- `current_period_start`, `current_period_end` (TIMESTAMPTZ)
 
-### 4. `master_profiles`
-Stores the user's master profile JSON data.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `content` (JSONB) - Default: `{}` (Note: The JSON schema follows CVSchema)
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+### `payments`
+Transactions mapping to a subscription invoice or direct credit purchase.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `amount` (NUMERIC)
+- `currency` (TEXT)
+- `status` (TEXT) - SUCCESS, FAILED
+- `metadata` (JSONB)
 
-### 5. `job_descriptions`
-Stores job descriptions that users input for tailoring their CVs.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `company` (TEXT)
-- `title` (TEXT)
-- `content` (TEXT, Not Null)
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+## 2. Ledger System
 
-### 6. `resumes`
-Metadata for generated tailored CVs/Cover Letters.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `profile_id` (UUID, Not Null) - References `master_profiles(id)`
-- `job_id` (UUID) - References `job_descriptions(id)` (Nullable)
-- `type` (TEXT, Not Null)
-- `name` (TEXT) - Name of the document (Nullable)
-- `status` (TEXT) - e.g. 'draft', 'completed' (Default: 'draft')
-- `template_id` (TEXT) - Selected layout template (Nullable)
-- `metadata` (JSONB) - Additional info like language, tone (Default: '{}')
-- `created_at` (TIMESTAMPTZ)
-- `updated_at` (TIMESTAMPTZ)
+### `credit_transactions` (The Ledger)
+A strict double-entry ledger ensuring 100% traceability for credit movements.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `amount` (INTEGER) - Positive (credits added), Negative (credits spent)
+- `balance_after` (INTEGER) - Snapshot of balance after transaction
+- `transaction_type` (TEXT) - PENDING_RESERVATION, PURCHASE, REFUND, CV_GENERATION
+- `reference_type` (TEXT) - e.g., 'ai_generation_logs'
+- `reference_id` (UUID) - ID of the generating entity
 
-### 7. `resume_versions`
-Stores the actual generated JSON content for a resume.
-- `id` (UUID, Primary Key)
-- `resume_id` (UUID, Not Null) - References `resumes(id)`
-- `content` (JSONB, Not Null)
-- `score` (INTEGER) - General match score (Nullable)
-- `match_analysis` (JSONB) - Detailed match object (isRelevant, missingSkills, feedback)
-- `created_at` (TIMESTAMPTZ)
+## 3. App Data (Profiles & Documents)
 
-### 8. `ai_generation_logs`
-Tracks AI usage for analytics and billing.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `action_type` (TEXT, Not Null)
-- `model_used` (TEXT, Not Null)
-- `tokens_prompt` (INTEGER, Not Null)
-- `tokens_completion` (INTEGER, Not Null)
-- `credits_used` (INTEGER, Not Null)
-- `created_at` (TIMESTAMPTZ)
+### `master_profiles`
+Now a **1-to-N** relationship. Users can have multiple base profiles.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `name` (TEXT) - e.g., "Software Engineer Profile"
+- `is_default` (BOOLEAN) - Primary profile used for rapid generation
+- `content` (JSONB) - Extracted profile data
 
-### 9. `activity_logs`
-System activity audit log. Automatically populated via Postgres Triggers to track data changes, and via App layer for network/user context.
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Not Null) - References `users(id)`
-- `action` (TEXT, Not Null) - Formats: `CLIENT_UPDATE_USERS`, `SYSTEM_UPDATE_USERS`, `APP_INITIATE_CHECKOUT`
-- `previous_state` (JSONB)
-- `new_state` (JSONB)
-- `ip_address` (TEXT)
-- `created_at` (TIMESTAMPTZ)
+### `job_descriptions`
+Saved Job Descriptions for tailoring.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `company`, `title`, `location` (TEXT)
+- `content` (TEXT)
 
-### 10. `webhook_events`
-- `id` (UUID, Primary Key)
-- `provider` (TEXT, Not Null)
-- `event_id` (TEXT, Unique, Not Null)
-- `payload` (JSONB, Not Null)
-- `status` (TEXT, Not Null) - Default: `PENDING`
-- `processed_at` (TIMESTAMPTZ)
-- `created_at` (TIMESTAMPTZ)
+### `resumes`
+The generated CVs and Cover Letters.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `profile_id` (UUID, FK -> master_profiles)
+- `job_id` (UUID, FK -> job_descriptions)
+- `document_type` (TEXT) - 'CV' or 'COVER_LETTER'
+- `name` (TEXT)
+- `status` (TEXT) - draft, completed
 
-## Views
+### `resume_versions`
+History of edits for a specific resume.
+- `id` (UUID, PK)
+- `resume_id` (UUID, FK -> resumes)
+- `version_number` (INTEGER)
+- `content` (JSONB)
+- `score` (INTEGER)
+- `match_analysis` (JSONB)
 
-### 1. `user_service_usages_view`
-Secure view built on top of `ai_generation_logs` to hide internal AI metrics (model, tokens, latency) from the client application.
-- Exposes: `id`, `user_id`, `action_type`, `status`, `error_message`, `created_at`, `credits_used`
-- Security: Uses `security_invoker=on` to inherit table RLS.
+## 4. Segregated Logging
 
-## Security (Row Level Security & Triggers)
+### `ai_generation_logs`
+Tracks every AI interaction for billing and analytics.
+- `id` (UUID, PK)
+- `user_id` (UUID, FK -> users)
+- `action_type` (TEXT) - e.g., 'generate_cv'
+- `prompt_tokens`, `completion_tokens`, `total_tokens` (INTEGER)
+- `latency_ms` (INTEGER)
+- `credits_used` (INTEGER)
+- `status` (TEXT) - pending, success, failed
 
-### Row Level Security
-RLS is enabled on all tables by default. Policies restrict access so that users can only read/write their own records based on `user_id`.
+### `audit_logs`
+Database mutation tracking (Inserts, Updates, Deletes).
+- `id` (UUID, PK)
+- `entity_type` (TEXT) - e.g., 'master_profile'
+- `action` (TEXT) - e.g., 'UPDATE'
+- `old_data`, `new_data` (JSONB)
 
-### Audit Triggers
-Postgres Triggers are configured on critical tables to automatically record state changes into `activity_logs`:
-- **`users`**: Logs changes to `credits`, `unlocked_cv_slots`, `unlocked_cl_slots`.
-- **`subscriptions`**: Logs any insert or update (e.g., plan upgrades, cancellations).
-- **`master_profiles` & `resume_versions`**: Logs modifications to the `content` JSON to allow full document rollback.
+### `activity_events`
+Semantic Application events.
+- `id` (UUID, PK)
+- `event_name` (TEXT) - e.g., 'APP_AI_GENERATE_CV_SUCCESS'
+- `metadata` (JSONB)
+
+### `security_logs`
+Authentication and security events.
+- `id` (UUID, PK)
+- `event_type` (TEXT) - e.g., 'LOGIN_SUCCESS'
+- `ip_address`, `user_agent` (TEXT)
+
+## 5. Security & Flow
+
+### Row Level Security (RLS)
+All tables now implement strict `auth.uid() = user_id` policies for `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.
+
+### Atomic RPCs
+Credits are never manipulated directly from the API. The system uses secure RPCs:
+1. `reserve_ai_credits`: Deducts balance upfront, creates a pending `ai_generation_logs` entry, and writes a `PENDING_RESERVATION` to the `credit_transactions` ledger.
+2. `finalize_ai_job`: Called by the Inngest worker. If successful, updates the log and ledger. If failed, refunds the user's `credits_balance` and writes a `REFUND` transaction to the ledger.

@@ -27,10 +27,10 @@ export const generateCvWorker = inngest.createFunction(
           p_error_message: error.message
         });
       }
-      await supabase.from("activity_logs").insert({
+      await supabase.from("activity_events").insert({
         user_id: (event.data as any).userId,
-        action: `API_ERROR_GENERATE_CV_JOB`,
-        new_state: { error_message: error.message },
+        event_name: `API_ERROR_GENERATE_CV_JOB`,
+        metadata: { error_message: error.message },
       });
       console.error("[generateCvWorker] Failed after all retries:", error.message);
     },
@@ -68,21 +68,26 @@ export const generateCvWorker = inngest.createFunction(
     let actualRawCV = rawCV;
     let actualProfileId = profileId;
 
-    if (sourceType === "master_profile" || !actualProfileId) {
-      const { data: profileRecord, error: profileError } = await supabase
+    if (profileId) {
+      const { data: profileData, error: profileError } = await supabase
         .from("master_profiles")
-        .select("id, content")
-        .eq("user_id", userId)
+        .select("content")
+        .eq("id", profileId)
         .single();
-
-      if (!profileError && profileRecord) {
-        if (sourceType === "master_profile") {
-          masterProfile = profileRecord.content;
-          if (!profileRecord.content) {
-            throw new Error("Master Profile is empty.");
-          }
-        }
-        actualProfileId = profileRecord.id;
+      if (!profileError && profileData) {
+        masterProfile = profileData.content as object;
+      }
+    } else {
+      // Fallback to default profile if no profileId provided
+      const { data: profileData, error: profileError } = await supabase
+        .from("master_profiles")
+        .select("content")
+        .eq("user_id", userId)
+        .eq("is_default", true)
+        .single();
+        
+      if (!profileError && profileData) {
+        masterProfile = profileData.content as object;
       } else if (sourceType === "master_profile") {
         throw new Error("Master Profile not found.");
       }
@@ -230,20 +235,24 @@ export const generateCvWorker = inngest.createFunction(
 
     // 4. Finalize Job (Marks as success and logs tokens)
     if (logId) {
-      await supabase.rpc("finalize_ai_job", {
+      const { error: finalizeError } = await supabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: true,
-        p_model_used: process.env.GEMINI_MODEL || "gemini-flash-latest",
-        p_prompt_tokens: totalUsage.promptTokens,
-        p_completion_tokens: totalUsage.completionTokens,
-        p_latency_ms: latency,
+        p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+        p_prompt_tokens: totalUsage.promptTokens || 0,
+        p_completion_tokens: totalUsage.completionTokens || 0,
+        p_latency_ms: latency
       });
+      if (finalizeError) {
+        console.error("[generateCvWorker] finalize_ai_job error:", finalizeError);
+        throw finalizeError;
+      }
       
       // Log semantic activity
-      await supabase.from('activity_logs').insert({
+      await supabase.from('activity_events').insert({
         user_id: userId,
-        action: `APP_AI_GENERATE_CV_SUCCESS`,
-        new_state: { cv_id: finalCvId, cl_id: finalClId }
+        event_name: `APP_AI_GENERATE_CV_SUCCESS`,
+        metadata: { cv_id: finalCvId, cl_id: finalClId }
       });
     }
 

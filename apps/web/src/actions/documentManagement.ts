@@ -7,9 +7,9 @@ import { withAuditLog } from '@/utils/auditLogger';
 export interface SavedDocument {
   id: string;
   user_id: string;
-  profile_id: string;
+  profile_id: string | null;
   job_id: string | null;
-  type: 'cv' | 'cover_letter';
+  document_type: 'cv' | 'cover_letter';
   name: string;
   status?: string;
   template_id?: string;
@@ -49,6 +49,7 @@ export async function checkMasterProfileEmpty(): Promise<boolean> {
     .from('master_profiles')
     .select('content')
     .eq('user_id', user.id)
+    .eq('is_default', true)
     .single();
 
   if (error || !data || !data.content) return true;
@@ -62,27 +63,39 @@ export async function getUserLimits() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('unlocked_cv_slots, unlocked_cl_slots')
-    .eq('id', user.id)
+  // V2: Limits come from active subscription package
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('packages(cv_slots, cl_slots)')
+    .eq('user_id', user.id)
+    .eq('status', 'ACTIVE')
     .single();
 
-  const cvLimit = userData?.unlocked_cv_slots ?? 1;
-  const clLimit = userData?.unlocked_cl_slots ?? 1;
+  let cvLimit = 1;
+  let clLimit = 1;
+
+  if (subData && (subData as any).packages) {
+    cvLimit = (subData as any).packages.cv_slots;
+    clLimit = (subData as any).packages.cl_slots;
+  } else {
+    // Fallback to FREE package
+    const { data: freePkg } = await supabase.from('packages').select('cv_slots, cl_slots').eq('code', 'FREE').single();
+    cvLimit = freePkg?.cv_slots || 1;
+    clLimit = freePkg?.cl_slots || 1;
+  }
 
   const { data: cvData } = await supabase
     .from('resumes')
     .select('id')
     .eq('user_id', user.id)
-    .eq('type', 'cv')
+    .eq('document_type', 'cv')
     .eq('status', 'completed');
 
   const { data: clData } = await supabase
     .from('resumes')
     .select('id')
     .eq('user_id', user.id)
-    .eq('type', 'cover_letter')
+    .eq('document_type', 'cover_letter')
     .eq('status', 'completed');
 
   return {
@@ -94,15 +107,25 @@ export async function getUserLimits() {
 }
 
 export async function checkUserLimit(supabase: any, userId: string, type: 'cv' | 'cover_letter') {
-  // 1. Get user limits from users table
-  const { data: userData } = await supabase
-    .from('users')
-    .select('unlocked_cv_slots, unlocked_cl_slots')
-    .eq('id', userId)
+  // V2: Get limits from subscriptions -> packages
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('packages(cv_slots, cl_slots)')
+    .eq('user_id', userId)
+    .eq('status', 'ACTIVE')
     .single();
 
-  const cvLimit = userData?.unlocked_cv_slots ?? 1;
-  const clLimit = userData?.unlocked_cl_slots ?? 1;
+  let cvLimit = 1;
+  let clLimit = 1;
+
+  if (subData && (subData as any).packages) {
+    cvLimit = (subData as any).packages.cv_slots;
+    clLimit = (subData as any).packages.cl_slots;
+  } else {
+    const { data: freePkg } = await supabase.from('packages').select('cv_slots, cl_slots').eq('code', 'FREE').single();
+    cvLimit = freePkg?.cv_slots || 1;
+    clLimit = freePkg?.cl_slots || 1;
+  }
   const limit = type === 'cv' ? cvLimit : clLimit;
 
   // 2. Count current completed documents
@@ -110,7 +133,7 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     .from('resumes')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
-    .eq('type', type)
+    .eq('document_type', type)
     .eq('status', 'completed');
 
   if ((count || 0) >= limit) {
@@ -141,6 +164,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
       .from('master_profiles')
       .select('id')
       .eq('user_id', user.id)
+      .eq('is_default', true)
       .limit(1);
     
     if (profiles && profiles.length > 0) {
@@ -148,7 +172,12 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
     } else {
       const { data: newProfile, error: createError } = await supabase
         .from('master_profiles')
-        .insert({ user_id: user.id, content: {} })
+        .insert({ 
+          user_id: user.id, 
+          name: 'Default Profile',
+          is_default: true,
+          content: {} 
+        })
         .select('id')
         .single();
         
@@ -186,7 +215,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
         .from('resumes')
         .select('id')
         .eq('user_id', user.id)
-        .eq('type', type)
+        .eq('document_type', type)
         .eq('status', 'draft');
 
       if (existingDrafts && existingDrafts.length > 0) {
@@ -204,11 +233,10 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
         user_id: user.id,
         profile_id: actualProfileId,
         job_id: jobId || null,
-        type: type,
+        document_type: type,
         name: name,
         template_id: templateId || null,
-        status: status,
-        metadata: { template_version: '1.0' }
+        status: status
       })
       .select('id')
       .single();
@@ -225,11 +253,22 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
     score = matchAnalysis.matchScore || null;
   }
 
+  // Determine version number
+  let nextVersion = 1;
+  if (idToUpdate) {
+    const { count: vCount } = await supabase
+      .from('resume_versions')
+      .select('*', { count: 'exact', head: true })
+      .eq('resume_id', resumeId);
+    if (vCount !== null) nextVersion = vCount + 1;
+  }
+
   // Insert new version into resume_versions
   const { error: versionError } = await supabase
     .from('resume_versions')
     .insert({
       resume_id: resumeId,
+      version_number: nextVersion,
       content: data as any,
       score: score,
       match_analysis: matchAnalysis
@@ -285,7 +324,7 @@ export async function getDocuments(): Promise<SavedDocument[]> {
 
   if (error) throw error;
   
-  return data || [];
+  return (data || []) as SavedDocument[];
 }
 
 export async function renameDocument(id: string, newName: string) {
@@ -346,7 +385,7 @@ export async function duplicateDocument(id: string) {
   if (vError || !versions || versions.length === 0) throw new Error('Cannot fetch content');
 
   if (resume.status === 'completed') {
-    await checkUserLimit(supabase, user.id, resume.type);
+    await checkUserLimit(supabase, user.id, resume.document_type as any);
   }
 
   const { data: newResume, error: insertError } = await supabase
@@ -355,11 +394,10 @@ export async function duplicateDocument(id: string) {
       user_id: user.id,
       profile_id: resume.profile_id,
       job_id: resume.job_id,
-      type: resume.type,
+      document_type: resume.document_type,
       name: `${resume.name} (Copy)`,
       status: resume.status,
-      template_id: resume.template_id,
-      metadata: resume.metadata
+      template_id: resume.template_id
     })
     .select('id')
     .single();
@@ -370,6 +408,7 @@ export async function duplicateDocument(id: string) {
     .from('resume_versions')
     .insert({
       resume_id: newResume.id,
+      version_number: 1,
       content: versions[0].content,
       score: versions[0].score,
       match_analysis: versions[0].match_analysis

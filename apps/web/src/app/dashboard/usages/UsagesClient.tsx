@@ -32,11 +32,12 @@ export function UsagesClient({
       filterOptions: [
         { label: t('credits.history.action.generate_cv') || 'Tạo CV', value: 'generate_cv' },
         { label: t('credits.history.action.generate_cover_letter') || 'Tạo Cover Letter', value: 'generate_cover_letter' },
-        { label: t('credits.history.action.generate_both') || 'Tạo CV & Cover Letter', value: 'generate_both' },
-        { label: t('credits.history.action.parse_master_profile') || 'Trích xuất hồ sơ', value: 'parse_master_profile' }
+        { label: t('credits.history.action.parse_master_profile') || 'Trích xuất hồ sơ', value: 'parse_master_profile' },
+        { label: t('credits.history.action.REFUND') || 'Hoàn tiền', value: 'REFUND' },
+        { label: t('credits.history.action.PENDING_RESERVATION') || 'Đang xử lý', value: 'PENDING_RESERVATION' }
       ],
       render: (log) => (
-        <span className="font-semibold text-zinc-800">{getActionLabel(log.action_type)}</span>
+        <span className="font-semibold text-zinc-800">{getActionLabel(log.transaction_type)}</span>
       )
     },
     {
@@ -55,40 +56,24 @@ export function UsagesClient({
       label: t('credits.history.columns.credit') || 'Credit',
       align: 'right',
       sortable: true,
-      sortQueryKey: 'credits_used',
+      sortQueryKey: 'amount',
       render: (log) => {
-        const isError = log.status === 'failed';
-        const credits = log.credits_used || 0;
-
-        if (isError) {
-          return <span className="font-medium text-zinc-400">0</span>;
-        }
-
+        const amount = log.amount || 0;
+        const isPositive = amount > 0;
+        
         return (
-          <span className="font-semibold text-rose-600">
-            -{credits}
+          <span className={`font-semibold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}>
+            {isPositive ? '+' : ''}{amount}
           </span>
         );
       }
     },
     {
-      key: 'status',
-      label: t('credits.history.columns.status') || 'Trạng thái',
-      align: 'center',
-      filterQueryKey: 'status',
-      filterable: true,
-      filterOptions: [
-        { label: t('credits.history.status.success') || 'Thành công', value: 'success' },
-        { label: t('credits.history.status.failed') || 'Thất bại', value: 'failed' }
-      ],
+      key: 'balance',
+      label: t('credits.history.columns.balance') || 'Số dư sau GD',
+      align: 'right',
       render: (log) => (
-        <div className="flex justify-center" title={log.error_message || ''}>
-          {log.status === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
-          ) : (
-            <XCircle className="w-5 h-5 text-red-500" />
-          )}
-        </div>
+        <span className="font-bold text-zinc-900">{log.balance_after}</span>
       )
     }
   ];

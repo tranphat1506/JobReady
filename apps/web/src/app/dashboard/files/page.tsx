@@ -86,11 +86,11 @@ export default function FilesPage() {
   const handleDuplicate = async (doc: SavedDocument) => {
     // Check limits before duplicating
     if (limits) {
-      if (doc.type === 'cv' && limits.cvUsed >= limits.cvLimit) {
+      if (doc.document_type === 'cv' && limits.cvUsed >= limits.cvLimit) {
         toast.error(`Bạn đã đạt giới hạn tối đa ${limits.cvLimit} CV. Vui lòng mua thêm Slot để tiếp tục.`);
         return;
       }
-      if (doc.type === 'cover_letter' && limits.clUsed >= limits.clLimit) {
+      if (doc.document_type === 'cover_letter' && limits.clUsed >= limits.clLimit) {
         toast.error(`Bạn đã đạt giới hạn tối đa ${limits.clLimit} Cover Letter. Vui lòng mua thêm Slot để tiếp tục.`);
         return;
       }
@@ -181,7 +181,7 @@ export default function FilesPage() {
   };
 
   const filteredDocs = documents.filter(doc => {
-    if (filter !== 'all' && doc.type !== filter) return false;
+    if (filter !== 'all' && doc.document_type !== filter) return false;
     if (search && !doc.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -331,7 +331,7 @@ export default function FilesPage() {
                       </div>
                       {/* Type badge */}
                       <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-zinc-600 uppercase tracking-widest border border-zinc-200 shadow-sm flex items-center gap-1">
-                        {doc.type === 'cv' ? 'CV' : 'Cover Letter'}
+                        {doc.document_type === 'cv' ? 'CV' : 'Cover Letter'}
                         {doc.template_id && <span className="text-zinc-400 border-l border-zinc-300 pl-1 ml-0.5">{doc.template_id}</span>}
                       </div>
                       {/* ATS Score */}

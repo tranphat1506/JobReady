@@ -3,7 +3,7 @@ import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
 import { ErrorCodes } from '@/lib/errors/errorCodes';
 import { createClient } from '@/utils/supabase/server';
-import { getCachedSystemSettings } from '@/actions/settings';
+import { AI_PRICING } from '@/constants/pricing';
 import { PDFParse } from 'pdf-parse';
 import { inngest } from '@/inngest/client';
 
@@ -42,16 +42,31 @@ export const POST = withErrorHandler(async (req: Request) => {
   let rawCV: string | undefined;
 
   if (sourceType === 'master_profile') {
-    const { data: profileRecord, error: profileError } = await supabase
-      .from('master_profiles')
-      .select('content')
-      .eq('user_id', userId)
-      .single();
-
-    if (profileError || !profileRecord || !profileRecord.content) {
+    let masterProfileData: object | undefined;
+    if (profileId) {
+      const { data: profileRecord, error: profileError } = await supabase
+        .from('master_profiles')
+        .select('content')
+        .eq('id', profileId)
+        .single();
+      if (!profileError && profileRecord) {
+        masterProfileData = profileRecord.content as object;
+      }
+    } else {
+      const { data: profileRecord, error: profileError } = await supabase
+        .from('master_profiles')
+        .select('content')
+        .eq('user_id', user.id)
+        .eq('is_default', true)
+        .single();
+      if (!profileError && profileRecord) {
+        masterProfileData = profileRecord.content as object;
+      }
+    }
+    if (!masterProfileData) {
       throw new ValidationError('Master Profile not found. Please create one first in the Profile section.');
     }
-    masterProfile = profileRecord.content;
+    masterProfile = masterProfileData;
   } else if (sourceType === 'upload') {
     const file = formData.get('file') as File | null;
     if (!file) {
@@ -67,13 +82,10 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   // --- RESERVE CREDITS UPFRONT ---
-  const settingsMap = await getCachedSystemSettings();
-  const getPrice = (k: string) => (settingsMap[k] ? Number(settingsMap[k]) : 0);
-  
   let totalCost = 0;
-  if (goal === "cv") totalCost = getPrice("price_generate_cv");
-  else if (goal === "cover_letter") totalCost = getPrice("price_generate_cl");
-  else totalCost = getPrice("price_generate_cv") + getPrice("price_generate_cl");
+  if (goal === "cv") totalCost = AI_PRICING.generate_cv;
+  else if (goal === "cover_letter") totalCost = AI_PRICING.generate_cl;
+  else totalCost = AI_PRICING.generate_cv + AI_PRICING.generate_cl;
 
   // Call the atomic reservation RPC
   const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {

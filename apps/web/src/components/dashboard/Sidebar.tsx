@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Wand2, Activity } from 'lucide-react'
@@ -9,7 +9,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { AppIcon } from '@/components/ui/AppIcon'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
-export function Sidebar({ user }: { user: { email?: string, full_name?: string, plan?: string, credits?: number, limits?: any } }) {
+export function Sidebar({ user }: { user: { id?: string, email?: string, full_name?: string, plan?: string, credits?: number, limits?: any } }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -18,6 +18,28 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [realtimeCredits, setRealtimeCredits] = useState(user.credits || 0)
+
+  // Subcribe to real-time credit updates
+  useEffect(() => {
+    setRealtimeCredits(user.credits || 0); // Sync initial
+
+    if (!user?.id) return;
+    const channel = supabase.channel('user-credits-sidebar');
+    channel.on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'users', filter: `id=eq.${user.id}` },
+      (payload) => {
+        if (payload.new && typeof payload.new.credits_balance === 'number') {
+          setRealtimeCredits(payload.new.credits_balance);
+        }
+      }
+    ).subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user.credits, user.id, supabase]);
 
   const navigation = [
     { name: t('dashboard.nav.createCv') || 'Tạo CV', href: '/dashboard', icon: FileCode2 },
@@ -167,7 +189,7 @@ export function Sidebar({ user }: { user: { email?: string, full_name?: string, 
                 <div className="bg-primary/20 p-1 rounded-md">
                   <CreditCard className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <span className="text-xs font-bold text-zinc-900">{user.credits || 0} Credits</span>
+                <span className="text-xs font-bold text-zinc-900">{realtimeCredits} Credits</span>
               </div>
               <div className="flex items-center justify-between text-[10px] font-semibold text-zinc-600">
                 <span>CV: {user.limits.cvUsed}/{user.limits.cvLimit}</span>

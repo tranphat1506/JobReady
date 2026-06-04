@@ -295,7 +295,7 @@ BEGIN
   -- 2. Create pending AI log
   INSERT INTO ai_generation_logs (
     user_id, action_type, status, credits_used,
-    tokens_prompt, tokens_completion, total_tokens, latency_ms, model_used
+    prompt_tokens, completion_tokens, total_tokens, latency_ms, model_used
   ) VALUES (
     p_user_id, p_action_type, 'pending', p_cost,
     0, 0, 0, 0, 'unknown'
@@ -342,8 +342,8 @@ BEGIN
   IF p_success THEN
     UPDATE ai_generation_logs
     SET status = 'success',
-        tokens_prompt = p_prompt_tokens,
-        tokens_completion = p_completion_tokens,
+        prompt_tokens = p_prompt_tokens,
+        completion_tokens = p_completion_tokens,
         total_tokens = p_prompt_tokens + p_completion_tokens,
         latency_ms = p_latency_ms,
         model_used = p_model_used
@@ -364,8 +364,8 @@ BEGIN
     UPDATE ai_generation_logs
     SET status = 'failed',
         error_message = p_error_message,
-        tokens_prompt = p_prompt_tokens,
-        tokens_completion = p_completion_tokens,
+        prompt_tokens = p_prompt_tokens,
+        completion_tokens = p_completion_tokens,
         latency_ms = p_latency_ms,
         model_used = p_model_used
     WHERE id = p_log_id;
@@ -438,3 +438,7 @@ USING (resume_id IN (SELECT id FROM resumes WHERE user_id = auth.uid()));
 
 -- Clean up utility function
 DROP FUNCTION create_user_policies(TEXT);
+
+-- 12. Enable Realtime for necessary tables
+-- (Required for the frontend to listen to AI background task completions)
+ALTER PUBLICATION supabase_realtime ADD TABLE master_profiles;

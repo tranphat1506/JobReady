@@ -4,7 +4,7 @@ import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
 import { ErrorCodes } from '@/lib/errors/errorCodes';
 import { createClient } from '@/utils/supabase/server';
-import { getCachedSystemSettings } from '@/actions/settings';
+import { AI_PRICING } from '@/constants/pricing';
 import { inngest } from '@/inngest/client';
 
 export const POST = withErrorHandler(async (req: Request) => {
@@ -36,8 +36,7 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   // --- RESERVE CREDITS UPFRONT ---
-  const settingsMap = await getCachedSystemSettings();
-  const totalCost = settingsMap.price_parse_profile ? Number(settingsMap.price_parse_profile) : 0;
+  const totalCost = AI_PRICING.parse_profile;
 
   const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
     p_user_id: userId,

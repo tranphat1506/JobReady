@@ -32,13 +32,32 @@ export async function logUserActivity({
     const forwardedFor = headersList.get('x-forwarded-for');
     const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : headersList.get('x-real-ip') || '';
 
-    const { error } = await adminSupabase.from('activity_logs').insert({
+    // Route to appropriate table based on action type
+    let tableName = 'activity_events';
+    let payload: any = {
       user_id: userId,
-      action: `APP_${action.toUpperCase()}`,
-      previous_state: previousState,
-      new_state: newState,
-      ip_address: ipAddress,
-    });
+      created_at: new Date().toISOString()
+    };
+
+    if (action.startsWith('SECURITY_') || action.startsWith('LOGIN_') || action.startsWith('AUTH_')) {
+      tableName = 'security_logs';
+      payload.event_type = action;
+      payload.ip_address = ipAddress;
+      payload.user_agent = headersList.get('user-agent') || '';
+      payload.metadata = { previousState, newState };
+    } else if (action.startsWith('DB_') || action.startsWith('APP_UPDATE') || action.startsWith('APP_DELETE')) {
+      tableName = 'audit_logs';
+      payload.entity_type = action.split('_')[1] || 'UNKNOWN';
+      payload.action = action;
+      payload.old_data = previousState;
+      payload.new_data = newState;
+    } else {
+      tableName = 'activity_events';
+      payload.event_name = action;
+      payload.metadata = { previousState, newState, ipAddress };
+    }
+
+    const { error } = await adminSupabase.from(tableName).insert(payload);
 
     if (error) {
       console.error('[AuditLogger] Failed to insert activity log:', error);
