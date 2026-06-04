@@ -63,14 +63,28 @@ export const POST = withErrorHandler(async (req: Request) => {
   const settingsMap = await getCachedSystemSettings();
   const totalCost = settingsMap.price_parse_profile ? Number(settingsMap.price_parse_profile) : 0;
 
-  const { data: userData, error: userError } = await supabase
+  let { data: userData, error: userError } = await supabase
     .from('users')
     .select('credits')
     .eq('id', userId)
     .single();
 
-  if (userError || !userData) {
-    throw new ApiError('Không thể lấy thông tin credits của người dùng', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  if (userError && userError.code === 'PGRST116') {
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert({ id: userId, email: user.email, credits: 10 })
+      .select('credits')
+      .single();
+    
+    if (insertError) {
+      console.error('[parse-profile] Insert new user error:', insertError);
+      throw new ApiError('Không thể khởi tạo thông tin tài khoản: ' + insertError.message, 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+    }
+    userData = newUser;
+    userError = null;
+  } else if (userError || !userData) {
+    console.error('[parse-profile] Fetch user error:', userError);
+    throw new ApiError('Không thể lấy thông tin credits của người dùng. ' + (userError?.message || ''), 500, ErrorCodes.INTERNAL_SERVER_ERROR);
   }
 
   if (userData.credits < totalCost) {

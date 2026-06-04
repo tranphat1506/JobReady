@@ -109,14 +109,29 @@ export const POST = withErrorHandler(async (req: Request) => {
   else if (goal === 'cover_letter') totalCost = getPrice('price_generate_cl');
   else totalCost = getPrice('price_generate_cv') + getPrice('price_generate_cl');
 
-  const { data: userData, error: userError } = await supabase
+  let { data: userData, error: userError } = await supabase
     .from('users')
     .select('credits')
     .eq('id', userId)
     .single();
 
-  if (userError || !userData) {
-    throw new ApiError('Không thể lấy thông tin credits của người dùng', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  if (userError && userError.code === 'PGRST116') {
+    // Row not found, create user with default credits
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert({ id: userId, email: user.email, credits: 10 })
+      .select('credits')
+      .single();
+    
+    if (insertError) {
+      console.error('[generate-cv] Insert new user error:', insertError);
+      throw new ApiError('Không thể khởi tạo thông tin tài khoản: ' + insertError.message, 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+    }
+    userData = newUser;
+    userError = null;
+  } else if (userError || !userData) {
+    console.error('[generate-cv] Fetch user error:', userError);
+    throw new ApiError('Không thể lấy thông tin credits của người dùng. ' + (userError?.message || ''), 500, ErrorCodes.INTERNAL_SERVER_ERROR);
   }
 
   if (userData.credits < totalCost) {
