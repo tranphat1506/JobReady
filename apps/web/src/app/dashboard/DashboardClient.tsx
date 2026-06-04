@@ -117,16 +117,20 @@ export default function DashboardClient({
           toast.success(t('builder.step4Title') || 'Đã tạo tài liệu nháp thành công!');
           setCurrentStep(4);
           
-          // Optionally fetch the latest CV ID to set it
-          const { data: latestCv } = await supabase
+          // Fetch the latest documents to set their IDs
+          const { data: latestDocs } = await supabase
             .from('resumes')
-            .select('id')
+            .select('id, type')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
+            .limit(2);
             
-          if (latestCv) setCvId(latestCv.id);
+          if (latestDocs && latestDocs.length > 0) {
+            const cvDoc = latestDocs.find(d => d.type === 'cv');
+            const clDoc = latestDocs.find(d => d.type === 'cover_letter');
+            if (cvDoc) setCvId(cvDoc.id);
+            if (clDoc) setClId(clDoc.id);
+          }
         }
       ).subscribe();
 
@@ -239,10 +243,15 @@ export default function DashboardClient({
                   // The API already saved the drafts, so we can just navigate.
                   if (cvId && clId) {
                     // Bulk operation (CV + Cover Letter)
+                    let isBlocked = false;
                     const cvWin = window.open(`/dashboard/edit/${cvId}`, '_blank');
+                    if (!cvWin) isBlocked = true;
+                    
                     const clWin = window.open(`/dashboard/edit/${clId}`, '_blank');
-                    if (!cvWin || !clWin) {
-                      toast.error('Trình duyệt đã chặn Tab mới. Bạn có thể mở lại tài liệu ở danh sách bên dưới!', { duration: 5000 });
+                    if (!clWin) isBlocked = true;
+                    
+                    if (isBlocked) {
+                      toast.error('Trình duyệt đã chặn mở nhiều Tab cùng lúc. Vui lòng cấp quyền Pop-up cho trang web!', { duration: 5000 });
                     }
                     handleReset();
                     router.push('/dashboard/files');
