@@ -9,8 +9,8 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 export const getCachedSystemSettings = unstable_cache(
   async () => {
     // Use a cookie-less client for cache to avoid Next.js dynamic errors
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     const supabase = createSupabaseClient(supabaseUrl, supabaseKey);
     
     const { data: settingsData, error } = await supabase.from('system_settings').select('key, value');
