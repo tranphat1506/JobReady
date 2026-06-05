@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { ErrorCodes } from '@/lib/constants/errors';
 import { getCachedSystemSettings } from './settings';
 import { revalidatePath } from 'next/cache';
 import { withAuditLog } from '@/utils/auditLogger';
@@ -10,7 +11,7 @@ export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    throw new Error('Unauthorized');
+    throw new Error(ErrorCodes.UNAUTHORIZED);
   }
 
   // Fetch prices from settings
@@ -30,11 +31,10 @@ export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
 
   if (error) {
     console.error('Failed to buy slot:', error);
-    // Standardize error message for user
     if (error.message.includes('Insufficient credits')) {
-      throw new Error('Bạn không đủ Credit để mua thêm Slot này.');
+      throw new Error(ErrorCodes.INSUFFICIENT_CREDITS);
     }
-    throw new Error('Giao dịch thất bại. Vui lòng thử lại sau.');
+    throw new Error(ErrorCodes.TRANSACTION_FAILED);
   }
 
   // Revalidate the dashboard paths so the limits update immediately

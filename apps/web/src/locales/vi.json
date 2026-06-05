@@ -323,7 +323,21 @@
   "error": {
     "system": {
       "internal": "Đã xảy ra lỗi không xác định trên hệ thống.",
-      "bad_request": "Dữ liệu yêu cầu không hợp lệ."
+      "bad_request": "Dữ liệu yêu cầu không hợp lệ.",
+      "insufficient_credits": "Bạn không đủ Credit để thực hiện chức năng này.",
+      "dispatch_failed": "Lỗi hệ thống khi khởi tạo tác vụ ngầm. Tiền đã được hoàn lại."
+    },
+    "validation": {
+      "missing_job_description": "Vui lòng nhập Mô tả công việc (Job Description).",
+      "master_profile_not_found": "Không tìm thấy Master Profile. Vui lòng tạo hồ sơ tại mục Hồ Sơ trước.",
+      "missing_pdf_file": "Vui lòng tải lên file PDF.",
+      "invalid_source_type": "Nguồn dữ liệu không hợp lệ.",
+      "no_file_or_text": "Vui lòng cung cấp file hoặc văn bản."
+    },
+    "action": {
+      "limit_reached": "Bạn đã đạt giới hạn lưu trữ tối đa. Vui lòng mua thêm Slot bằng Credit để tiếp tục.",
+      "transaction_failed": "Giao dịch thất bại. Vui lòng thử lại sau.",
+      "cannot_fetch_document": "Không thể tải dữ liệu tài liệu này."
     },
     "api": {
       "gemini": {
@@ -547,6 +561,10 @@
       },
       "columns": {
         "task": "Tác vụ",
+        "model": "Mô hình AI",
+        "tokens": "Tokens",
+        "time": "Thời gian",
+        "latency": "Tốc độ",
         "credit": "Credit",
         "status": "Trạng thái",
         "balance": "Số dư sau GD"

@@ -123,11 +123,11 @@ export function UsagesClient({
 
       {/* Transaction Details Modal */}
       {selectedLog && (
-        <TransactionTimelineModal 
-          selectedLog={selectedLog} 
-          onClose={() => setSelectedLog(null)} 
-          getActionLabel={getActionLabel} 
-          t={t} 
+        <TransactionTimelineModal
+          selectedLog={selectedLog}
+          onClose={() => setSelectedLog(null)}
+          getActionLabel={getActionLabel}
+          t={t}
         />
       )}
     </>
@@ -148,7 +148,7 @@ function TransactionTimelineModal({ selectedLog, onClose, getActionLabel, t }: a
         .select('*')
         .eq('reference_id', selectedLog.id)
         .order('created_at', { ascending: true });
-      
+
       setTimeline(data || []);
       setIsLoading(false);
     }
@@ -163,10 +163,9 @@ function TransactionTimelineModal({ selectedLog, onClose, getActionLabel, t }: a
         <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50 shrink-0">
           <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
             {t('credits.history.modal.title') || 'Chi tiết giao dịch'}
-            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-              selectedLog.status === 'success' ? 'bg-emerald-100 text-emerald-700' : 
-              selectedLog.status === 'failed' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
-            }`}>
+            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${selectedLog.status === 'success' ? 'bg-emerald-100 text-emerald-700' :
+                selectedLog.status === 'failed' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+              }`}>
               {getActionLabel(selectedLog.action_type)}
             </span>
           </h3>
@@ -201,7 +200,7 @@ function TransactionTimelineModal({ selectedLog, onClose, getActionLabel, t }: a
             ) : timeline.length === 0 ? (
               <div className="text-sm text-zinc-500">Không có giao dịch kế toán nào.</div>
             ) : (
-              <div className="space-y-3 relative before:absolute before:inset-y-0 before:left-[11px] before:w-[2px] before:bg-zinc-100">
+              <div className="space-y-3 relative before:absolute before:inset-y-0 before:left-2.75 before:w-0.5 before:bg-zinc-100">
                 {timeline.map((tx, idx) => (
                   <div key={tx.id} className="relative flex gap-3">
                     <div className="w-6 h-6 rounded-full shrink-0 flex items-center justify-center bg-white border-2 border-zinc-200 z-10 text-[10px]">

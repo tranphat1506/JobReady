@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { ErrorCodes } from '@/lib/constants/errors';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
 import { withAuditLog } from '@/utils/auditLogger';
 
@@ -23,7 +24,7 @@ export async function saveJobDescription(content: string, title: string = 'Untit
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  if (authError || !user) throw new Error('Unauthorized');
+  if (authError || !user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   const { data, error } = await supabase
     .from('job_descriptions')
@@ -61,7 +62,7 @@ export async function checkMasterProfileEmpty(): Promise<boolean> {
 export async function getUserLimits() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   // V2: Limits come from active subscription package
   const { data: subData } = await supabase
@@ -136,8 +137,8 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     .eq('document_type', type)
     .eq('status', 'completed');
 
-  if ((count || 0) >= limit) {
-    throw new Error(`Bạn đã đạt giới hạn lưu trữ tối đa ${limit} tài liệu ${type.toUpperCase()}. Vui lòng mua thêm Slot bằng Credit để tiếp tục.`);
+  if (count !== null && count >= limit) {
+    throw new Error(ErrorCodes.LIMIT_REACHED);
   }
 }
 
@@ -155,7 +156,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    throw new Error('Unauthorized');
+    throw new Error(ErrorCodes.UNAUTHORIZED);
   }
 
   let actualProfileId = profileId;
@@ -282,7 +283,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
 export async function getResumeById(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   const { data, error } = await supabase
     .from('resumes')
@@ -310,7 +311,7 @@ export async function getDocuments(): Promise<SavedDocument[]> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
@@ -330,7 +331,7 @@ export async function getDocuments(): Promise<SavedDocument[]> {
 export async function renameDocument(id: string, newName: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   const { error } = await supabase
     .from('resumes')
@@ -345,7 +346,7 @@ export async function renameDocument(id: string, newName: string) {
 export async function deleteDocument(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   await supabase
     .from('resume_versions')
@@ -365,7 +366,7 @@ export async function deleteDocument(id: string) {
 export async function duplicateDocument(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
   const { data: resume, error: fetchError } = await supabase
     .from('resumes')
@@ -373,7 +374,7 @@ export async function duplicateDocument(id: string) {
     .eq('id', id)
     .single();
 
-  if (fetchError || !resume) throw new Error('Cannot fetch document');
+  if (fetchError || !resume) throw new Error(ErrorCodes.CANNOT_FETCH_DOCUMENT);
 
   const { data: versions, error: vError } = await supabase
     .from('resume_versions')
@@ -382,7 +383,7 @@ export async function duplicateDocument(id: string) {
     .order('created_at', { ascending: false })
     .limit(1);
 
-  if (vError || !versions || versions.length === 0) throw new Error('Cannot fetch content');
+  if (vError || !versions || versions.length === 0) throw new Error(ErrorCodes.CANNOT_FETCH_DOCUMENT);
 
   if (resume.status === 'completed') {
     await checkUserLimit(supabase, user.id, resume.document_type as any);

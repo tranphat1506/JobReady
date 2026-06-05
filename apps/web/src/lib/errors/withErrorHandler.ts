@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AppError } from './AppError';
-import { ErrorCodes, ErrorCode } from './errorCodes';
+import { ErrorCodes, ErrorCode } from '../constants/errors';
 
 export function withErrorHandler(handler: (req: Request, ...args: any[]) => Promise<NextResponse>) {
   return async (req: Request, ...args: any[]) => {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { PDFParse } from 'pdf-parse';
 import { withErrorHandler } from '@/lib/errors/withErrorHandler';
 import { ApiError, ValidationError, AuthError } from '@/lib/errors/AppError';
-import { ErrorCodes } from '@/lib/errors/errorCodes';
+import { ErrorCodes } from '@/lib/constants/errors';
 import { createClient } from '@/utils/supabase/server';
 import { AI_PRICING } from '@/constants/pricing';
 import { inngest } from '@/inngest/client';
@@ -17,74 +17,74 @@ export const POST = withErrorHandler(async (req: Request) => {
   
   const userId = user.id;
 
-  const formData = await req.formData();
-  const file = formData.get('file') as File | null;
-  const text = formData.get('text') as string | null;
+  try {
+    const formData = await req.formData();
+    const file = formData.get('file') as File | null;
+    const isDefault = formData.get('is_default') === 'true';
+    const profileName = formData.get('name') as string || 'Hồ sơ mặc định';
 
-  let contentToParse = '';
+    if (!file) {
+      throw new ValidationError('No PDF file provided', ErrorCodes.MISSING_PDF_FILE);
+    }
 
-  if (file) {
+    // 1. Read the PDF file
     const buffer = Buffer.from(await file.arrayBuffer());
     const parser = new PDFParse({ data: buffer });
     const pdfData = await parser.getText();
-    contentToParse = pdfData.text;
+    const rawCV = pdfData.text;
     await parser.destroy();
-  } else if (text) {
-    contentToParse = text;
-  } else {
-    throw new ValidationError('No file or text provided');
-  }
 
-  // --- RESERVE CREDITS UPFRONT ---
-  const totalCost = AI_PRICING.parse_profile;
-
-  const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
-    p_user_id: userId,
-    p_cost: totalCost,
-    p_action_type: 'parse_master_profile',
-    p_metadata: { source: file ? file.name : 'text_input' }
-  });
-
-  if (reserveError) {
-    if (reserveError.message.includes('Insufficient credits')) {
-      throw new ValidationError('Bạn không đủ Credit để thực hiện chức năng này.');
-    }
-    throw new ApiError('Failed to reserve credits', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
-  }
-
-  // --- DISPATCH INNGEST EVENT ---
-  try {
-    await inngest.send({
-      name: 'profile/parse',
-      data: {
-        userId,
-        contentToParse,
-        logId
-      },
+    // 2. Reserve Credits Upfront
+    const totalCost = AI_PRICING.parse_profile;
+    const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
+      p_user_id: userId,
+      p_cost: totalCost,
+      p_action_type: 'parse_master_profile',
+      p_metadata: { source_type: 'upload', target_language: 'auto' }
     });
-  } catch (error: any) {
-    console.error("[parse-profile] API Dispatch Error:", error);
-    // If dispatching to worker fails, refund the user immediately using Admin client!
-    const { createClient: createSupabaseAdmin } = require("@supabase/supabase-js");
-    const adminSupabase = createSupabaseAdmin(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-      { auth: { persistSession: false } }
-    );
 
-    const { error: refundError } = await adminSupabase.rpc('finalize_ai_job', {
-      p_log_id: logId,
-      p_success: false,
-      p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`
-    });
-    
-    if (refundError) {
-      console.error("[parse-profile] Failed to process refund:", refundError);
-    } else {
-      console.log(`[parse-profile] Successfully processed refund for logId: ${logId}`);
+    if (reserveError) {
+      if (reserveError.message.includes('Insufficient credits')) {
+        throw new ValidationError('Bạn không đủ Credit để thực hiện chức năng này.', ErrorCodes.INSUFFICIENT_CREDITS);
+      }
+      throw new ApiError('Failed to reserve credits', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
     }
-    
-    throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.DISPATCH_FAILED);
+
+    // 3. Dispatch Background Job
+    try {
+      await inngest.send({
+        name: 'profile/parse',
+        data: {
+          userId,
+          rawCV,
+          isDefault,
+          profileName,
+          logId
+        },
+      });
+    } catch (error: any) {
+      console.error("[parse-profile] API Dispatch Error:", error);
+      
+      const { createClient: createSupabaseAdmin } = require("@supabase/supabase-js");
+      const adminSupabase = createSupabaseAdmin(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+        { auth: { persistSession: false } }
+      );
+
+      await adminSupabase.rpc('finalize_ai_job', {
+        p_log_id: logId,
+        p_success: false,
+        p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`
+      });
+
+      throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.DISPATCH_FAILED);
+    }
+  } catch (error) {
+    const { AppLogger } = require('@/lib/logger');
+    const { ActivityEvent } = require('@/lib/constants/events');
+    await AppLogger.trackActivity(userId, ActivityEvent.PROFILE_PARSED_FAILED);
+    throw error;
   }
 
   return NextResponse.json(

@@ -323,7 +323,21 @@
   "error": {
     "system": {
       "internal": "An unexpected error occurred.",
-      "bad_request": "Invalid request data."
+      "bad_request": "Invalid request data.",
+      "insufficient_credits": "You do not have enough Credits to perform this action.",
+      "dispatch_failed": "System error while initializing background task. Credits have been refunded."
+    },
+    "validation": {
+      "missing_job_description": "Please enter a Job Description.",
+      "master_profile_not_found": "Master Profile not found. Please create one in the Profile section first.",
+      "missing_pdf_file": "Please upload a PDF file.",
+      "invalid_source_type": "Invalid data source type.",
+      "no_file_or_text": "Please provide a file or text content."
+    },
+    "action": {
+      "limit_reached": "You have reached the maximum storage limit. Please purchase more Slots with Credits to continue.",
+      "transaction_failed": "Transaction failed. Please try again later.",
+      "cannot_fetch_document": "Cannot fetch document data."
     },
     "api": {
       "gemini": {

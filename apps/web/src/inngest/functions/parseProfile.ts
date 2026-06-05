@@ -2,7 +2,7 @@ import { inngest } from "../client";
 
 import { AIParser } from "@cv-generator/ai";
 import { getCachedSystemSettings } from "@/actions/settings";
-import { ErrorCodes } from "@/lib/errors/errorCodes";
+import { ErrorCodes } from "@/lib/constants/errors";
 import { AppLogger } from "@/lib/logger";
 import { ActivityEvent } from "@/lib/constants/events";
 import fs from "fs";
@@ -37,8 +37,7 @@ export const parseProfileWorker = inngest.createFunction(
       }
       await AppLogger.trackActivity(
         (event.data as any).userId,
-        ActivityEvent.PROFILE_PARSED_FAILED,
-        { error_message: error.message }
+        ActivityEvent.PROFILE_PARSED_FAILED
       );
       console.error("[parseProfileWorker] Failed after all retries:", error.message);
     },
