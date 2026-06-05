@@ -25,12 +25,12 @@ interface DashboardClientProps {
   clId?: string;
 }
 
-export default function DashboardClient({ 
+export default function DashboardClient({
   hasMasterProfile,
   cvTemplate: initialCvTemplate,
   clTemplate: initialClTemplate,
   cvId: initialCvId,
-  clId: initialClId 
+  clId: initialClId
 }: DashboardClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -87,7 +87,7 @@ export default function DashboardClient({
       }
 
       // 202 Accepted - Inngest is processing
-      
+
       // We start listening to Supabase Realtime for when ai_generation_logs receives a new entry for this user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -95,7 +95,7 @@ export default function DashboardClient({
       // Generate a unique channel name for this request to avoid "already subscribed" errors
       const channelName = `ai-generation-completion-${Date.now()}`;
       const channel = supabase.channel(channelName);
-      
+
       // We listen for 'UPDATE' because the new reservation logic inserts the 'pending' row upfront,
       // and the Inngest background job UPDATES it to 'success' or 'failed'.
       channel.on(
@@ -104,18 +104,18 @@ export default function DashboardClient({
         async (payload) => {
           // Ignore updates that are just setting it to pending
           if (payload.new.status === 'pending') return;
-          
+
           // AI generation finished! 
           setIsLoading(false);
           supabase.removeChannel(channel);
-          
+
           if (payload.new.status === 'failed') {
             toast.error(payload.new.error_message || t('builder.backgroundError'));
             return; // Stay on Step 3
           }
-          
+
           setCurrentStep(4);
-          
+
           // Fetch the latest documents to set their IDs
           const { data: latestDocs } = await supabase
             .from('resumes')
@@ -123,7 +123,7 @@ export default function DashboardClient({
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
             .limit(2);
-            
+
           if (latestDocs && latestDocs.length > 0) {
             const cvDoc = latestDocs.find(d => d.document_type === 'cv');
             const clDoc = latestDocs.find(d => d.document_type === 'cover_letter');
@@ -152,10 +152,7 @@ export default function DashboardClient({
   const showCL = state.goal === 'cover_letter' || state.goal === 'both';
 
   return (
-    <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0 font-sans">
-
-
-
+    <div className="pb-20 px-4 xl:px-0 font-sans">
       <div className="mb-8 border-b border-zinc-200 pb-5 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">
@@ -231,10 +228,10 @@ export default function DashboardClient({
                     let isBlocked = false;
                     const cvWin = window.open(`/dashboard/edit/${cvId}`, '_blank');
                     if (!cvWin) isBlocked = true;
-                    
+
                     const clWin = window.open(`/dashboard/edit/${clId}`, '_blank');
                     if (!clWin) isBlocked = true;
-                    
+
                     if (isBlocked) {
                       toast.error(t('files.popupBlocked'), { duration: 5000 });
                     }

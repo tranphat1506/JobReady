@@ -14,7 +14,7 @@ export default async function DevAuditPage({ searchParams }: { searchParams: any
   if (!user) redirect('/login');
 
   const params = await Promise.resolve(searchParams);
-  
+
   const PAGE_SIZE = 20;
   const page = parseInt(params?.page || '1', 10) || 1;
   const sortBy = params?.sortBy || 'created_at';
@@ -27,7 +27,7 @@ export default async function DevAuditPage({ searchParams }: { searchParams: any
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
-  
+
   let logsQuery = adminSupabase
     .from('audit_logs')
     .select('*', { count: 'exact' })
@@ -37,8 +37,8 @@ export default async function DevAuditPage({ searchParams }: { searchParams: any
   const { data: logs, count: logCount } = await logsQuery;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20">
-      <AuditClient 
+    <div className="space-y-8 pb-20">
+      <AuditClient
         logs={logs || []}
         logCount={logCount || 0}
         logPage={page}

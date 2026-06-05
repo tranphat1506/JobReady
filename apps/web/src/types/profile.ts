@@ -61,7 +61,7 @@ export const MasterProfileSchema = z.object({
       degree: z.string().optional().or(z.literal('')),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-      description: z.string().optional(),
+      description: z.array(z.string()).optional(),
     })
   ).optional(),
   languages: z.array(

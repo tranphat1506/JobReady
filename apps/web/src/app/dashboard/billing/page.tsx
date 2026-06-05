@@ -48,8 +48,8 @@ export default async function BillingPage({
   }));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20">
-      <BillingClient 
+    <div className="space-y-8 pb-20">
+      <BillingClient
         subscriptions={subscriptions}
         payCount={payCount || 0}
         payPage={payPage}

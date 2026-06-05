@@ -192,6 +192,33 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
     setImageToCrop(null);
   };
 
+  const handleSkillsPaste = (
+    e: React.ClipboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const text = e.clipboardData.getData('text');
+
+    if (!text.includes(',')) return;
+
+    e.preventDefault();
+
+    const skills = text
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    // cập nhật ô hiện tại
+    e.currentTarget.value = skills[0];
+    e.currentTarget.dispatchEvent(
+      new Event('input', { bubbles: true })
+    );
+
+    // append các skill còn lại
+    appendSkill(
+      skills.slice(1).map(name => ({ name }))
+    );
+  };
+
   // AI Import
   const [importText, setImportText] = useState('');
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -319,7 +346,7 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
   ];
 
   return (
-    <div className="font-sans flex flex-col h-full max-w-5xl">
+    <div className="font-sans flex flex-col h-full">
 
       {/* Header & Horizontal Tabs */}
       <div className="mb-6">
@@ -459,7 +486,7 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
               <div className="flex flex-wrap gap-2">
                 {skillFields.map((field, i) => (
                   <div key={field.id} className="flex items-center bg-zinc-50 border border-zinc-300 rounded-lg pr-1">
-                    <input {...register(`skills.${i}.name`)} className="px-3 py-2 bg-transparent text-sm font-medium text-zinc-800 outline-none w-32 md:w-auto rounded-l-lg focus:ring-2 focus:ring-primary/20 transition-all" placeholder="..." />
+                    <input {...register(`skills.${i}.name`)} onPaste={(e) => handleSkillsPaste(e, i)} className="px-3 py-2 bg-transparent text-sm font-medium text-zinc-800 outline-none w-32 md:w-auto rounded-l-lg focus:ring-2 focus:ring-primary/20 transition-all" placeholder="..." />
                     <button type="button" onClick={() => removeSkill(i)} className="text-zinc-400 hover:text-red-500 p-2"><X size={14} /></button>
                   </div>
                 ))}
@@ -528,13 +555,13 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
                   <div><label className={lbl}>{t('profile.fields.endDate')}</label><input {...register(`education.${i}.endDate`)} className={inpBox} /></div>
                   <div className="md:col-span-2">
                     <label className={lbl}>{t('profile.fields.description')}</label>
-                    <Controller 
-                      control={control} 
-                      name={`education.${i}.description` as const} 
+                    <Controller
+                      control={control}
+                      name={`education.${i}.description` as const}
                       render={({ field: { onChange, value } }) => (
-                        <textarea 
-                          rows={2} 
-                          className={`${inpBox} resize-none`} 
+                        <textarea
+                          rows={2}
+                          className={`${inpBox} resize-none`}
                           value={Array.isArray(value) ? value.join('\n') : (value || '')}
                           onChange={e => onChange(e.target.value.split('\n'))}
                         />
@@ -641,7 +668,7 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
         {/* TAB: HOBBIES */}
         {activeTab === 'hobbies' && (
           <div className="space-y-6">
-            <SectionHeading onAdd={() => {}} addLabel="">{t('profile.sections.hobbies') || 'Hobbies'}</SectionHeading>
+            <SectionHeading onAdd={() => { }} addLabel="">{t('profile.sections.hobbies') || 'Hobbies'}</SectionHeading>
             <div className={cardCls}>
               <label className={lbl}>{t('profile.fields.hobbies') || 'Hobbies (comma separated)'}</label>
               <textarea {...register('hobbies')} rows={3} className={`${inpBox} resize-none`} placeholder="Reading, Traveling, Cooking..." />
@@ -662,12 +689,12 @@ export default function MasterProfileForm({ initialData, profileId }: Props) {
                 </div>
                 <div className="border-t border-zinc-200 pt-4 mt-2">
                   <label className={lbl}>{t('profile.fields.items') || 'Items'}</label>
-                  <Controller 
-                    control={control} 
-                    name={`customSections.${i}.items` as const} 
+                  <Controller
+                    control={control}
+                    name={`customSections.${i}.items` as const}
                     render={({ field: { onChange, value } }) => (
                       <PillInput value={(value as string[]) || []} onChange={onChange} />
-                    )} 
+                    )}
                   />
                 </div>
               </div>

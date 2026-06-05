@@ -39,7 +39,7 @@ export default async function UsagesPage({ searchParams }: { searchParams: any }
   const { data: logs, count: logCount } = await logsQuery;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20">
+    <div className="space-y-8 pb-20">
 
       <UsagesClient
         logs={logs || []}

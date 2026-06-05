@@ -38,8 +38,8 @@ export default async function CreditsPage({ searchParams }: { searchParams: any 
   const { data: transactions, count } = await txQuery;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20">
-      <CreditsClient 
+    <div className="space-y-8 pb-20">
+      <CreditsClient
         transactions={transactions || []}
         txCount={count || 0}
         txPage={page}
