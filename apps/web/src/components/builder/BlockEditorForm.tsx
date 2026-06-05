@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Plus, Trash2, Camera, X } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { createClient } from '@/utils/supabase/client';
@@ -36,19 +36,27 @@ interface BlockEditorFormProps {
   sectionTitle?: string;
   onTitleChange?: (newTitle: string) => void;
   docType?: 'cv' | 'cover_letter';
+  onAvatarUpload?: (url: string) => void;
 }
 
-export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onTitleChange, docType }: BlockEditorFormProps) {
+export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onTitleChange, docType, onAvatarUpload }: BlockEditorFormProps) {
   const { t } = useTranslation();
   const supabase = createClient();
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   // Use local state to handle fast typing, then debounce or flush to parent on blur/save
   const [localData, setLocalData] = useState<any>(data);
+  const localDataRef = useRef<any>(data);
 
   useEffect(() => {
     setLocalData(data);
+    localDataRef.current = data;
   }, [activeBlock, data]);
+
+  // Keep ref in sync whenever localData changes
+  useEffect(() => {
+    localDataRef.current = localData;
+  }, [localData]);
 
   const handleChange = (path: string[], value: any) => {
     let newData = Array.isArray(localData) ? [...localData] : (typeof localData === 'object' && localData !== null ? { ...localData } : localData);
@@ -188,7 +196,7 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
 
   // -- SPECIFIC RENDERERS --
 
-  const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploadingAvatar(true);
@@ -200,14 +208,22 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
       const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file, { upsert: true });
       if (uploadError) throw uploadError;
       const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-      handleChange(['avatar'], urlData.publicUrl);
+      // Update local preview immediately
+      const updated = { ...localDataRef.current, avatar: urlData.publicUrl };
+      setLocalData(updated);
+      // Notify parent directly via dedicated callback (bypasses activeBlock check)
+      if (onAvatarUpload) {
+        onAvatarUpload(urlData.publicUrl);
+      } else {
+        onChange(updated);
+      }
     } catch (err) {
       console.error('Avatar upload failed:', err);
     } finally {
       setIsUploadingAvatar(false);
       e.target.value = '';
     }
-  }, [supabase]);
+  };
 
   if (activeBlock === 'personal') {
     const avatarUrl = localData?.avatar;

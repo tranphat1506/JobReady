@@ -55,16 +55,16 @@ export function Step5ReviewEdit({
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [status, setStatus] = useState<string>(initialStatus);
-  
+
   // Version History State
   const [showVersions, setShowVersions] = useState<boolean>(false);
   const [versions, setVersions] = useState<any[]>([]);
   const [isLoadingVersions, setIsLoadingVersions] = useState<boolean>(false);
-  
+
   // Upgrade Modal State
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeDocType, setUpgradeDocType] = useState<'cv' | 'cover_letter' | null>(null);
-  
+
   // Document Names
   const [cvName, setCvName] = useState<string>(
     result?.cv ? (result.cv as any).personal?.fullName ? `CV - ${(result.cv as any).personal.fullName}${(result.cv as any).personal.jobTitle ? ` - ${(result.cv as any).personal.jobTitle}` : ''}` : 'Untitled CV' : ''
@@ -185,22 +185,31 @@ export function Step5ReviewEdit({
   const handleSave = async () => {
     try {
       setIsSaving(true);
+      let newCvId = cvId;
+      let newClId = clId;
+
       if (showCV && result?.cv) {
-        await saveDocument(result.cv, 'cv', cvName, undefined, undefined, cvTemplate, 'completed', cvId || undefined);
+        const savedId = await saveDocument(result.cv, 'cv', cvName, undefined, undefined, cvTemplate, 'completed', cvId || undefined);
+        if (!cvId && savedId) newCvId = savedId;
       }
       if (showCL && result?.coverLetter) {
-        await saveDocument(result.coverLetter, 'cover_letter', clName, undefined, undefined, clTemplate, 'completed', clId || undefined);
+        const savedId = await saveDocument(result.coverLetter, 'cover_letter', clName, undefined, undefined, clTemplate, 'completed', clId || undefined);
+        if (!clId && savedId) newClId = savedId;
       }
-      
-      const redirectId = cvId || clId;
+
       setStatus('completed');
       setHasChanges(false);
-      
-      if (redirectId) {
-        toast.success(t('builder.saveSuccess'));
-        router.push(`/dashboard/edit/${redirectId}`);
+      toast.success(t('builder.saveSuccess'));
+
+      // If this was a brand-new draft (no existing ID), redirect to the new edit page
+      if (!cvId && !clId) {
+        const newId = newCvId || newClId;
+        if (newId) {
+          router.push(`/dashboard/edit/${newId}`);
+        }
       } else {
-        toast.success(t('builder.saveSuccess'));
+        // Already on the edit page — just refresh server data silently
+        router.refresh();
       }
     } catch (error: any) {
       if (error.message === ErrorCodes.LIMIT_REACHED || error.message?.includes('limit_reached')) {
@@ -221,51 +230,50 @@ export function Step5ReviewEdit({
         <div className="flex flex-1 items-center bg-white rounded-xl shadow-md border border-zinc-200 p-1.5 w-full justify-between">
           <div className="flex items-center">
             <button
-            onClick={onPrev}
-            className="flex items-center gap-2 text-zinc-600 px-4 py-2 hover:bg-zinc-100 rounded-lg font-semibold text-sm transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> {t('builder.back') || 'Quay Lại'}
-          </button>
-          {showCV && showCL && (
-            <div className="flex border-l border-zinc-200 pl-1 ml-1 gap-1">
-              <button
-                onClick={() => { setActiveDoc('cv'); setActiveBlock(null); }}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeDoc === 'cv' ? 'bg-primary text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-600'}`}
-              >
-                {t('builder.cv') || 'CV'}
-              </button>
-              <button
-                onClick={() => { setActiveDoc('cover_letter'); setActiveBlock(null); }}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeDoc === 'cover_letter' ? 'bg-primary text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-600'}`}
-              >
-                {t('builder.coverLetter') || 'Cover Letter'}
-              </button>
-            </div>
-          )}
-          {result?.cv?.matchAnalysis && (
-            <div className="px-2 border-l border-zinc-200 ml-1 flex items-center">
-              <button
-                onClick={() => setShowMatchAnalysis(true)}
-                className="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 transition-colors rounded-lg group"
-              >
-                <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
-                  result.cv.matchAnalysis.matchScore >= 70 ? 'border-green-500 text-green-600' : 
-                  result.cv.matchAnalysis.matchScore >= 40 ? 'border-yellow-500 text-yellow-600' : 
-                  'border-red-500 text-red-600'
-                }`}>
-                  <span className="text-xs font-bold">{result.cv.matchAnalysis.matchScore}</span>
-                </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-xs font-semibold text-zinc-900 leading-none group-hover:text-primary transition-colors">ATS Match</span>
-                  <span className="text-[10px] text-zinc-500 mt-1 leading-none">{t('builder.clickToView') || 'Xem chi tiết'}</span>
-                </div>
-              </button>
-            </div>
-          )}
-          
-          {/* Version History Button (Temporarily Disabled) */}
+              onClick={onPrev}
+              className="flex items-center gap-2 text-zinc-600 px-4 py-2 hover:bg-zinc-100 rounded-lg font-semibold text-sm transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" /> {t('builder.back') || 'Quay Lại'}
+            </button>
+            {showCV && showCL && (
+              <div className="flex border-l border-zinc-200 pl-1 ml-1 gap-1">
+                <button
+                  onClick={() => { setActiveDoc('cv'); setActiveBlock(null); }}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeDoc === 'cv' ? 'bg-primary text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-600'}`}
+                >
+                  {t('builder.cv') || 'CV'}
+                </button>
+                <button
+                  onClick={() => { setActiveDoc('cover_letter'); setActiveBlock(null); }}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeDoc === 'cover_letter' ? 'bg-primary text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-600'}`}
+                >
+                  {t('builder.coverLetter') || 'Cover Letter'}
+                </button>
+              </div>
+            )}
+            {result?.cv?.matchAnalysis && (
+              <div className="px-2 border-l border-zinc-200 ml-1 flex items-center">
+                <button
+                  onClick={() => setShowMatchAnalysis(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 transition-colors rounded-lg group"
+                >
+                  <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${result.cv.matchAnalysis.matchScore >= 70 ? 'border-green-500 text-green-600' :
+                      result.cv.matchAnalysis.matchScore >= 40 ? 'border-yellow-500 text-yellow-600' :
+                        'border-red-500 text-red-600'
+                    }`}>
+                    <span className="text-xs font-bold">{result.cv.matchAnalysis.matchScore}</span>
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs font-semibold text-zinc-900 leading-none group-hover:text-primary transition-colors">ATS Match</span>
+                    <span className="text-[10px] text-zinc-500 mt-1 leading-none">{t('builder.clickToView') || 'Xem chi tiết'}</span>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* Version History Button (Temporarily Disabled) */}
           </div>
-                      
+
           {/* Right side: Name, Save, Download */}
           <div className="flex items-center gap-2 pr-1">
             <button
@@ -275,8 +283,8 @@ export function Step5ReviewEdit({
               {language}
             </button>
             <div className="flex items-center border border-zinc-200 bg-zinc-50 rounded-lg overflow-hidden h-9 w-48 sm:w-64">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={activeDoc === 'cv' ? cvName : clName}
                 onChange={(e) => {
                   activeDoc === 'cv' ? setCvName(e.target.value) : setClName(e.target.value);
@@ -286,13 +294,12 @@ export function Step5ReviewEdit({
                 placeholder="Tên tài liệu..."
               />
             </div>
-            
+
             <button
               onClick={handleSave}
               disabled={isSaving || (!hasChanges && status !== 'draft')}
-              className={`flex items-center justify-center h-9 px-4 gap-2 rounded-lg font-semibold text-sm transition-opacity ${
-                (hasChanges || status === 'draft') ? 'bg-primary text-white hover:opacity-90 shadow-sm' : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
-              }`}
+              className={`flex items-center justify-center h-9 px-4 gap-2 rounded-lg font-semibold text-sm transition-opacity ${(hasChanges || status === 'draft') ? 'bg-primary text-white hover:opacity-90 shadow-sm' : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
+                }`}
             >
               {isSaving && (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -360,10 +367,10 @@ export function Step5ReviewEdit({
                 data={activeDoc === 'cv'
                   ? (activeBlock === 'personal' ? result?.cv?.personal : (result?.cv as any)?.[activeBlock])
                   : (['personal', 'recipient'].includes(activeBlock) ? (result?.coverLetter as any)?.[activeBlock] : (
-                      activeBlock === 'body' 
-                        ? { opening: result?.coverLetter?.opening, bodyParagraphs: result?.coverLetter?.bodyParagraphs, closing: result?.coverLetter?.closing } 
-                        : (result?.coverLetter as any)?.[activeBlock]
-                    ))
+                    activeBlock === 'body'
+                      ? { opening: result?.coverLetter?.opening, bodyParagraphs: result?.coverLetter?.bodyParagraphs, closing: result?.coverLetter?.closing }
+                      : (result?.coverLetter as any)?.[activeBlock]
+                  ))
                 }
                 onChange={handleFormChange}
                 sectionTitle={activeDoc === 'cv' ? result?.cv?.sectionTitles?.[activeBlock as keyof typeof result.cv.sectionTitles] : undefined}
@@ -385,7 +392,7 @@ export function Step5ReviewEdit({
       </div>
 
       {/* Full-Screen Free Panning Canvas */}
-      <div 
+      <div
         ref={canvasRef}
         className={`w-full h-full overflow-hidden relative bg-zinc-200 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onPointerDown={handlePointerDown}
@@ -393,7 +400,7 @@ export function Step5ReviewEdit({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        <div 
+        <div
           className="absolute top-1/2 left-1/2 transition-transform duration-75"
           style={{ transform: `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px))` }}
         >
@@ -437,21 +444,21 @@ export function Step5ReviewEdit({
       </div>
 
       {/* Zoom Toolbar */}
-        <div className="fixed bottom-8 right-8 bg-black text-white px-3 py-2 flex items-center gap-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] z-20">
-          <button
-            onClick={() => setZoom(z => Math.max(0.4, z - 0.1))}
-            className="w-6 h-6 flex items-center justify-center hover:bg-zinc-800 font-bold"
-          >
-            -
-          </button>
-          <span className="text-xs font-bold w-12 text-center tracking-widest">{Math.round(zoom * 100)}%</span>
-          <button
-            onClick={() => setZoom(z => Math.min(2, z + 0.1))}
-            className="w-6 h-6 flex items-center justify-center hover:bg-zinc-800 font-bold"
-          >
-            +
-          </button>
-        </div>
+      <div className="fixed bottom-8 right-8 bg-black text-white px-3 py-2 flex items-center gap-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] z-20">
+        <button
+          onClick={() => setZoom(z => Math.max(0.4, z - 0.1))}
+          className="w-6 h-6 flex items-center justify-center hover:bg-zinc-800 font-bold"
+        >
+          -
+        </button>
+        <span className="text-xs font-bold w-12 text-center tracking-widest">{Math.round(zoom * 100)}%</span>
+        <button
+          onClick={() => setZoom(z => Math.min(2, z + 0.1))}
+          className="w-6 h-6 flex items-center justify-center hover:bg-zinc-800 font-bold"
+        >
+          +
+        </button>
+      </div>
 
       {/* Match Analysis Modal */}
       {showMatchAnalysis && result?.cv?.matchAnalysis && (
@@ -561,9 +568,9 @@ export function Step5ReviewEdit({
         </div>
       </div>
 
-      <UpgradeModal 
-        isOpen={showUpgradeModal} 
-        onClose={() => setShowUpgradeModal(false)} 
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
         docType={upgradeDocType}
         onBuySuccess={() => {
           setShowUpgradeModal(false);

@@ -191,21 +191,21 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
       .eq('user_id', user.id)
       .eq('is_default', true)
       .limit(1);
-    
+
     if (profiles && profiles.length > 0) {
       actualProfileId = profiles[0].id;
     } else {
       const { data: newProfile, error: createError } = await supabase
         .from('master_profiles')
-        .insert({ 
-          user_id: user.id, 
+        .insert({
+          user_id: user.id,
           name: 'Default Profile',
           is_default: true,
-          content: {} 
+          content: {}
         })
         .select('id')
         .single();
-        
+
       if (createError) throw createError;
       actualProfileId = newProfile.id;
     }
@@ -221,7 +221,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
         .select('status')
         .eq('id', resumeId)
         .single();
-        
+
       if (oldResume && oldResume.status === 'draft') {
         await checkUserLimit(supabase, user.id, type);
       }
@@ -280,6 +280,10 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
   let matchAnalysis = null;
   let score = null;
   const contentToSave = JSON.parse(JSON.stringify(data)); // Deep copy to avoid mutating original
+  console.log(
+    'before save',
+    contentToSave.personal?.avatar
+  );
 
   if (type === 'cv' && contentToSave.matchAnalysis) {
     matchAnalysis = contentToSave.matchAnalysis;
@@ -297,7 +301,19 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
         match_analysis: matchAnalysis
       })
       .eq('id', existingVersion.id);
+    console.log('versionError', versionError);
+
     if (versionError) throw versionError;
+    const { data: check } = await supabase
+      .from('resume_versions')
+      .select('*')
+      .eq('id', existingVersion.id)
+      .single();
+
+    console.log(
+      'from db',
+      JSON.stringify(check, null, 2)
+    );
   } else {
     // Insert new version
     const { error: versionError } = await supabase
@@ -311,6 +327,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
       });
     if (versionError) throw versionError;
   }
+
 
   return resumeId;
 });
@@ -330,8 +347,8 @@ export async function getResumeById(id: string) {
   if (error) throw error;
 
   // Get the latest version
-  const latestVersion = data.resume_versions?.length 
-    ? data.resume_versions[data.resume_versions.length - 1] 
+  const latestVersion = data.resume_versions?.length
+    ? data.resume_versions[data.resume_versions.length - 1]
     : null;
 
   return {
@@ -360,7 +377,7 @@ export async function getDocuments(): Promise<SavedDocument[]> {
     .order('updated_at', { ascending: false });
 
   if (error) throw error;
-  
+
   return (data || []) as SavedDocument[];
 }
 
@@ -377,7 +394,7 @@ export async function getResumeVersions(resumeId: string) {
     .order('version_number', { ascending: false });
 
   if (error) throw error;
-  
+
   return data;
 }
 

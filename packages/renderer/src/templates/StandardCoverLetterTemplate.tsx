@@ -24,7 +24,7 @@ export class StandardCoverLetterTemplate implements ICoverLetterTemplate {
               {data.personal.avatar && data.personal.showAvatar !== false ? (
                 <Image
                   src={data.personal.avatar}
-                  style={{ width: 48, height: 60, objectFit: 'cover', borderRadius: 4 }}
+                  style={{ width: 113, height: 170, objectFit: 'cover', borderRadius: 2 }}
                 />
               ) : null}
               <View style={{ flex: 1 }}>

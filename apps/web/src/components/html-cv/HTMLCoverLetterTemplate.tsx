@@ -21,7 +21,7 @@ export function HTMLCoverLetterTemplate({ data, activeBlock, onBlockClick }: Pro
             <img
               src={personal.avatar}
               alt="Avatar"
-              className="w-16 h-20 object-cover rounded shrink-0"
+              className="w-[4cm] h-[6cm] object-cover rounded-sm shrink-0"
             />
           )}
           <div className="flex flex-col justify-center min-h-10 flex-1">
