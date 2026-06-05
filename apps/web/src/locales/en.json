@@ -535,10 +535,6 @@
       "title": "Usage History",
       "subtitle": "Track your usage history and corresponding Credit costs.",
       "empty": "No activity has been recorded yet.",
-      "status": {
-        "success": "Success",
-        "failed": "Failed"
-      },
       "action": {
         "generate_cv": "Generate CV",
         "generate_cover_letter": "Generate Cover Letter",
@@ -557,7 +553,12 @@
         "latency": "Speed",
         "credit": "Credit",
         "status": "Status",
-        "balance": "Balance"
+        "balance": "Balance After"
+      },
+      "status": {
+        "success": "Success",
+        "failed": "Failed",
+        "pending": "Pending"
       },
       "all": "All",
       "filterBy": "Filter by:",
@@ -565,17 +566,18 @@
       "tasks": "{count} tasks",
       "creditUsed": "-1 credit",
       "modal": {
-        "viewDetails": "View details",
         "title": "Transaction Details",
-        "txCode": "Transaction Code",
+        "txCode": "Transaction ID",
         "time": "Time",
         "amount": "Amount",
         "balanceAfter": "Balance After",
-        "credits": "Credits",
         "metadata": "Metadata",
-        "reasonError": "Refund Reason / Error",
+        "reasonError": "Reason / Error",
         "reference": "System Reference:",
-        "close": "Close"
+        "close": "Close",
+        "viewDetails": "View details",
+        "timeline": "Ledger Timeline",
+        "aiStats": "AI Statistics"
       }
     },
     "billing": {

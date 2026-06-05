@@ -535,10 +535,6 @@
       "title": "Lịch sử sử dụng",
       "subtitle": "Theo dõi lịch sử sử dụng và chi phí Credit tương ứng.",
       "empty": "Chưa có hoạt động nào được ghi lại.",
-      "status": {
-        "success": "Thành công",
-        "failed": "Thất bại"
-      },
       "action": {
         "generate_cv": "Tạo CV",
         "generate_cover_letter": "Tạo Cover Letter",
@@ -551,13 +547,14 @@
       },
       "columns": {
         "task": "Tác vụ",
-        "model": "Model AI",
-        "tokens": "Tokens",
-        "time": "Thời gian",
-        "latency": "Tốc độ",
         "credit": "Credit",
         "status": "Trạng thái",
         "balance": "Số dư sau GD"
+      },
+      "status": {
+        "success": "Thành công",
+        "failed": "Thất bại",
+        "pending": "Đang xử lý"
       },
       "all": "Tất cả",
       "filterBy": "Lọc theo:",
@@ -575,7 +572,9 @@
         "metadata": "Dữ liệu đi kèm (Metadata)",
         "reasonError": "Lý do hoàn tiền / Lỗi",
         "reference": "Tham chiếu hệ thống:",
-        "close": "Đóng"
+        "close": "Đóng",
+        "timeline": "Biến động số dư",
+        "aiStats": "Thống kê AI"
       }
     },
     "billing": {

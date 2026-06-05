@@ -1,0 +1,24 @@
+/**
+ * Global Semantic Events 
+ * Organized by domain/feature for easier tracking and maintenance across the system.
+ */
+
+export enum ActivityEvent {
+  // --- AUTH DOMAIN ---
+  APP_LOGIN_SUCCESS = 'APP_LOGIN_SUCCESS',
+  
+  // --- CV GENERATION DOMAIN ---
+  CV_GENERATED_SUCCESS = 'CV_GENERATED_SUCCESS',
+  CV_GENERATED_FAILED = 'CV_GENERATED_FAILED',
+  
+  // --- PROFILE DOMAIN ---
+  PROFILE_PARSED_SUCCESS = 'PROFILE_PARSED_SUCCESS',
+  PROFILE_PARSED_FAILED = 'PROFILE_PARSED_FAILED',
+}
+
+export enum SecurityEvent {
+  LOGIN_SUCCESS = 'LOGIN_SUCCESS',
+  LOGIN_FAILED = 'LOGIN_FAILED',
+  PASSWORD_RESET_REQUESTED = 'PASSWORD_RESET_REQUESTED',
+  PASSWORD_RESET_COMPLETED = 'PASSWORD_RESET_COMPLETED',
+}

@@ -11,6 +11,16 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
+      // Get user to log security event
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        // Track login event in security_logs
+        const { AppLogger } = await import('@/lib/logger')
+        const { SecurityEvent } = await import('@/lib/constants/events')
+
+        // We log 'unknown' for IP/UserAgent for now. In a real middleware we can extract headers.
+        await AppLogger.trackSecurity(user.id, SecurityEvent.LOGIN_SUCCESS, 'unknown', 'unknown', { provider: 'email' })
+      }
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

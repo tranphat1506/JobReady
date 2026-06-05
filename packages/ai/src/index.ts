@@ -3,6 +3,9 @@ import { CVSchema } from '@cv-generator/schema';
 import { buildCVPrompt } from './prompts/cv.prompt';
 import { buildCoverLetterPrompt } from './prompts/coverLetter.prompt';
 import { buildMasterProfilePrompt } from './prompts/masterProfile.prompt';
+import { mapProviderError } from './errors';
+
+export * from './errors';
 
 export interface AIUsage {
   promptTokens: number;
@@ -56,7 +59,7 @@ export class AIParser {
       return { data: JSON.parse(responseText) as CVSchema, usage };
     } catch (error) {
       console.error('Error parsing CV with AI:', error);
-      throw error;
+      mapProviderError(error);
     }
   }
 
@@ -95,7 +98,7 @@ export class AIParser {
       return { data: JSON.parse(jsonText), usage };
     } catch (error) {
       console.error('Failed to parse Cover Letter Gemini response as JSON. Raw response:', text);
-      throw error;
+      mapProviderError(error);
     }
   }
 
@@ -139,7 +142,7 @@ export class AIParser {
       return { data: JSON.parse(jsonText), usage };
     } catch (error) {
       console.error('Error parsing Master Profile with AI:', error);
-      throw error;
+      mapProviderError(error);
     }
   }
 }

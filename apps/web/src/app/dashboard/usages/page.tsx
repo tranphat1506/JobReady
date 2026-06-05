@@ -25,16 +25,15 @@ export default async function UsagesPage({ searchParams }: { searchParams: any }
   const logSortOrder = params?.logSortOrder === 'asc' ? 'asc' : 'desc';
   const logOffset = (logPage - 1) * PAGE_SIZE;
 
-  // Query service usages logs from credit_transactions (Ledger)
+  // Query AI usages from ai_generation_logs
   let logsQuery = supabase
-    .from('credit_transactions')
-    .select('id, transaction_type, amount, balance_after, created_at, reference_id, metadata', { count: 'exact' })
+    .from('ai_generation_logs')
+    .select('id, action_type, credits_used, status, error_message, created_at, prompt_tokens, completion_tokens, latency_ms', { count: 'exact' })
     .eq('user_id', user.id)
-    .not('transaction_type', 'in', '("PURCHASE", "BONUS")')
     .order(logSortBy, { ascending: logSortOrder === 'asc' })
     .range(logOffset, logOffset + PAGE_SIZE - 1);
 
-  if (filterAction) logsQuery = logsQuery.eq('transaction_type', filterAction);
+  if (filterAction) logsQuery = logsQuery.eq('action_type', filterAction);
   // Status filter doesn't apply to ledger as directly, so we'll just ignore it for now or we could filter by REFUND
 
   const { data: logs, count: logCount } = await logsQuery;

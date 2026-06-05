@@ -137,7 +137,7 @@ export const POST = withErrorHandler(async (req: Request) => {
     const { error: refundError } = await adminSupabase.rpc('finalize_ai_job', {
       p_log_id: logId,
       p_success: false,
-      p_error_message: `Lỗi hệ thống khi điều phối tiến trình (Inngest): ${error.message}`
+      p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`
     });
     
     if (refundError) {
@@ -146,7 +146,7 @@ export const POST = withErrorHandler(async (req: Request) => {
       console.log(`[generate-cv] Successfully processed refund for logId: ${logId}`);
     }
 
-    throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+    throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.DISPATCH_FAILED);
   }
 
   return NextResponse.json(

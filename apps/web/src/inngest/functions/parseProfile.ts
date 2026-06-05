@@ -1,6 +1,10 @@
 import { inngest } from "../client";
+
 import { AIParser } from "@cv-generator/ai";
 import { getCachedSystemSettings } from "@/actions/settings";
+import { ErrorCodes } from "@/lib/errors/errorCodes";
+import { AppLogger } from "@/lib/logger";
+import { ActivityEvent } from "@/lib/constants/events";
 import fs from "fs";
 import path from "path";
 
@@ -19,17 +23,23 @@ export const parseProfileWorker = inngest.createFunction(
       
       const logId = (event.data as any).logId;
       if (logId) {
+        // If it's an AIProviderError from packages/ai, use its semantic code
+        let mappedErrorMessage = `${ErrorCodes.WORKER_FAILED}: ${error.message}`;
+        if (error.name === 'AIProviderError' && (error as any).code) {
+          mappedErrorMessage = `${(error as any).code}: ${error.message}`;
+        }
+
         await supabase.rpc('finalize_ai_job', {
-          p_log_id: logId,
+          p_log_id: (event.data as any).logId,
           p_success: false,
-          p_error_message: error.message
+          p_error_message: mappedErrorMessage
         });
       }
-      await supabase.from("activity_events").insert({
-        user_id: (event.data as any).userId,
-        event_name: `API_ERROR_PARSE_PROFILE_JOB`,
-        metadata: { error_message: error.message }
-      });
+      await AppLogger.trackActivity(
+        (event.data as any).userId,
+        ActivityEvent.PROFILE_PARSED_FAILED,
+        { error_message: error.message }
+      );
       console.error("[parseProfileWorker] Failed after all retries:", error.message);
     },
   },
@@ -129,11 +139,11 @@ export const parseProfileWorker = inngest.createFunction(
       }
       
       // Log semantic activity
-      await supabase.from('activity_events').insert({
-        user_id: userId,
-        event_name: `APP_AI_PARSE_PROFILE_SUCCESS`,
-        metadata: { profile_id: profileId }
-      });
+      await AppLogger.trackActivity(
+        userId,
+        ActivityEvent.PROFILE_PARSED_SUCCESS,
+        { profileId: profileId }
+      );
     }
 
     return { success: true };
