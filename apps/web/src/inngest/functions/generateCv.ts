@@ -238,10 +238,11 @@ export const generateCvWorker = inngest.createFunction(
       const { error: finalizeError } = await supabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: true,
-        p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+        p_model_used: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
         p_prompt_tokens: totalUsage.promptTokens || 0,
         p_completion_tokens: totalUsage.completionTokens || 0,
-        p_latency_ms: latency
+        p_latency_ms: latency,
+        p_provider: 'google'
       });
       if (finalizeError) {
         console.error("[generateCvWorker] finalize_ai_job error:", finalizeError);

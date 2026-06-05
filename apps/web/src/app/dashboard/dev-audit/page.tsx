@@ -29,7 +29,7 @@ export default async function DevAuditPage({ searchParams }: { searchParams: any
   );
   
   let logsQuery = adminSupabase
-    .from('activity_logs')
+    .from('audit_logs')
     .select('*', { count: 'exact' })
     .order(sortBy, { ascending: sortOrder === 'asc' })
     .range(offset, offset + PAGE_SIZE - 1);

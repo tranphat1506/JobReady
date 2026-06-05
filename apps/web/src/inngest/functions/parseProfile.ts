@@ -117,10 +117,11 @@ export const parseProfileWorker = inngest.createFunction(
       const { error: finalizeError } = await supabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: true,
-        p_model_used: process.env.GEMINI_MODEL || 'gemini-flash-latest',
         p_prompt_tokens: result.usage.promptTokens,
         p_completion_tokens: result.usage.completionTokens,
-        p_latency_ms: latency
+        p_latency_ms: latency,
+        p_provider: 'google',
+        p_model_used: 'gemini-1.5-flash'
       });
       if (finalizeError) {
         console.error("[parseProfileWorker] finalize_ai_job error:", finalizeError);

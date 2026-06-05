@@ -127,7 +127,7 @@ export function AuditClient({ logs, logCount, logPage }: AuditClientProps) {
                 <h4 className="font-medium text-zinc-700 text-sm">Previous State (OLD)</h4>
                 <div className="bg-zinc-950 rounded-lg p-4 overflow-x-auto">
                   <pre className="text-[13px] text-zinc-300 font-mono">
-                    {selectedLog.previous_state ? JSON.stringify(selectedLog.previous_state, null, 2) : 'null'}
+                    {selectedLog.old_data ? JSON.stringify(selectedLog.old_data, null, 2) : 'null'}
                   </pre>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export function AuditClient({ logs, logCount, logPage }: AuditClientProps) {
                 <h4 className="font-medium text-zinc-700 text-sm">New State (NEW)</h4>
                 <div className="bg-zinc-950 rounded-lg p-4 overflow-x-auto border border-emerald-500/20">
                   <pre className="text-[13px] text-emerald-400 font-mono">
-                    {selectedLog.new_state ? JSON.stringify(selectedLog.new_state, null, 2) : 'null'}
+                    {selectedLog.new_data ? JSON.stringify(selectedLog.new_data, null, 2) : 'null'}
                   </pre>
                 </div>
               </div>

@@ -41,7 +41,8 @@ export const POST = withErrorHandler(async (req: Request) => {
   const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
     p_user_id: userId,
     p_cost: totalCost,
-    p_action_type: 'parse_master_profile'
+    p_action_type: 'parse_master_profile',
+    p_metadata: { source: file ? file.name : 'text_input' }
   });
 
   if (reserveError) {
@@ -52,14 +53,39 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   // --- DISPATCH INNGEST EVENT ---
-  await inngest.send({
-    name: 'profile/parse',
-    data: {
-      userId,
-      contentToParse,
-      logId
-    },
-  });
+  try {
+    await inngest.send({
+      name: 'profile/parse',
+      data: {
+        userId,
+        contentToParse,
+        logId
+      },
+    });
+  } catch (error: any) {
+    console.error("[parse-profile] API Dispatch Error:", error);
+    // If dispatching to worker fails, refund the user immediately using Admin client!
+    const { createClient: createSupabaseAdmin } = require("@supabase/supabase-js");
+    const adminSupabase = createSupabaseAdmin(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { persistSession: false } }
+    );
+
+    const { error: refundError } = await adminSupabase.rpc('finalize_ai_job', {
+      p_log_id: logId,
+      p_success: false,
+      p_error_message: `Lỗi hệ thống khi điều phối tiến trình (Inngest): ${error.message}`
+    });
+    
+    if (refundError) {
+      console.error("[parse-profile] Failed to process refund:", refundError);
+    } else {
+      console.log(`[parse-profile] Successfully processed refund for logId: ${logId}`);
+    }
+    
+    throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  }
 
   return NextResponse.json(
     { message: 'Đang xử lý nền. Vui lòng đợi...' },

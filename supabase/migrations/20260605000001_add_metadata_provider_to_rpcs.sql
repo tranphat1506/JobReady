@@ -1,3 +1,6 @@
+-- Migration: Add metadata to reserve_ai_credits and provider to finalize_ai_job
+-- Date: 2026-06-05
+
 CREATE OR REPLACE FUNCTION reserve_ai_credits(
   p_user_id UUID,
   p_cost INTEGER,
@@ -42,6 +45,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Drop the old functions to avoid PostgREST overload ambiguity
+DROP FUNCTION IF EXISTS finalize_ai_job(UUID, BOOLEAN, INTEGER, INTEGER, INTEGER, TEXT, TEXT);
+DROP FUNCTION IF EXISTS finalize_ai_job(UUID, BOOLEAN, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION finalize_ai_job(
   p_log_id UUID,
@@ -106,9 +112,13 @@ BEGIN
     
     -- Write Refund to Ledger
     INSERT INTO credit_transactions (
-      user_id, amount, balance_after, transaction_type, reference_type, reference_id
+      user_id, amount, balance_after, transaction_type, reference_type, reference_id, metadata
     ) VALUES (
-      v_log.user_id, v_log.credits_used, v_current_credits, 'REFUND', 'ai_generation_logs', p_log_id
+      v_log.user_id, v_log.credits_used, v_current_credits, 'REFUND', 'ai_generation_logs', p_log_id,
+      jsonb_build_object(
+        'reason', p_error_message, 
+        'original_action', v_log.action_type
+      )
     );
   END IF;
 END;

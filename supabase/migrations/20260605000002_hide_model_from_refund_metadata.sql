@@ -1,47 +1,9 @@
-CREATE OR REPLACE FUNCTION reserve_ai_credits(
-  p_user_id UUID,
-  p_cost INTEGER,
-  p_action_type TEXT,
-  p_metadata JSONB DEFAULT '{}'::jsonb
-) RETURNS UUID AS $$
-DECLARE
-  v_current_credits INTEGER;
-  v_log_id UUID;
-BEGIN
-  SELECT credits_balance INTO v_current_credits
-  FROM users
-  WHERE id = p_user_id
-  FOR UPDATE;
+-- Migration: Hide model and provider from refund metadata
+-- Date: 2026-06-05
 
-  IF v_current_credits < p_cost THEN
-    RAISE EXCEPTION 'Insufficient credits';
-  END IF;
-
-  -- 1. Deduct upfront
-  UPDATE users
-  SET credits_balance = credits_balance - p_cost
-  WHERE id = p_user_id;
-
-  -- 2. Create pending AI log
-  INSERT INTO ai_generation_logs (
-    user_id, action_type, status, credits_used,
-    prompt_tokens, completion_tokens, total_tokens, latency_ms, model_used
-  ) VALUES (
-    p_user_id, p_action_type, 'pending', p_cost,
-    0, 0, 0, 0, 'unknown'
-  ) RETURNING id INTO v_log_id;
-
-  -- 3. Write to Ledger
-  INSERT INTO credit_transactions (
-    user_id, amount, balance_after, transaction_type, reference_type, reference_id, metadata
-  ) VALUES (
-    p_user_id, -p_cost, v_current_credits - p_cost, 'PENDING_RESERVATION', 'ai_generation_logs', v_log_id, p_metadata
-  );
-
-  RETURN v_log_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
+-- Drop the old functions to avoid PostgREST overload ambiguity
+DROP FUNCTION IF EXISTS finalize_ai_job(UUID, BOOLEAN, INTEGER, INTEGER, INTEGER, TEXT, TEXT);
+DROP FUNCTION IF EXISTS finalize_ai_job(UUID, BOOLEAN, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION finalize_ai_job(
   p_log_id UUID,
@@ -106,9 +68,13 @@ BEGIN
     
     -- Write Refund to Ledger
     INSERT INTO credit_transactions (
-      user_id, amount, balance_after, transaction_type, reference_type, reference_id
+      user_id, amount, balance_after, transaction_type, reference_type, reference_id, metadata
     ) VALUES (
-      v_log.user_id, v_log.credits_used, v_current_credits, 'REFUND', 'ai_generation_logs', p_log_id
+      v_log.user_id, v_log.credits_used, v_current_credits, 'REFUND', 'ai_generation_logs', p_log_id,
+      jsonb_build_object(
+        'reason', p_error_message, 
+        'original_action', v_log.action_type
+      )
     );
   END IF;
 END;

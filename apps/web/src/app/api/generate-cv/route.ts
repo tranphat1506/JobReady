@@ -91,7 +91,8 @@ export const POST = withErrorHandler(async (req: Request) => {
   const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
     p_user_id: userId,
     p_cost: totalCost,
-    p_action_type: `generate_${goal}`
+    p_action_type: `generate_${goal}`,
+    p_metadata: { goal, source_type: sourceType, target_language: targetLanguage }
   });
 
   if (reserveError) {
@@ -102,26 +103,51 @@ export const POST = withErrorHandler(async (req: Request) => {
   }
 
   // --- DISPATCH INNGEST EVENT ---
-  await inngest.send({
-    name: 'cv/generate',
-    data: {
-      userId,
-      jobDescription,
-      targetLanguage,
-      sourceType,
-      goal,
-      toneOfVoice,
-      profileId,
-      savedJobId,
-      cvTemplate,
-      clTemplate,
-      existingCvId,
-      existingClId,
-      rawCV,
-      masterProfile,
-      logId
-    },
-  });
+  try {
+    await inngest.send({
+      name: 'cv/generate',
+      data: {
+        userId,
+        jobDescription,
+        targetLanguage,
+        sourceType,
+        goal,
+        toneOfVoice,
+        profileId,
+        savedJobId,
+        cvTemplate,
+        clTemplate,
+        existingCvId,
+        existingClId,
+        rawCV,
+        masterProfile,
+        logId
+      },
+    });
+  } catch (error: any) {
+    console.error("[generate-cv] API Dispatch Error:", error);
+    // If dispatching to worker fails, refund the user immediately using Admin client!
+    const { createClient: createSupabaseAdmin } = require("@supabase/supabase-js");
+    const adminSupabase = createSupabaseAdmin(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { persistSession: false } }
+    );
+
+    const { error: refundError } = await adminSupabase.rpc('finalize_ai_job', {
+      p_log_id: logId,
+      p_success: false,
+      p_error_message: `Lỗi hệ thống khi điều phối tiến trình (Inngest): ${error.message}`
+    });
+    
+    if (refundError) {
+      console.error("[generate-cv] Failed to process refund:", refundError);
+    } else {
+      console.log(`[generate-cv] Successfully processed refund for logId: ${logId}`);
+    }
+
+    throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.INTERNAL_SERVER_ERROR);
+  }
 
   return NextResponse.json(
     { message: 'Đang xử lý nền. Vui lòng đợi...' },

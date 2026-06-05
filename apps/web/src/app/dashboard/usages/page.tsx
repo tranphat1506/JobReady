@@ -28,7 +28,7 @@ export default async function UsagesPage({ searchParams }: { searchParams: any }
   // Query service usages logs from credit_transactions (Ledger)
   let logsQuery = supabase
     .from('credit_transactions')
-    .select('id, transaction_type, amount, balance_after, created_at, reference_id', { count: 'exact' })
+    .select('id, transaction_type, amount, balance_after, created_at, reference_id, metadata', { count: 'exact' })
     .eq('user_id', user.id)
     .not('transaction_type', 'in', '("PURCHASE", "BONUS")')
     .order(logSortBy, { ascending: logSortOrder === 'asc' })

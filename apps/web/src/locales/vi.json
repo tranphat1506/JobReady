@@ -563,7 +563,20 @@
       "filterBy": "Lọc theo:",
       "pages": "Trang {page} / {total}",
       "tasks": "{count} tác vụ",
-      "creditUsed": "-1 credit"
+      "creditUsed": "-1 credit",
+      "modal": {
+        "viewDetails": "Xem chi tiết",
+        "title": "Chi tiết giao dịch",
+        "txCode": "Mã Giao Dịch",
+        "time": "Thời Gian",
+        "amount": "Biến Động",
+        "balanceAfter": "Số Dư Sau Giao Dịch",
+        "credits": "Credits",
+        "metadata": "Dữ liệu đi kèm (Metadata)",
+        "reasonError": "Lý do hoàn tiền / Lỗi",
+        "reference": "Tham chiếu hệ thống:",
+        "close": "Đóng"
+      }
     },
     "billing": {
       "title": "Lịch sử thanh toán",

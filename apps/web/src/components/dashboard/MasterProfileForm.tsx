@@ -12,6 +12,7 @@ import AvatarCropperModal from './AvatarCropperModal';
 
 interface Props {
   initialData: MasterProfileData;
+  profileId: string;
 }
 
 // ── Shared UI Atoms (Matched to project theme) ────────────────────────────
@@ -142,7 +143,7 @@ const ProjectLinks = ({ control, register, nestIndex }: any) => {
 };
 
 // ── Main Component ────────────────────────────────────────────────────────
-export default function MasterProfileForm({ initialData }: Props) {
+export default function MasterProfileForm({ initialData, profileId }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
   const supabase = createClient();
@@ -282,7 +283,7 @@ export default function MasterProfileForm({ initialData }: Props) {
       const { data: updatedRows, error } = await supabase
         .from('master_profiles')
         .update({ content: data, updated_at: new Date().toISOString() })
-        .eq('user_id', user.id)
+        .eq('id', profileId)
         .select();
 
       if (error) throw error;

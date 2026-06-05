@@ -563,7 +563,20 @@
       "filterBy": "Filter by:",
       "pages": "Page {page} / {total}",
       "tasks": "{count} tasks",
-      "creditUsed": "-1 credit"
+      "creditUsed": "-1 credit",
+      "modal": {
+        "viewDetails": "View details",
+        "title": "Transaction Details",
+        "txCode": "Transaction Code",
+        "time": "Time",
+        "amount": "Amount",
+        "balanceAfter": "Balance After",
+        "credits": "Credits",
+        "metadata": "Metadata",
+        "reasonError": "Refund Reason / Error",
+        "reference": "System Reference:",
+        "close": "Close"
+      }
     },
     "billing": {
       "title": "Payment History",

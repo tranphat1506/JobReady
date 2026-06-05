@@ -1,30 +1,33 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import MasterProfileForm from '@/components/dashboard/MasterProfileForm';
+import ProfileSwitcher from '@/components/dashboard/ProfileSwitcher';
 import { defaultProfileData } from '@/types/profile';
 
 export const metadata = {
   title: 'Master Profile | JobReady',
 };
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ searchParams }: { searchParams: any }) {
   const supabase = await createClient();
 
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/login');
   }
 
-  // Fetch or create master profile
-  let { data: profile } = await supabase
-    .from('master_profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
+  const params = await Promise.resolve(searchParams);
+  const targetId = params?.id;
 
-  if (!profile) {
+  // Fetch all profiles
+  let { data: profiles } = await supabase
+    .from('master_profiles')
+    .select('id, name, is_default, user_id, content')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true });
+
+  if (!profiles || profiles.length === 0) {
     // If not exists, insert a blank one
     const { data: newProfile } = await supabase
       .from('master_profiles')
@@ -37,15 +40,37 @@ export default async function ProfilePage() {
       .select()
       .single();
     
-    profile = newProfile;
+    profiles = newProfile ? [newProfile] : [];
   }
 
-  // Fallback to default if content is empty or malformed
-  const initialData = profile?.content as any || defaultProfileData;
+  // Determine active profile
+  let activeProfile = null;
+  if (targetId) {
+    activeProfile = profiles?.find(p => p.id === targetId);
+  }
+  if (!activeProfile) {
+    activeProfile = profiles?.find(p => p.is_default) || profiles?.[0];
+  }
+
+  const initialData = activeProfile?.content as any || defaultProfileData;
 
   return (
     <div className="w-full">
-      <MasterProfileForm initialData={initialData} />
+      <ProfileSwitcher 
+        profiles={profiles || []} 
+        activeProfileId={activeProfile?.id}
+      />
+      
+      {activeProfile && (
+        // Add a key to force re-render when switching profiles, 
+        // so useForm gets reset with the new initialData
+        <div key={activeProfile.id}>
+          <MasterProfileForm 
+            initialData={initialData} 
+            profileId={activeProfile.id} 
+          />
+        </div>
+      )}
     </div>
   );
 }
