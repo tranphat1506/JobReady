@@ -8,7 +8,6 @@ import { Step2Source } from '@/components/builder/Step2Source';
 import { Step3Customize } from '@/components/builder/Step3Customize';
 import { Step4TemplateSelection } from '@/components/builder/Step4TemplateSelection';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
-import { getCachedSystemSettings } from '@/actions/settings';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';

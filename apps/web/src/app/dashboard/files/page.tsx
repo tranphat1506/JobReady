@@ -106,6 +106,8 @@ export default function FilesPage() {
     }
   };
 
+
+
   const handleBuySlot = (type: 'cv' | 'cl') => {
     setBuyingSlotType(type);
   };

@@ -5,3 +5,8 @@ export const AI_PRICING = {
   translate: 20,
   ats_analysis: 15
 };
+
+export const SLOT_PRICING = {
+  cv: 50,
+  cl: 30
+};

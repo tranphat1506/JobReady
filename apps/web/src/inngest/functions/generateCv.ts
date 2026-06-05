@@ -1,6 +1,5 @@
 import { inngest } from "../client";
 import { AIParser } from "@cv-generator/ai";
-import { getCachedSystemSettings } from "@/actions/settings";
 import { ErrorCodes } from "@/lib/constants/errors";
 import { AppLogger } from "@/lib/logger";
 import { ActivityEvent } from "@/lib/constants/events";

@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { ErrorCodes } from '@/lib/constants/errors';
-import { getCachedSystemSettings } from './settings';
+import { SLOT_PRICING } from '@/constants/pricing';
 import { revalidatePath } from 'next/cache';
 import { withAuditLog } from '@/utils/auditLogger';
 
@@ -14,16 +14,10 @@ export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
     throw new Error(ErrorCodes.UNAUTHORIZED);
   }
 
-  // Fetch prices from settings
-  const settingsMap = await getCachedSystemSettings();
-  const priceKey = type === 'cv' ? 'price_cv_slot' : 'price_cl_slot';
-  
-  // Default fallback prices if not set in DB
-  const fallbackPrice = type === 'cv' ? 50 : 30;
-  const cost = settingsMap[priceKey] ? Number(settingsMap[priceKey]) : fallbackPrice;
+  const cost = type === 'cv' ? SLOT_PRICING.cv : SLOT_PRICING.cl;
 
   // Call the database RPC to handle the transaction safely
-  const { data, error } = await supabase.rpc('buy_slot', {
+  const { error } = await supabase.rpc('buy_slot', {
     p_user_id: user.id,
     p_slot_type: type,
     p_cost: cost
@@ -43,6 +37,7 @@ export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/resumes');
   revalidatePath('/dashboard/cover-letters');
+  revalidatePath('/dashboard/files');
 
   return { success: true, cost };
 });

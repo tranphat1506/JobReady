@@ -64,7 +64,14 @@ export async function getUserLimits() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
 
-  // V2: Limits come from active subscription package
+  // Fetch User's Extra Slots
+  const { data: userData } = await supabase
+    .from('users')
+    .select('extra_cv_slots, extra_cl_slots')
+    .eq('id', user.id)
+    .single() as { data: { extra_cv_slots: number, extra_cl_slots: number } | null };
+
+  // Fetch active package limits
   const { data: subData } = await supabase
     .from('subscriptions')
     .select('packages(cv_slots, cl_slots)')
@@ -84,6 +91,9 @@ export async function getUserLimits() {
     cvLimit = freePkg?.cv_slots || 1;
     clLimit = freePkg?.cl_slots || 1;
   }
+
+  cvLimit += (userData?.extra_cv_slots || 0);
+  clLimit += (userData?.extra_cl_slots || 0);
 
   const { data: cvData } = await supabase
     .from('resumes')
@@ -108,6 +118,13 @@ export async function getUserLimits() {
 }
 
 export async function checkUserLimit(supabase: any, userId: string, type: 'cv' | 'cover_letter') {
+  // Fetch extra slots
+  const { data: userData } = await supabase
+    .from('users')
+    .select('extra_cv_slots, extra_cl_slots')
+    .eq('id', userId)
+    .single() as { data: { extra_cv_slots: number, extra_cl_slots: number } | null };
+
   // V2: Get limits from subscriptions -> packages
   const { data: subData } = await supabase
     .from('subscriptions')
@@ -127,6 +144,10 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     cvLimit = freePkg?.cv_slots || 1;
     clLimit = freePkg?.cl_slots || 1;
   }
+
+  cvLimit += (userData?.extra_cv_slots || 0);
+  clLimit += (userData?.extra_cl_slots || 0);
+
   const limit = type === 'cv' ? cvLimit : clLimit;
 
   // 2. Count current completed documents
