@@ -478,6 +478,13 @@
     "matchScoreDesc": "Điểm số do AI đánh giá dựa trên Job Description.",
     "missingSkills": "Kỹ năng cần bổ sung",
     "aiFeedback": "Lời khuyên từ AI",
+    "versionHistoryTitle": "Lịch sử phiên bản",
+    "versionLoading": "Đang tải lịch sử...",
+    "noVersions": "Chưa có phiên bản nào",
+    "version": "Phiên bản",
+    "score": "Điểm",
+    "restore": "Khôi phục",
+    "restoreSuccess": "Đã khôi phục phiên bản",
     "relevant": "Đạt yêu cầu",
     "irrelevant": "Chưa đạt",
     "createCvAndCl": "Tạo CV & Cover Letter",
@@ -492,7 +499,9 @@
     "noData": "Không có dữ liệu",
     "clickToView": "Xem chi tiết",
     "saveSuccess": "Đã lưu tài liệu vào Quản lý File!",
-    "saveToDashboard": "Lưu"
+    "saveToDashboard": "Lưu",
+    "saveError": "Lỗi khi lưu tài liệu",
+    "backgroundError": "Có lỗi xảy ra trong quá trình xử lý nền."
   },
   "files": {
     "title": "Quản lý tài liệu",
@@ -525,7 +534,20 @@
     "bulkDelete": "Xoá tất cả",
     "timeLeftH": "g",
     "timeLeftM": "p",
-    "timeLeftMin": "phút"
+    "timeLeftMin": "phút",
+    "loadError": "Lỗi tải danh sách tài liệu",
+    "renameError": "Lỗi đổi tên",
+    "deleteError": "Lỗi xoá tài liệu",
+    "cvLimitReached": "Bạn đã đạt giới hạn tối đa {limit} CV. Vui lòng mua thêm Slot để tiếp tục.",
+    "clLimitReached": "Bạn đã đạt giới hạn tối đa {limit} Cover Letter. Vui lòng mua thêm Slot để tiếp tục.",
+    "duplicateError": "Lỗi nhân bản",
+    "buySlotProcessing": "Đang xử lý giao dịch...",
+    "buySlotSuccess": "Đã mua thành công 1 Slot {name}!",
+    "buySlotError": "Giao dịch thất bại",
+    "bulkDeleteSuccess": "Đã xoá {count} tài liệu",
+    "bulkDeleteError": "Có lỗi khi xoá hàng loạt",
+    "popupBlocked": "Trình duyệt đã chặn mở nhiều Tab cùng lúc. Vui lòng cấp quyền Pop-up cho trang web!",
+    "cannotLoadDocument": "Không thể tải tài liệu: "
   },
   "credits": {
     "title": "Credits & Lịch sử",
@@ -556,6 +578,7 @@
         "parse_master_profile": "Trích xuất hồ sơ",
         "generate_cv_api_error": "Lỗi API Tạo CV",
         "parse_master_profile_api_error": "Lỗi API Trích xuất hồ sơ",
+        "PURCHASE_SLOT": "Mua thêm Slot",
         "REFUND": "Hoàn tiền",
         "PENDING_RESERVATION": "Đang xử lý"
       },
@@ -595,6 +618,22 @@
         "aiStats": "Thống kê AI"
       }
     },
+    "ledger": {
+      "title": "Lịch sử Credits",
+      "subtitle": "Theo dõi biến động số dư Credits của bạn.",
+      "details": "Chi tiết giao dịch",
+      "desc": {
+        "MSG_BUY_CV_SLOT": "Mua thêm 1 Slot lưu trữ CV",
+        "MSG_BUY_CL_SLOT": "Mua thêm 1 Slot lưu trữ Cover Letter",
+        "MSG_GENERATE_CV_RESERVE": "Giữ chỗ Credits để tạo CV...",
+        "MSG_GENERATE_CV_SUCCESS": "Dùng AI phân tích và tạo CV",
+        "MSG_GENERATE_CV_REFUND": "Hoàn tiền do lỗi tạo CV",
+        "MSG_PARSE_PROFILE_RESERVE": "Giữ chỗ Credits trích xuất Hồ sơ...",
+        "MSG_PARSE_PROFILE_SUCCESS": "Dùng AI trích xuất Master Profile",
+        "MSG_PARSE_PROFILE_REFUND": "Hoàn tiền do lỗi trích xuất",
+        "default": "Giao dịch hệ thống"
+      }
+    },
     "billing": {
       "title": "Lịch sử thanh toán",
       "subtitle": "Theo dõi các giao dịch mua gói hoặc mua Slot của bạn.",
@@ -607,7 +646,26 @@
         "package": "Gói",
         "amount": "Số tiền",
         "status": "Trạng thái"
+      },
+      "status": {
+        "ACTIVE": "Hoạt động",
+        "EXPIRED": "Hết hạn",
+        "CANCELLED": "Đã hủy"
       }
     }
+  },
+  "upgradeModal": {
+    "title": "Hết không gian lưu trữ",
+      "description": "Tài khoản của bạn đã đạt giới hạn lưu trữ tối đa cho phép. Để tiếp tục lưu tài liệu này, bạn có thể mua thêm chỗ trống hoặc nâng cấp tài khoản.",
+      "benefit1": "Mở rộng vĩnh viễn không gian lưu trữ cho tài khoản của bạn.",
+      "benefit2": "Lưu lại mọi phiên bản tài liệu một cách an toàn.",
+      "benefit3": "Chỉnh sửa và xuất bản tài liệu không giới hạn số lần.",
+      "buySlotCV": "Mua 1 Slot CV (50 Credits)",
+      "buySlotCL": "Mua 1 Slot Cover Letter (30 Credits)",
+      "processing": "Đang xử lý...",
+      "buySuccess": "Mua thành công 1 chỗ trống",
+      "error": "Không đủ Credits hoặc có lỗi xảy ra",
+      "upgradePlan": "Xem các Gói Nâng Cấp",
+    "later": "Để sau"
   }
 }

@@ -41,20 +41,19 @@ export default function FilesPage() {
 
   useEffect(() => { fetchDocuments(); }, []);
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const [data, userLimits] = await Promise.all([
         getDocuments(),
         getUserLimits()
       ]);
       setDocuments(data);
       setLimits(userLimits);
-      setSelected(new Set());
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi tải danh sách tài liệu');
+      toast.error(err.message || t('files.loadError'));
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -63,11 +62,11 @@ export default function FilesPage() {
     if (!editingId || !editName.trim()) return;
     try {
       await renameDocument(editingId, editName);
-      toast.success(t('files.renameSuccess') || 'Đã đổi tên thành công');
+      toast.success(t('files.renameSuccess'));
+      setDocuments(prev => prev.map(d => d.id === editingId ? { ...d, name: editName } : d));
       setEditingId(null);
-      fetchDocuments();
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi đổi tên');
+      toast.error(err.message || t('files.renameError'));
     }
   };
 
@@ -75,11 +74,26 @@ export default function FilesPage() {
     if (!deletingId) return;
     try {
       await deleteDocument(deletingId);
-      toast.success(t('files.deleteSuccess') || 'Đã xoá tài liệu');
+      toast.success(t('files.deleteSuccess'));
+      setDocuments(prev => {
+        const doc = prev.find(d => d.id === deletingId);
+        if (doc && doc.status === 'completed' && limits) {
+           setLimits((l: any) => ({
+             ...l,
+             cvUsed: doc.document_type === 'cv' ? Math.max(0, l.cvUsed - 1) : l.cvUsed,
+             clUsed: doc.document_type === 'cover_letter' ? Math.max(0, l.clUsed - 1) : l.clUsed
+           }));
+        }
+        return prev.filter(d => d.id !== deletingId);
+      });
+      setSelected(prev => {
+        const next = new Set(prev);
+        next.delete(deletingId);
+        return next;
+      });
       setDeletingId(null);
-      fetchDocuments();
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi xoá tài liệu');
+      toast.error(err.message || t('files.deleteError'));
     }
   };
 
@@ -87,22 +101,22 @@ export default function FilesPage() {
     // Check limits before duplicating
     if (limits) {
       if (doc.document_type === 'cv' && limits.cvUsed >= limits.cvLimit) {
-        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.cvLimit} CV. Vui lòng mua thêm Slot để tiếp tục.`);
+        toast.error(t('files.cvLimitReached').replace('{limit}', limits.cvLimit.toString()));
         return;
       }
       if (doc.document_type === 'cover_letter' && limits.clUsed >= limits.clLimit) {
-        toast.error(`Bạn đã đạt giới hạn tối đa ${limits.clLimit} Cover Letter. Vui lòng mua thêm Slot để tiếp tục.`);
+        toast.error(t('files.clLimitReached').replace('{limit}', limits.clLimit.toString()));
         return;
       }
     }
 
     try {
-      toast.loading(t('files.duplicating') || 'Đang nhân bản...', { id: 'dup' });
+      toast.loading(t('files.duplicating'), { id: 'dup' });
       await duplicateDocument(doc.id);
-      toast.success(t('files.duplicateSuccess') || 'Nhân bản thành công', { id: 'dup' });
-      fetchDocuments();
+      toast.success(t('files.duplicateSuccess'), { id: 'dup' });
+      fetchDocuments(false); // Background fetch
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi nhân bản', { id: 'dup' });
+      toast.error(err.message || t('files.duplicateError'), { id: 'dup' });
     }
   };
 
@@ -120,13 +134,13 @@ export default function FilesPage() {
     const name = isCV ? 'CV' : 'Cover Letter';
 
     try {
-      toast.loading('Đang xử lý giao dịch...', { id: 'buySlot' });
+      toast.loading(t('files.buySlotProcessing'), { id: 'buySlot' });
       await buySlot(buyingSlotType);
-      toast.success(`Đã mua thành công 1 Slot ${name}!`, { id: 'buySlot' });
+      toast.success(t('files.buySlotSuccess').replace('{name}', name), { id: 'buySlot' });
       fetchDocuments();
       setBuyingSlotType(null);
     } catch (err: any) {
-      toast.error(err.message || 'Giao dịch thất bại', { id: 'buySlot' });
+      toast.error(err.message || t('files.buySlotError'), { id: 'buySlot' });
     } finally {
       setIsBuying(false);
     }
@@ -153,10 +167,30 @@ export default function FilesPage() {
     setBulkDeleting(true);
     try {
       await Promise.all([...selected].map(id => deleteDocument(id)));
-      toast.success(`Đã xoá ${selected.size} tài liệu`);
-      fetchDocuments();
+      toast.success(t('files.bulkDeleteSuccess').replace('{count}', selected.size.toString()));
+      
+      setDocuments(prev => {
+        let deletedCv = 0;
+        let deletedCl = 0;
+        selected.forEach(id => {
+          const doc = prev.find(d => d.id === id);
+          if (doc && doc.status === 'completed') {
+            if (doc.document_type === 'cv') deletedCv++;
+            if (doc.document_type === 'cover_letter') deletedCl++;
+          }
+        });
+        if (limits) {
+           setLimits((l: any) => ({
+             ...l,
+             cvUsed: Math.max(0, l.cvUsed - deletedCv),
+             clUsed: Math.max(0, l.clUsed - deletedCl)
+           }));
+        }
+        return prev.filter(d => !selected.has(d.id));
+      });
+      setSelected(new Set());
     } catch (err: any) {
-      toast.error('Có lỗi khi xoá hàng loạt');
+      toast.error(t('files.bulkDeleteError'));
     } finally {
       setBulkDeleting(false);
     }
@@ -176,7 +210,7 @@ export default function FilesPage() {
         if (!win) isBlocked = true;
       });
       if (isBlocked) {
-        toast.error('Trình duyệt đã chặn mở nhiều Tab cùng lúc. Vui lòng cấp quyền Pop-up cho trang web!', { duration: 5000 });
+        toast.error(t('files.popupBlocked'), { duration: 5000 });
       }
       setSelected(new Set());
     }
@@ -224,7 +258,7 @@ export default function FilesPage() {
           
           <div className="flex items-center gap-2">
             <button
-              onClick={fetchDocuments}
+              onClick={() => fetchDocuments(true)}
               disabled={loading}
               className="flex items-center justify-center bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-600 p-2.5 rounded-lg transition-all shadow-sm disabled:opacity-50"
               title={t('files.refresh') || 'Làm mới'}

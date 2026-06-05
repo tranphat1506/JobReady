@@ -478,6 +478,13 @@
     "matchScoreDesc": "Score evaluated by AI based on Job Description.",
     "missingSkills": "Missing Skills",
     "aiFeedback": "AI Feedback",
+    "versionHistoryTitle": "Version History",
+    "versionLoading": "Loading history...",
+    "noVersions": "No versions available",
+    "version": "Version",
+    "score": "Score",
+    "restore": "Restore",
+    "restoreSuccess": "Successfully restored version",
     "relevant": "Relevant",
     "irrelevant": "Irrelevant",
     "createCvAndCl": "Create CV & Cover Letter",
@@ -491,8 +498,10 @@
     "htmlNotSupported": "HTML not supported for",
     "noData": "No data",
     "clickToView": "Click to view",
-    "saveSuccess": "Document saved to File Management!",
-    "saveToDashboard": "Save"
+    "saveSuccess": "Document saved to File Manager!",
+    "saveToDashboard": "Save",
+    "saveError": "Error saving document",
+    "backgroundError": "An error occurred during background processing."
   },
   "files": {
     "title": "File Management",
@@ -519,13 +528,26 @@
     "deleteConfirmTitle": "Confirm Delete",
     "deleteConfirmDesc": "Are you sure you want to delete this document? This action cannot be undone.",
     "deleteConfirmBtn": "Delete Document",
-    "selectAll": "Select all",
+    "selectAll": "Select All",
     "selected": "selected",
     "bulkEdit": "Open",
-    "bulkDelete": "Delete all",
+    "bulkDelete": "Delete All",
     "timeLeftH": "h",
     "timeLeftM": "m",
-    "timeLeftMin": "mins"
+    "timeLeftMin": "mins",
+    "loadError": "Error loading documents",
+    "renameError": "Error renaming",
+    "deleteError": "Error deleting document",
+    "cvLimitReached": "You have reached the maximum limit of {limit} CVs. Please buy more Slots to continue.",
+    "clLimitReached": "You have reached the maximum limit of {limit} Cover Letters. Please buy more Slots to continue.",
+    "duplicateError": "Error duplicating",
+    "buySlotProcessing": "Processing transaction...",
+    "buySlotSuccess": "Successfully purchased 1 {name} Slot!",
+    "buySlotError": "Transaction failed",
+    "bulkDeleteSuccess": "Successfully deleted {count} documents",
+    "bulkDeleteError": "Error deleting multiple documents",
+    "popupBlocked": "Your browser blocked opening multiple tabs. Please allow pop-ups for this site!",
+    "cannotLoadDocument": "Cannot load document: "
   },
   "credits": {
     "title": "Credits & History",
@@ -555,7 +577,8 @@
         "generate_both": "Generate CV & Cover Letter",
         "parse_master_profile": "Extract Profile",
         "generate_cv_api_error": "API Error: Generate CV",
-        "parse_master_profile_api_error": "API Error: Extract Profile",
+        "parse_master_profile_api_error": "API Error Parse Master Profile",
+        "PURCHASE_SLOT": "Purchase Extra Slot",
         "REFUND": "Refund",
         "PENDING_RESERVATION": "Pending"
       },
@@ -590,8 +613,24 @@
         "reference": "System Reference:",
         "close": "Close",
         "viewDetails": "View details",
-        "timeline": "Ledger Timeline",
-        "aiStats": "AI Statistics"
+        "timeline": "Balance Timeline",
+        "aiStats": "AI Stats"
+      }
+    },
+    "ledger": {
+      "title": "Credits History",
+      "subtitle": "Track your Credits balance changes.",
+      "details": "Transaction Details",
+      "desc": {
+        "MSG_BUY_CV_SLOT": "Purchased 1 extra CV storage slot",
+        "MSG_BUY_CL_SLOT": "Purchased 1 extra Cover Letter storage slot",
+        "MSG_GENERATE_CV_RESERVE": "Reserved Credits for CV Generation...",
+        "MSG_GENERATE_CV_SUCCESS": "Used AI to analyze and generate CV",
+        "MSG_GENERATE_CV_REFUND": "Refund for CV generation failure",
+        "MSG_PARSE_PROFILE_RESERVE": "Reserved Credits for Profile Extraction...",
+        "MSG_PARSE_PROFILE_SUCCESS": "Used AI to extract Master Profile",
+        "MSG_PARSE_PROFILE_REFUND": "Refund for profile extraction failure",
+        "default": "System transaction"
       }
     },
     "billing": {
@@ -606,7 +645,26 @@
         "package": "Package",
         "amount": "Amount",
         "status": "Status"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "EXPIRED": "Expired",
+        "CANCELLED": "Cancelled"
       }
     }
+  },
+  "upgradeModal": {
+    "title": "Storage Limit Reached",
+      "description": "Your account has reached its maximum storage limit. To continue saving this document, you can purchase more slots or upgrade your account.",
+      "benefit1": "Permanently expand your account storage space.",
+      "benefit2": "Safely store all versions of your documents.",
+      "benefit3": "Edit and publish documents unlimited times.",
+      "buySlotCV": "Buy 1 CV Slot (50 Credits)",
+      "buySlotCL": "Buy 1 Cover Letter Slot (30 Credits)",
+      "processing": "Processing...",
+      "buySuccess": "Successfully purchased 1 slot",
+      "error": "Insufficient Credits or an error occurred",
+      "upgradePlan": "View Upgrade Plans",
+    "later": "Maybe later"
   }
 }

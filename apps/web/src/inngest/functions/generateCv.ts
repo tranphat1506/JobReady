@@ -2,7 +2,7 @@ import { inngest } from "../client";
 import { AIParser } from "@cv-generator/ai";
 import { ErrorCodes } from "@/lib/constants/errors";
 import { AppLogger } from "@/lib/logger";
-import { ActivityEvent } from "@/lib/constants/events";
+import { ActivityEvent, LedgerEvent } from "@/lib/constants/events";
 import fs from "fs";
 import path from "path";
 
@@ -21,7 +21,8 @@ export const generateCvWorker = inngest.createFunction(
         { auth: { persistSession: false } }
       );
       
-      const logId = (event.data as any).logId;
+      const originalEventData = event.data.event?.data || event.data;
+      const logId = originalEventData.logId;
       if (logId) {
         // If it's an AIProviderError from packages/ai, use its semantic code
         let mappedErrorMessage = `${ErrorCodes.WORKER_FAILED}: ${error.message}`;
@@ -32,11 +33,12 @@ export const generateCvWorker = inngest.createFunction(
         await supabase.rpc('finalize_ai_job', {
           p_log_id: logId,
           p_success: false,
-          p_error_message: mappedErrorMessage
+          p_error_message: mappedErrorMessage,
+          p_refund_message_code: LedgerEvent.GENERATE_CV_REFUND
         });
       }
       await AppLogger.trackActivity(
-        (event.data as any).userId,
+        originalEventData.userId,
         ActivityEvent.CV_GENERATED_FAILED
       );
       console.error("[generateCvWorker] Failed after all retries:", error.message);
@@ -187,12 +189,13 @@ export const generateCvWorker = inngest.createFunction(
     // We should patch saveDocument or pass the supabase instance to it.
     // For now, let's recreate the saveDocument logic here to avoid cookie issues in background.
     const saveDoc = async (data: any, docType: string, title: string, idToUpdate?: string) => {
+      let finalResumeId = idToUpdate;
+      
       if (idToUpdate) {
         await supabase
-          .from("resume_versions")
-          .update({ content: data, updated_at: new Date().toISOString() })
+          .from("resumes")
+          .update({ name: title, updated_at: new Date().toISOString(), status: 'draft' })
           .eq("id", idToUpdate);
-        return idToUpdate;
       } else {
         // Create new resume parent
         const { data: resumeData, error: resumeError } = await supabase
@@ -201,29 +204,55 @@ export const generateCvWorker = inngest.createFunction(
             user_id: userId,
             profile_id: actualProfileId, // Required by not-null constraint
             name: title,
-            type: docType,
+            document_type: docType,
             template_id: docType === "cv" ? cvTemplate || "ats-simple" : clTemplate || "cl-simple",
             job_id: finalJobId || null,
+            status: 'draft',
           })
           .select("id")
           .single();
 
         if (resumeError) throw resumeError;
-
-        // Create version
-        const { data: versionData, error: versionError } = await supabase
-          .from("resume_versions")
-          .insert({
-            resume_id: resumeData.id,
-            content: data,
-          })
-          .select("id")
-          .single();
-
-        if (versionError) throw versionError;
-
-        return resumeData.id;
+        finalResumeId = resumeData.id;
       }
+
+      // Determine version number
+      let nextVersion = 1;
+      if (idToUpdate) {
+        const { count: vCount } = await supabase
+          .from('resume_versions')
+          .select('*', { count: 'exact', head: true })
+          .eq('resume_id', finalResumeId);
+        if (vCount !== null) nextVersion = vCount + 1;
+      }
+
+      // Extract match analysis if present
+      let matchAnalysis = null;
+      let score = null;
+      const contentToSave = JSON.parse(JSON.stringify(data)); // Deep copy
+
+      if (docType === 'cv' && contentToSave.matchAnalysis) {
+        matchAnalysis = contentToSave.matchAnalysis;
+        score = matchAnalysis.matchScore || null;
+        delete contentToSave.matchAnalysis;
+      }
+
+      // Create version
+      const { data: versionData, error: versionError } = await supabase
+        .from("resume_versions")
+        .insert({
+          resume_id: finalResumeId,
+          version_number: nextVersion,
+          content: contentToSave,
+          score: score,
+          match_analysis: matchAnalysis
+        })
+        .select("id")
+        .single();
+
+      if (versionError) throw versionError;
+
+      return finalResumeId;
     };
 
     if (responseData.cv) {
@@ -249,7 +278,8 @@ export const generateCvWorker = inngest.createFunction(
         p_prompt_tokens: totalUsage.promptTokens || 0,
         p_completion_tokens: totalUsage.completionTokens || 0,
         p_latency_ms: latency,
-        p_provider: 'google'
+        p_provider: 'google',
+        p_success_message_code: LedgerEvent.GENERATE_CV_SUCCESS
       });
       if (finalizeError) {
         console.error("[generateCvWorker] finalize_ai_job error:", finalizeError);

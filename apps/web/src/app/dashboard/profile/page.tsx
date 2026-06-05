@@ -56,10 +56,12 @@ export default async function ProfilePage({ searchParams }: { searchParams: any 
 
   return (
     <div className="w-full">
+      {/* Tạm khóa tính năng đa Profile
       <ProfileSwitcher 
         profiles={profiles || []} 
         activeProfileId={activeProfile?.id}
       />
+      */}
       
       {activeProfile && (
         // Add a key to force re-render when switching profiles, 

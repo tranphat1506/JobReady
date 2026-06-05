@@ -110,7 +110,7 @@ export default function DashboardClient({
           supabase.removeChannel(channel);
           
           if (payload.new.status === 'failed') {
-            toast.error(payload.new.error_message || 'Có lỗi xảy ra trong quá trình xử lý nền.');
+            toast.error(payload.new.error_message || t('builder.backgroundError'));
             return; // Stay on Step 3
           }
           
@@ -236,7 +236,7 @@ export default function DashboardClient({
                     if (!clWin) isBlocked = true;
                     
                     if (isBlocked) {
-                      toast.error('Trình duyệt đã chặn mở nhiều Tab cùng lúc. Vui lòng cấp quyền Pop-up cho trang web!', { duration: 5000 });
+                      toast.error(t('files.popupBlocked'), { duration: 5000 });
                     }
                     handleReset();
                     router.push('/dashboard/files');

@@ -3,7 +3,7 @@ import { inngest } from "../client";
 import { AIParser } from "@cv-generator/ai";
 import { ErrorCodes } from "@/lib/constants/errors";
 import { AppLogger } from "@/lib/logger";
-import { ActivityEvent } from "@/lib/constants/events";
+import { ActivityEvent, LedgerEvent } from "@/lib/constants/events";
 import fs from "fs";
 import path from "path";
 
@@ -20,7 +20,8 @@ export const parseProfileWorker = inngest.createFunction(
         { auth: { persistSession: false } }
       );
       
-      const logId = (event.data as any).logId;
+      const originalEventData = event.data.event?.data || event.data;
+      const logId = originalEventData.logId;
       if (logId) {
         // If it's an AIProviderError from packages/ai, use its semantic code
         let mappedErrorMessage = `${ErrorCodes.WORKER_FAILED}: ${error.message}`;
@@ -29,13 +30,14 @@ export const parseProfileWorker = inngest.createFunction(
         }
 
         await supabase.rpc('finalize_ai_job', {
-          p_log_id: (event.data as any).logId,
+          p_log_id: logId,
           p_success: false,
-          p_error_message: mappedErrorMessage
+          p_error_message: mappedErrorMessage,
+          p_refund_message_code: LedgerEvent.PARSE_PROFILE_REFUND
         });
       }
       await AppLogger.trackActivity(
-        (event.data as any).userId,
+        originalEventData.userId,
         ActivityEvent.PROFILE_PARSED_FAILED
       );
       console.error("[parseProfileWorker] Failed after all retries:", error.message);
@@ -129,7 +131,8 @@ export const parseProfileWorker = inngest.createFunction(
         p_completion_tokens: result.usage.completionTokens,
         p_latency_ms: latency,
         p_provider: 'google',
-        p_model_used: 'gemini-1.5-flash'
+        p_model_used: 'gemini-1.5-flash',
+        p_success_message_code: LedgerEvent.PARSE_PROFILE_SUCCESS
       });
       if (finalizeError) {
         console.error("[parseProfileWorker] finalize_ai_job error:", finalizeError);

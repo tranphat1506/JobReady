@@ -57,21 +57,21 @@ export function BillingClient({
       filterQueryKey: 'payStatus',
       filterable: true,
       filterOptions: [
-        { label: 'Hoạt động', value: 'ACTIVE' },
-        { label: 'Hết hạn', value: 'EXPIRED' },
-        { label: 'Đã hủy', value: 'CANCELLED' }
+        { label: t('credits.billing.status.ACTIVE') || 'Hoạt động', value: 'ACTIVE' },
+        { label: t('credits.billing.status.EXPIRED') || 'Hết hạn', value: 'EXPIRED' },
+        { label: t('credits.billing.status.CANCELLED') || 'Đã hủy', value: 'CANCELLED' }
       ],
       render: (sub) => {
         let color = 'bg-zinc-100 text-zinc-600 border-zinc-200';
         let label = sub.status;
         if (sub.status === 'ACTIVE') {
           color = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-          label = 'Hoạt động';
+          label = t('credits.billing.status.ACTIVE') || 'Hoạt động';
         } else if (sub.status === 'EXPIRED') {
           color = 'bg-rose-50 text-rose-700 border-rose-200';
-          label = 'Hết hạn';
+          label = t('credits.billing.status.EXPIRED') || 'Hết hạn';
         } else if (sub.status === 'CANCELLED') {
-          label = 'Đã hủy';
+          label = t('credits.billing.status.CANCELLED') || 'Đã hủy';
         }
         return (
           <div className="flex justify-center">
@@ -87,34 +87,34 @@ export function BillingClient({
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('credits.billing.title') || 'Lịch sử thanh toán'}</h1>
-        <p className="text-sm text-zinc-500 mt-1.5 font-medium">{t('credits.billing.subtitle') || 'Theo dõi các giao dịch mua gói hoặc mua Slot của bạn.'}</p>
+        <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('credits.billing.title')}</h1>
+        <p className="text-sm text-zinc-500 mt-1.5 font-medium">{t('credits.billing.subtitle')}</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-5 border-b border-zinc-100 bg-zinc-50/50">
-        <h3 className="font-semibold text-zinc-900 text-lg">
-          {t('credits.billing.title') || 'Lịch sử thanh toán'}
-        </h3>
+        <div className="px-6 py-5 border-b border-zinc-100 bg-zinc-50/50">
+          <h3 className="font-semibold text-zinc-900 text-lg">
+            {t('credits.billing.title')}
+          </h3>
+        </div>
+        <div className="p-0">
+          <DataTable
+            columns={payColumns}
+            data={subscriptions}
+            page={payPage}
+            totalPages={totalPayPages}
+            pageQueryKey="payPage"
+            sortByKey="paySortBy"
+            sortOrderKey="paySortOrder"
+            emptyMessage={t('credits.billing.empty') || 'Chưa có giao dịch nào.'}
+            dict={{
+              all: t('credits.history.all') || 'Tất cả',
+              filterBy: t('credits.history.filterBy') || 'Lọc theo:',
+              pageInfo: t('credits.history.pages') || 'Trang {page} / {total}'
+            }}
+          />
+        </div>
       </div>
-      <div className="p-0">
-        <DataTable
-          columns={payColumns}
-          data={subscriptions}
-          page={payPage}
-          totalPages={totalPayPages}
-          pageQueryKey="payPage"
-          sortByKey="paySortBy"
-          sortOrderKey="paySortOrder"
-          emptyMessage={t('credits.billing.empty') || 'Chưa có giao dịch nào.'}
-          dict={{
-            all: t('credits.history.all') || 'Tất cả',
-            filterBy: t('credits.history.filterBy') || 'Lọc theo:',
-            pageInfo: t('credits.history.pages') || 'Trang {page} / {total}'
-          }}
-        />
-      </div>
-    </div>
     </>
   );
 }

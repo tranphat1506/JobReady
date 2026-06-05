@@ -100,14 +100,16 @@ export async function getUserLimits() {
     .select('id')
     .eq('user_id', user.id)
     .eq('document_type', 'cv')
-    .eq('status', 'completed');
+    .eq('status', 'completed')
+    .is('deleted_at', null);
 
   const { data: clData } = await supabase
     .from('resumes')
     .select('id')
     .eq('user_id', user.id)
     .eq('document_type', 'cover_letter')
-    .eq('status', 'completed');
+    .eq('status', 'completed')
+    .is('deleted_at', null);
 
   return {
     cvUsed: cvData?.length || 0,
@@ -156,7 +158,8 @@ export async function checkUserLimit(supabase: any, userId: string, type: 'cv' |
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
     .eq('document_type', type)
-    .eq('status', 'completed');
+    .eq('status', 'completed')
+    .is('deleted_at', null);
 
   if (count !== null && count >= limit) {
     throw new Error(ErrorCodes.LIMIT_REACHED);
@@ -211,6 +214,19 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
   let resumeId = idToUpdate;
 
   if (resumeId) {
+    // Check if we are upgrading a draft to completed
+    if (status === 'completed') {
+      const { data: oldResume } = await supabase
+        .from('resumes')
+        .select('status')
+        .eq('id', resumeId)
+        .single();
+        
+      if (oldResume && oldResume.status === 'draft') {
+        await checkUserLimit(supabase, user.id, type);
+      }
+    }
+
     // UPDATE existing resume
     const { error: updateError } = await supabase
       .from('resumes')
@@ -231,23 +247,7 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
     }
 
     // INSERT new resume.
-    // CONSTRAINT: 1 User has at most 1 draft per type. If creating a new draft, delete the old one first.
-    if (status === 'draft') {
-      const { data: existingDrafts } = await supabase
-        .from('resumes')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('document_type', type)
-        .eq('status', 'draft');
-
-      if (existingDrafts && existingDrafts.length > 0) {
-        for (const draft of existingDrafts) {
-          // Cascading delete should handle resume_versions
-          await supabase.from('resume_versions').delete().eq('resume_id', draft.id);
-          await supabase.from('resumes').delete().eq('id', draft.id);
-        }
-      }
-    }
+    // Allow multiple drafts. They will be filtered out by the 24h query in getDocuments.
 
     const { data: resume, error: resumeError } = await supabase
       .from('resumes')
@@ -267,36 +267,50 @@ export const saveDocument = withAuditLog('SAVE_DOCUMENT', async (
     resumeId = resume.id;
   }
 
-  // Extract match analysis if present
+
+  // Determine version number and overwrite instead of creating new
+  const { data: existingVersion } = await supabase
+    .from('resume_versions')
+    .select('id')
+    .eq('resume_id', resumeId)
+    .limit(1)
+    .maybeSingle();
+
+  // Extract match analysis if present and remove it from content
   let matchAnalysis = null;
   let score = null;
-  if (type === 'cv' && (data as any).matchAnalysis) {
-    matchAnalysis = (data as any).matchAnalysis;
+  const contentToSave = JSON.parse(JSON.stringify(data)); // Deep copy to avoid mutating original
+
+  if (type === 'cv' && contentToSave.matchAnalysis) {
+    matchAnalysis = contentToSave.matchAnalysis;
     score = matchAnalysis.matchScore || null;
+    delete contentToSave.matchAnalysis; // Segregate data
   }
 
-  // Determine version number
-  let nextVersion = 1;
-  if (idToUpdate) {
-    const { count: vCount } = await supabase
+  if (existingVersion) {
+    // Update existing version
+    const { error: versionError } = await supabase
       .from('resume_versions')
-      .select('*', { count: 'exact', head: true })
-      .eq('resume_id', resumeId);
-    if (vCount !== null) nextVersion = vCount + 1;
+      .update({
+        content: contentToSave,
+        score: score,
+        match_analysis: matchAnalysis
+      })
+      .eq('id', existingVersion.id);
+    if (versionError) throw versionError;
+  } else {
+    // Insert new version
+    const { error: versionError } = await supabase
+      .from('resume_versions')
+      .insert({
+        resume_id: resumeId,
+        version_number: 1,
+        content: contentToSave,
+        score: score,
+        match_analysis: matchAnalysis
+      });
+    if (versionError) throw versionError;
   }
-
-  // Insert new version into resume_versions
-  const { error: versionError } = await supabase
-    .from('resume_versions')
-    .insert({
-      resume_id: resumeId,
-      version_number: nextVersion,
-      content: data as any,
-      score: score,
-      match_analysis: matchAnalysis
-    });
-
-  if (versionError) throw versionError;
 
   return resumeId;
 });
@@ -341,12 +355,30 @@ export async function getDocuments(): Promise<SavedDocument[]> {
     .from('resumes')
     .select('*, resume_versions(score, match_analysis)')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .or(`status.eq.completed,and(status.eq.draft,updated_at.gte.${yesterday})`)
     .order('updated_at', { ascending: false });
 
   if (error) throw error;
   
   return (data || []) as SavedDocument[];
+}
+
+export async function getResumeVersions(resumeId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
+
+  const { data, error } = await supabase
+    .from('resume_versions')
+    .select('id, version_number, score, match_analysis, created_at, content')
+    .eq('resume_id', resumeId)
+    .order('version_number', { ascending: false });
+
+  if (error) throw error;
+  
+  return data;
 }
 
 export async function renameDocument(id: string, newName: string) {
@@ -368,15 +400,10 @@ export async function deleteDocument(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error(ErrorCodes.UNAUTHORIZED);
-
-  await supabase
-    .from('resume_versions')
-    .delete()
-    .eq('resume_id', id);
-
+  // Use soft delete by setting deleted_at
   const { error } = await supabase
     .from('resumes')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
     .eq('user_id', user.id);
 

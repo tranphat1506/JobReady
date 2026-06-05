@@ -5,6 +5,7 @@ import { ErrorCodes } from '@/lib/constants/errors';
 import { SLOT_PRICING } from '@/constants/pricing';
 import { revalidatePath } from 'next/cache';
 import { withAuditLog } from '@/utils/auditLogger';
+import { LedgerEvent } from '@/lib/constants/events';
 
 export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
   const supabase = await createClient();
@@ -20,7 +21,8 @@ export const buySlot = withAuditLog('BUY_SLOT', async (type: 'cv' | 'cl') => {
   const { error } = await supabase.rpc('buy_slot', {
     p_user_id: user.id,
     p_slot_type: type,
-    p_cost: cost
+    p_cost: cost,
+    p_message_code: type === 'cv' ? LedgerEvent.BUY_CV_SLOT : LedgerEvent.BUY_CL_SLOT
   });
 
   if (error) {

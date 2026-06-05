@@ -6,6 +6,7 @@ import { ErrorCodes } from '@/lib/constants/errors';
 import { createClient } from '@/utils/supabase/server';
 import { AI_PRICING } from '@/constants/pricing';
 import { inngest } from '@/inngest/client';
+import { LedgerEvent } from '@/lib/constants/events';
 
 export const POST = withErrorHandler(async (req: Request) => {
   const supabase = await createClient();
@@ -40,7 +41,8 @@ export const POST = withErrorHandler(async (req: Request) => {
       p_user_id: userId,
       p_cost: totalCost,
       p_action_type: 'parse_master_profile',
-      p_metadata: { source_type: 'upload', target_language: 'auto' }
+      p_metadata: { source_type: 'upload', target_language: 'auto' },
+      p_message_code: LedgerEvent.PARSE_PROFILE_RESERVE
     });
 
     if (reserveError) {
@@ -75,7 +77,8 @@ export const POST = withErrorHandler(async (req: Request) => {
       await adminSupabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: false,
-        p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`
+        p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`,
+        p_refund_message_code: LedgerEvent.PARSE_PROFILE_REFUND
       });
 
       throw new ApiError('Failed to dispatch background job. Credits refunded.', 500, ErrorCodes.DISPATCH_FAILED);

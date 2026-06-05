@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/server';
 import { AI_PRICING } from '@/constants/pricing';
 import { PDFParse } from 'pdf-parse';
 import { inngest } from '@/inngest/client';
+import { LedgerEvent } from '@/lib/constants/events';
 
 export const POST = withErrorHandler(async (req: Request) => {
   const supabase = await createClient();
@@ -88,12 +89,12 @@ export const POST = withErrorHandler(async (req: Request) => {
     else if (goal === "cover_letter") totalCost = AI_PRICING.generate_cl;
     else totalCost = AI_PRICING.generate_cv + AI_PRICING.generate_cl;
 
-    // Call the atomic reservation RPC
     const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
       p_user_id: userId,
       p_cost: totalCost,
       p_action_type: `generate_${goal}`,
-      p_metadata: { goal, source_type: sourceType, target_language: targetLanguage }
+      p_metadata: { goal, source_type: sourceType, target_language: targetLanguage },
+      p_message_code: LedgerEvent.GENERATE_CV_RESERVE
     });
 
     if (reserveError) {
@@ -138,7 +139,8 @@ export const POST = withErrorHandler(async (req: Request) => {
       const { error: refundError } = await adminSupabase.rpc('finalize_ai_job', {
         p_log_id: logId,
         p_success: false,
-        p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`
+        p_error_message: `${ErrorCodes.DISPATCH_FAILED}: ${error.message}`,
+        p_refund_message_code: LedgerEvent.GENERATE_CV_REFUND
       });
       
       if (refundError) {

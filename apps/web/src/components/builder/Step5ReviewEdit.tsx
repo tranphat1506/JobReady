@@ -1,15 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, CheckCircle2, FileText, ChevronRight, ArrowRight, Sparkles, MousePointer2 } from 'lucide-react';
-import PDFPreview from './PDFPreview';
+import dynamic from 'next/dynamic';
+
+const PDFPreview = dynamic(() => import('./PDFPreview'), { ssr: false });
 import { HTMLHarvardTemplate } from '../html-cv/HTMLHarvardTemplate';
 import { HTMLATSSimpleTemplate } from '../html-cv/HTMLATSSimpleTemplate';
 import { HTMLCoverLetterTemplate } from '../html-cv/HTMLCoverLetterTemplate';
 import { BlockEditorForm } from './BlockEditorForm';
 import { CVSchema, CoverLetterSchema } from '@cv-generator/schema';
 import { useTranslation } from '@/hooks/useTranslation';
-import { saveDocument } from '@/actions/documentManagement';
+import { saveDocument, getResumeVersions } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { UpgradeModal } from './UpgradeModal';
+import { ErrorCodes } from '@/lib/constants/errors';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 interface Step5Props {
   result: { cv?: CVSchema; coverLetter?: CoverLetterSchema } | null;
@@ -38,7 +43,8 @@ export function Step5ReviewEdit({
   onPrev,
   initialStatus = 'completed',
 }: Step5Props) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const setLanguage = useSettingsStore((state) => state.setLanguage);
   const router = useRouter();
   // Mock state for active edit block
   const [activeBlock, setActiveBlock] = useState<string | null>(null);
@@ -49,6 +55,15 @@ export function Step5ReviewEdit({
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [status, setStatus] = useState<string>(initialStatus);
+  
+  // Version History State
+  const [showVersions, setShowVersions] = useState<boolean>(false);
+  const [versions, setVersions] = useState<any[]>([]);
+  const [isLoadingVersions, setIsLoadingVersions] = useState<boolean>(false);
+  
+  // Upgrade Modal State
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeDocType, setUpgradeDocType] = useState<'cv' | 'cover_letter' | null>(null);
   
   // Document Names
   const [cvName, setCvName] = useState<string>(
@@ -182,13 +197,18 @@ export function Step5ReviewEdit({
       setHasChanges(false);
       
       if (redirectId) {
-        toast.success(t('builder.saveSuccess') || 'Đã lưu tài liệu thành công!');
+        toast.success(t('builder.saveSuccess'));
         router.push(`/dashboard/edit/${redirectId}`);
       } else {
-        toast.success(t('builder.saveSuccess') || 'Đã lưu tài liệu thành công!');
+        toast.success(t('builder.saveSuccess'));
       }
     } catch (error: any) {
-      toast.error(error.message || 'Lỗi khi lưu tài liệu');
+      if (error.message === ErrorCodes.LIMIT_REACHED || error.message?.includes('limit_reached')) {
+        setUpgradeDocType(activeDoc === 'cv' ? 'cv' : 'cover_letter');
+        setShowUpgradeModal(true);
+      } else {
+        toast.error(error.message || t('builder.saveError'));
+      }
     } finally {
       setIsSaving(false);
     }
@@ -242,10 +262,18 @@ export function Step5ReviewEdit({
               </button>
             </div>
           )}
+          
+          {/* Version History Button (Temporarily Disabled) */}
           </div>
                       
           {/* Right side: Name, Save, Download */}
           <div className="flex items-center gap-2 pr-1">
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'vi' : 'en')}
+              className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-bold text-zinc-600 transition-colors uppercase"
+            >
+              {language}
+            </button>
             <div className="flex items-center border border-zinc-200 bg-zinc-50 rounded-lg overflow-hidden h-9 w-48 sm:w-64">
               <input 
                 type="text" 
@@ -470,6 +498,77 @@ export function Step5ReviewEdit({
           </div>
         </div>
       )}
+
+      {/* Version History Drawer */}
+      <div
+        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-zinc-200 flex flex-col ${showVersions ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        <div className="p-4 border-b border-zinc-200 bg-zinc-50/50 flex justify-between items-center">
+          <h3 className="font-semibold text-zinc-900 text-sm">{t('builder.versionHistoryTitle') || 'Lịch sử phiên bản'}</h3>
+          <button
+            onClick={() => setShowVersions(false)}
+            className="text-2xl leading-none font-medium text-zinc-400 hover:text-red-500 px-2 transition-colors"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {isLoadingVersions ? (
+            <div className="text-center text-zinc-500 py-8 text-sm animate-pulse">{t('builder.versionLoading') || 'Đang tải lịch sử...'}</div>
+          ) : versions.length === 0 ? (
+            <div className="text-center text-zinc-500 py-8 text-sm">{t('builder.noVersions') || 'Chưa có phiên bản nào'}</div>
+          ) : (
+            versions.map((v) => (
+              <div key={v.id} className="border border-zinc-200 rounded-lg p-4 bg-white hover:border-primary/50 transition-colors">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <span className="font-bold text-sm text-zinc-900">{t('builder.version') || 'Phiên bản'} {v.version_number}</span>
+                    <div className="text-xs text-zinc-500 mt-1">
+                      {new Date(v.created_at).toLocaleString(language === 'en' ? 'en-US' : 'vi-VN')}
+                    </div>
+                  </div>
+                  {v.score && (
+                    <div className="text-xs font-bold px-2 py-1 bg-green-50 text-green-700 rounded-md">
+                      {t('builder.score') || 'Điểm'}: {v.score}
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    const contentWithMatch = { ...v.content };
+                    if (v.match_analysis) {
+                      contentWithMatch.matchAnalysis = v.match_analysis;
+                    }
+                    if (activeDoc === 'cv') {
+                      setResult({ ...result, cv: contentWithMatch });
+                    } else {
+                      setResult({ ...result, coverLetter: contentWithMatch });
+                    }
+                    setHasChanges(true);
+                    setShowVersions(false);
+                    toast.success(`${t('builder.restoreSuccess') || 'Đã khôi phục phiên bản'} ${v.version_number}`);
+                  }}
+                  className="mt-3 w-full text-xs font-semibold px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-md transition-colors"
+                >
+                  {t('builder.restore') || 'Khôi phục'}
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+        docType={upgradeDocType}
+        onBuySuccess={() => {
+          setShowUpgradeModal(false);
+          handleSave(); // Automatically retry saving
+        }}
+      />
     </div>
   );
 }

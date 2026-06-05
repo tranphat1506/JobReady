@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Wand2, Activity } from 'lucide-react'
+import { FileText, UserCircle, FolderKanban, CreditCard, LogOut, FileCode2, Menu, X, PanelLeftClose, PanelLeftOpen, Activity, History, Coins } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import { AppIcon } from '@/components/ui/AppIcon'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { getUserLimits } from '@/actions/documentManagement'
 
 export function Sidebar({ user }: { user: { id?: string, email?: string, full_name?: string, plan?: string, credits?: number, limits?: any } }) {
   const pathname = usePathname()
@@ -19,34 +20,65 @@ export function Sidebar({ user }: { user: { id?: string, email?: string, full_na
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [realtimeCredits, setRealtimeCredits] = useState(user.credits || 0)
+  const [realtimeLimits, setRealtimeLimits] = useState(user.limits || null)
 
   // Subcribe to real-time credit updates
   useEffect(() => {
     setRealtimeCredits(user.credits || 0); // Sync initial
+    setRealtimeLimits(user.limits || null);
 
     if (!user?.id) return;
-    const channel = supabase.channel('user-credits-sidebar');
+    const channel = supabase.channel('user-sidebar-updates');
+    
+    // Listen for credits balance and extra slots updates
     channel.on(
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'users', filter: `id=eq.${user.id}` },
-      (payload) => {
+      async (payload) => {
         if (payload.new && typeof payload.new.credits_balance === 'number') {
           setRealtimeCredits(payload.new.credits_balance);
         }
+        if (payload.new && (payload.new.extra_cv_slots !== payload.old?.extra_cv_slots || payload.new.extra_cl_slots !== payload.old?.extra_cl_slots)) {
+          const limits = await getUserLimits();
+          setRealtimeLimits(limits);
+        }
       }
-    ).subscribe();
+    );
+
+    // Listen for resumes changes (document used)
+    channel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'resumes', filter: `user_id=eq.${user.id}` },
+      async () => {
+        const limits = await getUserLimits();
+        setRealtimeLimits(limits);
+      }
+    );
+
+    // Listen for subscriptions changes
+    channel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'subscriptions', filter: `user_id=eq.${user.id}` },
+      async () => {
+        const limits = await getUserLimits();
+        setRealtimeLimits(limits);
+      }
+    );
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user.credits, user.id, supabase]);
+  }, [user.credits, user.limits, user.id, supabase]);
 
   const navigation = [
     { name: t('dashboard.nav.createCv') || 'Tạo CV', href: '/dashboard', icon: FileCode2 },
     { name: t('dashboard.nav.masterProfile') || 'Hồ Sơ Master', href: '/dashboard/profile', icon: UserCircle },
     { name: t('dashboard.nav.manageFiles') || 'Quản lý File', href: '/dashboard/files', icon: FolderKanban },
     { name: t('dashboard.nav.billing') || 'Lịch sử thanh toán', href: '/dashboard/billing', icon: CreditCard },
-    { name: t('dashboard.nav.usages') || 'Lịch sử sử dụng AI', href: '/dashboard/usages', icon: Wand2 },
+    { name: t('credits.ledger.title') || 'Lịch sử Credits', href: '/dashboard/credits', icon: Coins },
+    { name: t('dashboard.nav.usages') || 'Lịch sử sử dụng AI', href: '/dashboard/usages', icon: History },
   ]
 
   const devNavigation = [
@@ -183,7 +215,7 @@ export function Sidebar({ user }: { user: { id?: string, email?: string, full_na
           )}
 
           {/* Mini-dashboard: Credits & Limits */}
-          {!isCollapsed && user?.limits && (
+          {!isCollapsed && realtimeLimits && (
             <div className="mb-3 px-3 py-2 border border-primary/20 bg-primary/5 rounded-lg">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="bg-primary/20 p-1 rounded-md">
@@ -192,8 +224,8 @@ export function Sidebar({ user }: { user: { id?: string, email?: string, full_na
                 <span className="text-xs font-bold text-zinc-900">{realtimeCredits} Credits</span>
               </div>
               <div className="flex items-center justify-between text-[10px] font-semibold text-zinc-600">
-                <span>CV: {user.limits.cvUsed}/{user.limits.cvLimit}</span>
-                <span>CL: {user.limits.clUsed}/{user.limits.clLimit}</span>
+                <span>CV: {realtimeLimits.cvUsed}/{realtimeLimits.cvLimit}</span>
+                <span>CL: {realtimeLimits.clUsed}/{realtimeLimits.clLimit}</span>
               </div>
             </div>
           )}
