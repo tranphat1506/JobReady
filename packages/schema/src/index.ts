@@ -8,6 +8,7 @@ export interface PersonalInfo {
   jobTitle?: string;
   gender?: string;
   avatar?: string;
+  showAvatar?: boolean;
   dob?: string;
   email: string;
   phone: string;

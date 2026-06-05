@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Document, Page, Text, View } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image } from '@react-pdf/renderer';
 import { ICoverLetterTemplate, CoverLetterTemplateConfig } from '../core/ICoverLetterTemplate';
 import { CoverLetterSchema } from '@cv-generator/schema';
 import { styles } from '../components/Styles';
@@ -20,21 +20,31 @@ export class StandardCoverLetterTemplate implements ICoverLetterTemplate {
 
           {/* Header - Sender Info */}
           <View style={{ marginBottom: 20 }}>
-            <View style={{ minHeight: 30, justifyContent: 'center' }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 5 }}>
-                {data.personal.fullName}
-              </Text>
-            </View>
-            {isValid(data.personal.jobTitle) ? (
-              <View style={{ minHeight: 18, marginBottom: 5, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 12, color: '#555' }}>{data.personal.jobTitle}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+              {data.personal.avatar && data.personal.showAvatar !== false ? (
+                <Image
+                  src={data.personal.avatar}
+                  style={{ width: 48, height: 60, objectFit: 'cover', borderRadius: 4 }}
+                />
+              ) : null}
+              <View style={{ flex: 1 }}>
+                <View style={{ minHeight: 30, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 5 }}>
+                    {data.personal.fullName}
+                  </Text>
+                </View>
+                {isValid(data.personal.jobTitle) ? (
+                  <View style={{ minHeight: 18, marginBottom: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#555' }}>{data.personal.jobTitle}</Text>
+                  </View>
+                ) : null}
+                <View style={{ fontSize: 10, color: '#333', lineHeight: 1.5 }}>
+                  {isValid(data.personal.phone) ? <Text>{data.personal.phone}</Text> : null}
+                  {isValid(data.personal.email) ? <Text>{data.personal.email}</Text> : null}
+                  {isValid(data.personal.location) ? <Text>{data.personal.location}</Text> : null}
+                  {isValid(data.personal.portfolio) ? <Text>{data.personal.portfolio}</Text> : null}
+                </View>
               </View>
-            ) : null}
-            <View style={{ fontSize: 10, color: '#333', lineHeight: 1.5 }}>
-              {isValid(data.personal.phone) ? <Text>{data.personal.phone}</Text> : null}
-              {isValid(data.personal.email) ? <Text>{data.personal.email}</Text> : null}
-              {isValid(data.personal.location) ? <Text>{data.personal.location}</Text> : null}
-              {isValid(data.personal.portfolio) ? <Text>{data.personal.portfolio}</Text> : null}
             </View>
           </View>
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Plus, Trash2, Camera, X } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+import { createClient } from '@/utils/supabase/client';
 
 const AutoResizeTextarea = ({ className, value, onChange, ...props }: any) => {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -34,10 +35,14 @@ interface BlockEditorFormProps {
   onChange: (newData: any) => void;
   sectionTitle?: string;
   onTitleChange?: (newTitle: string) => void;
+  docType?: 'cv' | 'cover_letter';
 }
 
-export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onTitleChange }: BlockEditorFormProps) {
+export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onTitleChange, docType }: BlockEditorFormProps) {
   const { t } = useTranslation();
+  const supabase = createClient();
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   // Use local state to handle fast typing, then debounce or flush to parent on blur/save
   const [localData, setLocalData] = useState<any>(data);
 
@@ -183,10 +188,105 @@ export function BlockEditorForm({ activeBlock, data, onChange, sectionTitle, onT
 
   // -- SPECIFIC RENDERERS --
 
+  const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingAvatar(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
+      handleChange(['avatar'], urlData.publicUrl);
+    } catch (err) {
+      console.error('Avatar upload failed:', err);
+    } finally {
+      setIsUploadingAvatar(false);
+      e.target.value = '';
+    }
+  }, [supabase]);
+
   if (activeBlock === 'personal') {
+    const avatarUrl = localData?.avatar;
     return (
       <div className="space-y-1">
-        <InputField label={t('builder.avatar') || "Ảnh đại diện (URL)"} value={localData?.avatar} path={['avatar']} />
+        {/* Avatar Upload UI */}
+        <div className="mb-4">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">
+            {t('builder.avatar') || 'Ảnh đại diện'}
+          </label>
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => avatarInputRef.current?.click()}
+              className="w-16 h-20 rounded border border-dashed border-zinc-300 bg-zinc-50 flex items-center justify-center cursor-pointer hover:border-zinc-500 transition-colors overflow-hidden relative group shrink-0"
+            >
+              {avatarUrl ? (
+                <>
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Camera className="w-4 h-4 text-white" />
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-1">
+                  {isUploadingAvatar ? (
+                    <svg className="animate-spin h-5 w-5 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <Camera className="w-5 h-5 text-zinc-300" />
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+                className="text-[10px] font-bold uppercase tracking-widest px-2 py-1.5 border border-zinc-200 hover:bg-zinc-100 transition-colors disabled:opacity-50"
+              >
+                {isUploadingAvatar ? (t('builder.processing') || 'Đang tải...') : (avatarUrl ? (t('builder.changeAvatar') || 'Đổi ảnh') : (t('builder.uploadAvatar') || 'Tải ảnh lên'))}
+              </button>
+              {avatarUrl && (
+                <button
+                  type="button"
+                  onClick={() => handleChange(['avatar'], '')}
+                  className="text-[10px] font-bold uppercase tracking-widest px-2 py-1.5 border border-zinc-200 text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors flex items-center gap-1"
+                >
+                  <X className="w-3 h-3" /> {t('builder.removeAvatar') || 'Xóa ảnh'}
+                </button>
+              )}
+            </div>
+          </div>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAvatarUpload}
+          />
+        </div>
+        {/* Show Avatar toggle (Cover Letter only) */}
+        {docType === 'cover_letter' && (
+          <div className="mb-3 p-3 bg-zinc-50 border border-zinc-200 rounded">
+            <label className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={localData?.showAvatar !== false}
+                onChange={(e) => handleChange(['showAvatar'], e.target.checked)}
+                className="w-4 h-4 rounded text-primary border-zinc-300 focus:ring-primary"
+              />
+              <span className="text-xs font-semibold text-zinc-700">
+                {t('builder.showAvatarOnCL') || 'Hiển thị ảnh đại diện trên Cover Letter'}
+              </span>
+            </label>
+          </div>
+        )}
         <InputField label={t('builder.fullName') || "Họ và Tên"} value={localData?.fullName} path={['fullName']} />
         <InputField label={t('builder.jobTitle') || "Vị trí / Chức danh"} value={localData?.jobTitle} path={['jobTitle']} />
         <div className="grid grid-cols-2 gap-2">

@@ -368,6 +368,7 @@ export function Step5ReviewEdit({
                 onChange={handleFormChange}
                 sectionTitle={activeDoc === 'cv' ? result?.cv?.sectionTitles?.[activeBlock as keyof typeof result.cv.sectionTitles] : undefined}
                 onTitleChange={activeDoc === 'cv' ? handleTitleChange : undefined}
+                docType={activeDoc === 'cv' ? 'cv' : 'cover_letter'}
               />
             </div>
 
