@@ -1,4 +1,4 @@
-# CV Generator (AI-Powered) SaaS
+# Job Ready (AI-Powered) SaaS
 
 Dự án tạo CV và Cover Letter tự động bằng AI, sử dụng cấu trúc AST (Abstract Syntax Tree) và xuất file PDF chuẩn ATS.
 
