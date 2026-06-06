@@ -19,7 +19,7 @@ export const parseProfileWorker = inngest.createFunction(
         process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
         { auth: { persistSession: false } }
       );
-      
+
       const originalEventData = event.data.event?.data || event.data;
       const logId = originalEventData.logId;
       if (logId) {
@@ -44,7 +44,7 @@ export const parseProfileWorker = inngest.createFunction(
     },
   },
   async ({ event, step }: { event: any; step: any }) => {
-    const { userId, contentToParse, logId } = event.data;
+    const { userId, rawCV: contentToParse, logId } = event.data;
 
     const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -56,16 +56,16 @@ export const parseProfileWorker = inngest.createFunction(
     // Credits are already deducted at the API layer
 
     const aiParser = new AIParser(process.env.GEMINI_API_KEY!);
-    
+
     console.log(`[AI-Worker] Parsing Master Profile for user ${userId}...`);
     const startTime = Date.now();
     let result: any = null;
-    
+
     // --- DEV CACHING LOGIC ---
     const isDev = process.env.NODE_ENV === "development";
     let cacheFile = "";
     let isCached = false;
-    
+
     if (isDev) {
       const cacheDir = path.join(process.cwd(), ".cache");
       if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
@@ -88,7 +88,7 @@ export const parseProfileWorker = inngest.createFunction(
         throw error;
       }
     }
-    
+
     const latency = Date.now() - startTime;
 
     // Save to DB (1-N relationship: find default or create new)
@@ -110,8 +110,8 @@ export const parseProfileWorker = inngest.createFunction(
     } else {
       const { data: newProfile, error: insertError } = await supabase
         .from('master_profiles')
-        .insert({ 
-          user_id: userId, 
+        .insert({
+          user_id: userId,
           name: 'Default Profile',
           is_default: true,
           content: result.data
@@ -138,7 +138,7 @@ export const parseProfileWorker = inngest.createFunction(
         console.error("[parseProfileWorker] finalize_ai_job error:", finalizeError);
         throw finalizeError;
       }
-      
+
       // Log semantic activity
       await AppLogger.trackActivity(
         userId,

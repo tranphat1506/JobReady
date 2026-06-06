@@ -11,11 +11,11 @@ import { LedgerEvent } from '@/lib/constants/events';
 export const POST = withErrorHandler(async (req: Request) => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  
+
   if (!user) {
     throw new AuthError('Not authenticated', ErrorCodes.UNAUTHORIZED);
   }
-  
+
   const userId = user.id;
 
   try {
@@ -66,7 +66,7 @@ export const POST = withErrorHandler(async (req: Request) => {
       });
     } catch (error: any) {
       console.error("[parse-profile] API Dispatch Error:", error);
-      
+
       const { createClient: createSupabaseAdmin } = require("@supabase/supabase-js");
       const adminSupabase = createSupabaseAdmin(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
