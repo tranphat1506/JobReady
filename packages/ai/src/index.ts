@@ -4,6 +4,8 @@ import { buildCVPrompt } from './prompts/cv.prompt';
 import { buildCoverLetterPrompt } from './prompts/coverLetter.prompt';
 import { buildMasterProfilePrompt } from './prompts/masterProfile.prompt';
 import { mapProviderError } from './errors';
+import { buildRescorePrompt } from './prompts/rescore.prompt';
+import { MatchAnalysis } from '@cv-generator/schema';
 
 export * from './errors';
 
@@ -59,6 +61,48 @@ export class AIParser {
       return { data: JSON.parse(responseText) as CVSchema, usage };
     } catch (error) {
       console.error('Error parsing CV with AI:', error);
+      mapProviderError(error);
+    }
+  }
+
+  public async scoreResume(jobDescription: string, cvContent: object, targetLanguage: string = 'English'): Promise<{ data: MatchAnalysis; usage: AIUsage }> {
+    const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    const model = this.genAI.getGenerativeModel({ model: modelName });
+
+    console.log(`🤖 Đang sử dụng Model cho Rescore: ${modelName}`);
+
+    const prompt = buildRescorePrompt(jobDescription, cvContent, targetLanguage);
+
+    const config: GenerationConfig = {
+      responseMimeType: "application/json",
+      temperature: 0.1,
+    };
+
+    try {
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: config,
+      });
+
+      let usage: AIUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+      if (result.response.usageMetadata) {
+        usage = {
+          promptTokens: result.response.usageMetadata.promptTokenCount,
+          completionTokens: result.response.usageMetadata.candidatesTokenCount,
+          totalTokens: result.response.usageMetadata.totalTokenCount,
+        };
+      }
+
+      let jsonText = result.response.text().trim();
+      if (jsonText.startsWith('```json')) {
+        jsonText = jsonText.replace(/^```json\n/, '').replace(/\n```$/, '');
+      } else if (jsonText.startsWith('```')) {
+        jsonText = jsonText.replace(/^```\n/, '').replace(/\n```$/, '');
+      }
+
+      return { data: JSON.parse(jsonText) as MatchAnalysis, usage };
+    } catch (error) {
+      console.error('Error rescoring CV with AI:', error);
       mapProviderError(error);
     }
   }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, CheckCircle2, FileText, ChevronRight, ArrowRight, Sparkles, MousePointer2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FileText, ChevronRight, ArrowRight, Sparkles, MousePointer2, RefreshCw } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const PDFPreview = dynamic(() => import('./PDFPreview'), { ssr: false });
@@ -12,6 +12,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { saveDocument, getResumeVersions } from '@/actions/documentManagement';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { MatchAnalysisModal } from './MatchAnalysisModal';
+import { triggerRescore } from '@/actions/rescore';
 import { UpgradeModal } from './UpgradeModal';
 import { ErrorCodes } from '@/lib/constants/errors';
 import { useSettingsStore } from '@/stores/useSettingsStore';
@@ -55,6 +57,7 @@ export function Step5ReviewEdit({
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [status, setStatus] = useState<string>(initialStatus);
+  const [isRescoring, setIsRescoring] = useState<boolean>(false);
 
   // Version History State
   const [showVersions, setShowVersions] = useState<boolean>(false);
@@ -182,6 +185,25 @@ export function Step5ReviewEdit({
     setHasChanges(true);
   };
 
+  const handleRescore = async () => {
+    if (!cvId || !result?.cv) {
+      toast.error(t('builder.saveFirstToRescore') || 'Vui lòng lưu CV trước khi tính lại điểm');
+      return;
+    }
+    try {
+      setIsRescoring(true);
+      await triggerRescore(cvId, result.cv, language === 'vi' ? 'Vietnamese' : 'English');
+      toast.success(t('builder.rescoreStarted') || 'Đang tính lại điểm ATS. Vui lòng đợi vài giây rồi làm mới trang...');
+      setTimeout(() => {
+        setIsRescoring(false);
+        router.refresh();
+      }, 5000);
+    } catch (error: any) {
+      toast.error(error.message || t('builder.rescoreError') || 'Lỗi khi tính điểm');
+      setIsRescoring(false);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -252,7 +274,7 @@ export function Step5ReviewEdit({
               </div>
             )}
             {result?.cv?.matchAnalysis && (
-              <div className="px-2 border-l border-zinc-200 ml-1 flex items-center">
+              <div className="px-2 border-l border-zinc-200 ml-1 flex items-center gap-2">
                 <button
                   onClick={() => setShowMatchAnalysis(true)}
                   className="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 transition-colors rounded-lg group"
@@ -265,8 +287,18 @@ export function Step5ReviewEdit({
                   </div>
                   <div className="flex flex-col text-left">
                     <span className="text-xs font-semibold text-zinc-900 leading-none group-hover:text-primary transition-colors">ATS Match</span>
-                    <span className="text-[10px] text-zinc-500 mt-1 leading-none">{t('builder.clickToView') || 'Xem chi tiết'}</span>
+                    <span className="text-[10px] text-zinc-500 mt-1 leading-none">
+                      {result.cv.matchAnalysis.jobLevel || (t('builder.clickToView') || 'Xem chi tiết')}
+                    </span>
                   </div>
+                </button>
+                <button
+                  onClick={handleRescore}
+                  disabled={isRescoring}
+                  className="p-1.5 text-zinc-400 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50"
+                  title="Tính lại ATS"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isRescoring ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             )}
@@ -462,49 +494,13 @@ export function Step5ReviewEdit({
 
       {/* Match Analysis Modal */}
       {showMatchAnalysis && result?.cv?.matchAnalysis && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white max-w-lg w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 relative">
-            <button
-              onClick={() => setShowMatchAnalysis(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-black font-bold text-xl leading-none"
-            >
-              &times;
-            </button>
-            <h2 className="text-xl font-bold uppercase tracking-widest mb-6">{t('builder.matchAnalysis') || 'Phân tích độ phù hợp (JD Match)'}</h2>
-
-            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-zinc-200">
-              <div className={`text-4xl font-bold ${result.cv.matchAnalysis.matchScore >= 70 ? 'text-green-600' : result.cv.matchAnalysis.matchScore >= 40 ? 'text-yellow-600' : 'text-red-600'}`}>
-                {result.cv.matchAnalysis.matchScore}%
-              </div>
-              <div>
-                <div className="font-bold text-sm uppercase tracking-widest">{t('builder.matchStatus') || 'Trạng thái'}: {result.cv.matchAnalysis.isRelevant ? (t('builder.relevant') || 'Đạt yêu cầu') : (t('builder.irrelevant') || 'Chưa đạt')}</div>
-                <div className="text-xs text-zinc-500 mt-1">{t('builder.matchScoreDesc') || 'Điểm số do AI đánh giá dựa trên Job Description.'}</div>
-              </div>
-            </div>
-
-            {result.cv.matchAnalysis.missingSkills && result.cv.matchAnalysis.missingSkills.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">{t('builder.missingSkills') || 'Kỹ năng cần bổ sung'}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {result.cv.matchAnalysis.missingSkills.map((s, i) => (
-                    <span key={i} className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 text-xs font-bold rounded-sm">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {result.cv.matchAnalysis.feedback && (
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">{t('builder.aiFeedback') || 'Lời khuyên từ AI'}</h3>
-                <p className="text-sm text-zinc-700 leading-relaxed bg-zinc-50 p-4 border border-zinc-200">
-                  {result.cv.matchAnalysis.feedback}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <MatchAnalysisModal
+          analysis={result.cv.matchAnalysis as any}
+          onClose={() => setShowMatchAnalysis(false)}
+          onRescore={handleRescore}
+          isRescoring={isRescoring}
+          t={t}
+        />
       )}
 
       {/* Version History Drawer */}
@@ -532,13 +528,21 @@ export function Step5ReviewEdit({
               <div key={v.id} className="border border-zinc-200 rounded-lg p-4 bg-white hover:border-primary/50 transition-colors">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <span className="font-bold text-sm text-zinc-900">{t('builder.version') || 'Phiên bản'} {v.version_number}</span>
+                    <span className="font-bold text-sm text-zinc-900 flex items-center gap-2">
+                      {t('builder.version') || 'Phiên bản'} {v.version_number}
+                      {v.match_analysis?.isRescore && (
+                        <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] uppercase font-bold">Re-score</span>
+                      )}
+                      {!v.match_analysis?.isRescore && v.version_number === 1 && (
+                        <span className="px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] uppercase font-bold">Generate</span>
+                      )}
+                    </span>
                     <div className="text-xs text-zinc-500 mt-1">
                       {new Date(v.created_at).toLocaleString(language === 'en' ? 'en-US' : 'vi-VN')}
                     </div>
                   </div>
-                  {v.score && (
-                    <div className="text-xs font-bold px-2 py-1 bg-green-50 text-green-700 rounded-md">
+                  {v.score !== null && (
+                    <div className={`text-xs font-bold px-2 py-1 rounded-md ${v.score >= 70 ? 'bg-green-50 text-green-700' : v.score >= 40 ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700'}`}>
                       {t('builder.score') || 'Điểm'}: {v.score}
                     </div>
                   )}

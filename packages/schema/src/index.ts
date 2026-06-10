@@ -89,11 +89,43 @@ export interface SectionTitles {
   customSections?: string;
 }
 
+export interface BreakdownScore {
+  score: number;
+  weight: number;
+}
+
+export interface DetailedMissingSkills {
+  critical: string[];
+  niceToHave: string[];
+}
+
+export interface SuggestedAddition {
+  skill: string;
+  reason: string;
+}
+
+export interface AIFeedback {
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+}
+
 export interface MatchAnalysis {
   matchScore: number;
   isRelevant: boolean;
-  missingSkills: string[];
-  feedback: string;
+  jobLevel?: string;
+  keywordMatch?: string;
+  breakdown?: {
+    skills: BreakdownScore;
+    experience: BreakdownScore;
+    education: BreakdownScore;
+    keywords: BreakdownScore;
+  };
+  missingSkillsDetails?: DetailedMissingSkills;
+  suggestedAdditions?: SuggestedAddition[];
+  structuredFeedback?: AIFeedback;
+  missingSkills?: string[];
+  feedback?: string;
 }
 
 export interface Labels {

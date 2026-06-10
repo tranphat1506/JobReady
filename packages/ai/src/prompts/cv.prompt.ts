@@ -47,10 +47,14 @@ export function buildCVPrompt(
     ${specificInstructions}${toneInstruction}
 
     - Analyze the fit between the Candidate's data and the Job Description to generate a 'matchAnalysis' object.
-      - 'matchScore': 0-100 score indicating how well the candidate fits the role.
-      - 'isRelevant': true if matchScore >= 40, false if the candidate is wildly unqualified or irrelevant.
-      - 'missingSkills': an array of critical skills required by JD that the candidate lacks.
-      - 'feedback': short advice for the candidate (in ${targetLanguage}).
+      - 'matchScore': 0-100 score indicating how well the candidate fits the role overall.
+      - 'isRelevant': true if matchScore >= 40, false otherwise.
+      - 'jobLevel': Extracted or assumed job title/level for the analysis (e.g., "Senior Backend", "Junior Frontend").
+      - 'keywordMatch': Ratio of matched keywords from JD (e.g., "8/14").
+      - 'breakdown': Object containing score (0-100) and weight (0-1) for: skills, experience, education, keywords. Ensure weights sum to 1.0.
+      - 'missingSkillsDetails': Object containing 'critical' (must-have) and 'niceToHave' arrays of skills missing from candidate.
+      - 'suggestedAdditions': Array of objects { skill, reason } for skills the candidate likely has but didn't explicitly mention.
+      - 'structuredFeedback': Object with 'summary' (short text), 'strengths' (array of strings), 'improvements' (array of strings). (ALL in ${targetLanguage}).
     - Translate ALL output content (sectionTitles, labels, bullet points, etc.) strictly into ${targetLanguage}.
     - Extract all available sections: certifications, awards, activities, references, hobbies if present.
     - If there is any content in the Candidate's data that does not fit into the standard sections above (e.g. Publications, Volunteer Work, Custom Skills, Test Scores, etc.), put it into the 'customSections' array. Use a highly professional title for each custom section translated into ${targetLanguage}.
@@ -60,7 +64,7 @@ export function buildCVPrompt(
     - For education, ensure 'description' is strictly an ARRAY OF STRINGS (e.g. ["Major: AI", "GPA: 2.75", "Relevant Courses: ..."]). NEVER output a single string.
     - Output MUST be ONLY valid JSON matching this exact schema:
     {
-      "matchAnalysis": { "matchScore": 0, "isRelevant": true, "missingSkills": ["string"], "feedback": "string" },
+      "matchAnalysis": { "matchScore": 0, "isRelevant": true, "jobLevel": "string", "keywordMatch": "string", "breakdown": { "skills": { "score": 0, "weight": 0 }, "experience": { "score": 0, "weight": 0 }, "education": { "score": 0, "weight": 0 }, "keywords": { "score": 0, "weight": 0 } }, "missingSkillsDetails": { "critical": ["string"], "niceToHave": ["string"] }, "suggestedAdditions": [{ "skill": "string", "reason": "string" }], "structuredFeedback": { "summary": "string", "strengths": ["string"], "improvements": ["string"] } },
       "labels": { "dob": "string", "portfolio": "string", "link": "string", "phone": "string", "email": "string", "location": "string" },
       "sectionTitles": { "summary": "string", "experience": "string", "projects": "string", "education": "string", "skills": "string", "certifications": "string", "awards": "string", "activities": "string", "references": "string", "hobbies": "string", "customSections": "string" },
       "personal": { "fullName": "string", "jobTitle": "string", "gender": "string", "avatar": "string", "dob": "string", "email": "string", "phone": "string", "location": "string", "portfolio": "string", "links": [{ "name": "string", "url": "string" }] },
