@@ -20,9 +20,10 @@ interface PDFPreviewProps {
   templateId: string;
   data: any;
   hidePreview?: boolean;
+  fileName?: string;
 }
 
-export default function PDFPreview({ type, templateId, data, hidePreview }: PDFPreviewProps) {
+export default function PDFPreview({ type, templateId, data, hidePreview, fileName }: PDFPreviewProps) {
   const { t } = useTranslation();
   const [isGenerating, setIsGenerating] = useState(false);
   let templateObj: any = null;
@@ -53,7 +54,7 @@ export default function PDFPreview({ type, templateId, data, hidePreview }: PDFP
       if (instance.url) {
         const link = document.createElement('a');
         link.href = instance.url;
-        link.download = `${type}_${templateId}.pdf`;
+        link.download = fileName ? `${fileName}.pdf` : `${type}_${templateId}.pdf`;
         link.click();
       } else {
         throw new Error(t('builder.invalidDocType') || 'Loại tài liệu không hợp lệ');
@@ -117,7 +118,7 @@ export default function PDFPreview({ type, templateId, data, hidePreview }: PDFP
         <div className="w-full space-y-3">
           <a
             href={instance.url!}
-            download={`${type}_${templateId}.pdf`}
+            download={fileName ? `${fileName}.pdf` : `${type}_${templateId}.pdf`}
             className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-black text-white rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-zinc-800 transition-colors"
           >
             <Download className="w-4 h-4" /> {t('builder.download') || 'Tải Xuống'} PDF

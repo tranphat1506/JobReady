@@ -344,7 +344,7 @@ export function Step5ReviewEdit({
                 {status === 'draft' ? (
                   <button disabled title="Lưu tài liệu để tải xuống PDF" className="flex items-center justify-center h-9 px-4 gap-2 bg-zinc-200 text-zinc-500 rounded-lg font-semibold text-sm cursor-not-allowed">PDF</button>
                 ) : (
-                  <PDFPreview type="cv" templateId={cvTemplate} data={result.cv as any} hidePreview={true} />
+                  <PDFPreview type="cv" templateId={cvTemplate} data={result.cv as any} hidePreview={true} fileName={cvName} />
                 )}
               </div>
             )}
@@ -353,7 +353,7 @@ export function Step5ReviewEdit({
                 {status === 'draft' ? (
                   <button disabled title="Lưu tài liệu để tải xuống PDF" className="flex items-center justify-center h-9 px-4 gap-2 bg-zinc-200 text-zinc-500 rounded-lg font-semibold text-sm cursor-not-allowed">PDF</button>
                 ) : (
-                  <PDFPreview type="cover_letter" templateId={clTemplate} data={result.coverLetter as any} hidePreview={true} />
+                  <PDFPreview type="cover_letter" templateId={clTemplate} data={result.coverLetter as any} hidePreview={true} fileName={clName} />
                 )}
               </div>
             )}

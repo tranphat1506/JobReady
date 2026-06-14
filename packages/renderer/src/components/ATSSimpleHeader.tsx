@@ -1,13 +1,62 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import React from 'react';
-import { Text, View, Image } from '@react-pdf/renderer';
+import { Text, View, Image, StyleSheet } from '@react-pdf/renderer';
 import { PersonalInfo, Labels } from '@cv-generator/schema';
-import { styles } from './Styles';
 
 interface HeaderProps {
   data: PersonalInfo;
   labels?: Labels;
 }
+
+const localStyles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    width: 100,
+    marginRight: 20,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    objectFit: 'contain',
+  },
+  infoContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  fullName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 5,
+    lineHeight: 1.2,
+  },
+  jobTitle: {
+    fontSize: 13,
+    color: '#555555',
+    marginBottom: 5,
+    lineHeight: 1.2,
+  },
+  contactsGrid: {
+    fontSize: 10,
+    lineHeight: 1.3,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    marginBottom: 2,
+  },
+  contactLabel: {
+    width: 80,
+    fontWeight: 'bold',
+  },
+  contactValue: {
+    flex: 1,
+  }
+});
 
 export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
   const isValid = (str?: string) => str && str.trim() !== '' && str.trim().toUpperCase() !== 'N/A';
@@ -21,7 +70,6 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
     location: 'Địa chỉ'
   };
 
-  // Build contact items as plain strings (no JSX) to avoid Invalid string child warnings
   const contactItems: { label: string; value: string }[] = [];
   if (isValid(data.dob)) contactItems.push({ label: l.dob || 'Ngày sinh', value: data.dob! });
   if (isValid(data.gender)) contactItems.push({ label: 'Giới tính', value: data.gender! });
@@ -42,39 +90,33 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
     });
   }
 
-  // Fallback avatar
   let avatarSrc = data.avatar;
   if (!isValid(avatarSrc)) {
     avatarSrc = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
   }
 
   return (
-    <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
-      {/* Left side: Avatar */}
-      <View style={{ width: 100, marginRight: 20 }}>
-        <Image
-          src={avatarSrc!}
-          style={{ width: 100, height: 100, objectFit: 'contain' }}
-        />
+    <View style={localStyles.headerContainer}>
+      <View style={localStyles.avatarContainer}>
+        <Image src={avatarSrc!} style={localStyles.avatar} />
       </View>
 
-      {/* Right side: Info */}
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', textTransform: 'uppercase' }}>
-          {data.fullName}
+      <View style={localStyles.infoContainer}>
+        <Text style={localStyles.fullName}>
+          {data.fullName || 'YOUR NAME'}
         </Text>
+        
         {isValid(data.jobTitle) ? (
-          <Text style={{ fontSize: 13, color: '#555', marginBottom: 5 }}>
+          <Text style={localStyles.jobTitle}>
             {data.jobTitle}
           </Text>
         ) : <View style={{ marginBottom: 5 }} />}
 
-        {/* Contact info grid */}
-        <View style={{ fontSize: 10, lineHeight: 1.3 }}>
+        <View style={localStyles.contactsGrid}>
           {contactItems.map((item, i) => (
-            <View key={i} style={{ flexDirection: 'row' }}>
-              <Text style={{ width: 80, fontWeight: 'bold' }}>{item.label}:</Text>
-              <Text style={{ flex: 1 }}>{item.value}</Text>
+            <View key={i} style={localStyles.contactRow}>
+              <Text style={localStyles.contactLabel}>{item.label}:</Text>
+              <Text style={localStyles.contactValue}>{item.value}</Text>
             </View>
           ))}
         </View>
@@ -82,3 +124,4 @@ export const ATSSimpleHeader = ({ data, labels }: HeaderProps) => {
     </View>
   );
 };
+

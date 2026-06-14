@@ -222,6 +222,20 @@ export default function DashboardClient({
                 showCL={showCL}
                 onPrev={() => setCurrentStep(3)}
                 onNext={async () => {
+                  setIsLoading(true);
+                  try {
+                    if (cvId) {
+                      await supabase.from('resumes').update({ template_id: cvTemplate }).eq('id', cvId);
+                    }
+                    if (clId) {
+                      await supabase.from('resumes').update({ template_id: clTemplate }).eq('id', clId);
+                    }
+                  } catch (err) {
+                    console.error("Failed to save template selection", err);
+                  } finally {
+                    setIsLoading(false);
+                  }
+                  
                   // The API already saved the drafts, so we can just navigate.
                   if (cvId && clId) {
                     // Bulk operation (CV + Cover Letter)
