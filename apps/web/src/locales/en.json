@@ -505,7 +505,14 @@
     "saveSuccess": "Document saved to File Manager!",
     "saveToDashboard": "Save",
     "saveError": "Error saving document",
-    "backgroundError": "An error occurred during background processing."
+    "backgroundError": "An error occurred during background processing.",
+    "saveFirstToRescore": "Please save the CV before rescoring",
+    "rescoreStarted": "Recalculating ATS score. Please wait a few seconds and refresh the page...",
+    "rescoreError": "Error during rescoring",
+    "recalculateATS": "Recalculate ATS",
+    "rescoreLabel": "Re-score",
+    "generateLabel": "Generate",
+    "analysisTitle": "MATCH ANALYSIS"
   },
   "files": {
     "title": "File Management",
@@ -584,7 +591,8 @@
         "parse_master_profile_api_error": "API Error Parse Master Profile",
         "PURCHASE_SLOT": "Purchase Extra Slot",
         "REFUND": "Refund",
-        "PENDING_RESERVATION": "Pending"
+        "PENDING_RESERVATION": "Pending",
+        "rescore_cv": "Rescore ATS Match"
       },
       "columns": {
         "task": "Task",
@@ -634,7 +642,10 @@
         "MSG_PARSE_PROFILE_RESERVE": "Reserved Credits for Profile Extraction...",
         "MSG_PARSE_PROFILE_SUCCESS": "Used AI to extract Master Profile",
         "MSG_PARSE_PROFILE_REFUND": "Refund for profile extraction failure",
-        "default": "System transaction"
+        "default": "System transaction",
+        "MSG_RESCORE_CV_RESERVE": "Reserving Credits for ATS Rescore...",
+        "MSG_RESCORE_CV_SUCCESS": "AI Rescore ATS Match",
+        "MSG_RESCORE_CV_REFUND": "Refund due to Rescore error"
       }
     },
     "billing": {
@@ -659,16 +670,39 @@
   },
   "upgradeModal": {
     "title": "Storage Limit Reached",
-      "description": "Your account has reached its maximum storage limit. To continue saving this document, you can purchase more slots or upgrade your account.",
-      "benefit1": "Permanently expand your account storage space.",
-      "benefit2": "Safely store all versions of your documents.",
-      "benefit3": "Edit and publish documents unlimited times.",
-      "buySlotCV": "Buy 1 CV Slot (50 Credits)",
-      "buySlotCL": "Buy 1 Cover Letter Slot (30 Credits)",
-      "processing": "Processing...",
-      "buySuccess": "Successfully purchased 1 slot",
-      "error": "Insufficient Credits or an error occurred",
-      "upgradePlan": "View Upgrade Plans",
+    "description": "Your account has reached its maximum storage limit. To continue saving this document, you can purchase more slots or upgrade your account.",
+    "benefit1": "Permanently expand your account storage space.",
+    "benefit2": "Safely store all versions of your documents.",
+    "benefit3": "Edit and publish documents unlimited times.",
+    "buySlotCV": "Buy 1 CV Slot (50 Credits)",
+    "buySlotCL": "Buy 1 Cover Letter Slot (30 Credits)",
+    "processing": "Processing...",
+    "buySuccess": "Successfully purchased 1 slot",
+    "error": "Insufficient Credits or an error occurred",
+    "upgradePlan": "View Upgrade Plans",
     "later": "Maybe later"
+  },
+  "matchAnalysis": {
+    "jdMatchReport": "JD Match Report",
+    "atsScore": "ATS Score",
+    "status": "Status",
+    "passed": "Passed",
+    "failed": "Failed",
+    "analyzedPosition": "Analyzed Position",
+    "unspecified": "Unspecified",
+    "matchedKeywords": "Matched Keywords",
+    "missingSkills": "Missing Skills",
+    "critical": "critical",
+    "scoreByCriteria": "SCORE BY CRITERIA",
+    "technicalSkills": "Technical Skills",
+    "experience": "Experience",
+    "keywordsLanguage": "Keywords & Language",
+    "educationCertifications": "Education & Certifications",
+    "skillsToImprove": "SKILLS TO ADD / SUGGESTIONS",
+    "mandatoryByJd": "Mandatory by JD",
+    "niceToHave": "Nice-to-have",
+    "aiSuggestions": "AI Suggestions",
+    "aiFeedback": "AI FEEDBACK",
+    "close": "Close"
   }
 }

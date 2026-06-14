@@ -32,7 +32,7 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
         <div className="px-6 py-4 border-b border-zinc-200 flex justify-between items-center bg-zinc-50">
           <div>
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">{t('builder.analysisTitle') || 'PHÂN TÍCH ĐỘ PHÙ HỢP'}</h2>
-            <h1 className="text-xl font-bold text-zinc-900">JD Match Report</h1>
+            <h1 className="text-xl font-bold text-zinc-900">{t('matchAnalysis.jdMatchReport') || 'JD Match Report'}</h1>
           </div>
           <button onClick={onClose} className="p-2 text-zinc-400 hover:text-black hover:bg-zinc-200 rounded-lg transition-colors">
             <X className="w-5 h-5" />
@@ -44,30 +44,30 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-stretch">
             <div className={`flex flex-col items-center justify-center w-32 h-32 rounded-full border-4 ${circleColorClass} shrink-0`}>
               <span className="text-3xl font-bold">{analysis.matchScore}%</span>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mt-1">Điểm ATS</span>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mt-1">{t('matchAnalysis.atsScore') || 'Điểm ATS'}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 w-full">
               <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-100 flex flex-col justify-center">
-                <span className="text-xs text-zinc-500 font-medium mb-1">Trạng thái</span>
+                <span className="text-xs text-zinc-500 font-medium mb-1">{t('matchAnalysis.status') || 'Trạng thái'}</span>
                 {analysis.isRelevant ? (
-                  <span className="text-sm font-bold text-green-600 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> Đạt yêu cầu</span>
+                  <span className="text-sm font-bold text-green-600 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> {t('matchAnalysis.passed') || 'Đạt yêu cầu'}</span>
                 ) : (
-                  <span className="text-sm font-bold text-red-600 flex items-center gap-1"><X className="w-4 h-4"/> Chưa đạt</span>
+                  <span className="text-sm font-bold text-red-600 flex items-center gap-1"><X className="w-4 h-4"/> {t('matchAnalysis.failed') || 'Chưa đạt'}</span>
                 )}
               </div>
               <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-100 flex flex-col justify-center">
-                <span className="text-xs text-zinc-500 font-medium mb-1">Vị trí phân tích</span>
-                <span className="text-sm font-bold text-zinc-900 truncate">{analysis.jobLevel || 'Chưa xác định'}</span>
+                <span className="text-xs text-zinc-500 font-medium mb-1">{t('matchAnalysis.analyzedPosition') || 'Vị trí phân tích'}</span>
+                <span className="text-sm font-bold text-zinc-900 truncate">{analysis.jobLevel || t('matchAnalysis.unspecified') || 'Chưa xác định'}</span>
               </div>
               <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-100 flex flex-col justify-center">
-                <span className="text-xs text-zinc-500 font-medium mb-1">Từ khóa khớp</span>
+                <span className="text-xs text-zinc-500 font-medium mb-1">{t('matchAnalysis.matchedKeywords') || 'Từ khóa khớp'}</span>
                 <span className="text-sm font-bold text-zinc-900">{analysis.keywordMatch || 'N/A'}</span>
               </div>
               <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-100 flex flex-col justify-center">
-                <span className="text-xs text-zinc-500 font-medium mb-1">Kỹ năng thiếu</span>
+                <span className="text-xs text-zinc-500 font-medium mb-1">{t('matchAnalysis.missingSkills') || 'Kỹ năng thiếu'}</span>
                 <span className="text-sm font-bold text-red-600">
-                  {analysis.missingSkillsDetails?.critical?.length || 0} quan trọng
+                  {analysis.missingSkillsDetails?.critical?.length || 0} {t('matchAnalysis.critical') || 'quan trọng'}
                 </span>
               </div>
             </div>
@@ -78,13 +78,13 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
           {/* Breakdown Bars */}
           {analysis.breakdown && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">ĐIỂM THEO TIÊU CHÍ</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">{t('matchAnalysis.scoreByCriteria') || 'ĐIỂM THEO TIÊU CHÍ'}</h3>
               <div className="space-y-4">
                 {[
-                  { label: 'Kỹ năng kỹ thuật', data: analysis.breakdown.skills },
-                  { label: 'Kinh nghiệm', data: analysis.breakdown.experience },
-                  { label: 'Từ khóa & ngôn ngữ', data: analysis.breakdown.keywords },
-                  { label: 'Học vấn & chứng chỉ', data: analysis.breakdown.education }
+                  { label: t('matchAnalysis.technicalSkills') || 'Kỹ năng kỹ thuật', data: analysis.breakdown.skills },
+                  { label: t('matchAnalysis.experience') || 'Kinh nghiệm', data: analysis.breakdown.experience },
+                  { label: t('matchAnalysis.keywordsLanguage') || 'Từ khóa & ngôn ngữ', data: analysis.breakdown.keywords },
+                  { label: t('matchAnalysis.educationCertifications') || 'Học vấn & chứng chỉ', data: analysis.breakdown.education }
                 ].map((item, i) => item.data && (
                   <div key={i}>
                     <div className="flex justify-between mb-1 text-sm font-semibold text-zinc-800">
@@ -105,15 +105,15 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
           {/* Missing Skills */}
           {((analysis.missingSkillsDetails?.critical?.length ?? 0) > 0 || (analysis.missingSkillsDetails?.niceToHave?.length ?? 0) > 0 || (analysis.suggestedAdditions?.length ?? 0) > 0) && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">KỸ NĂNG CẦN BỔ SUNG / GỢI Ý</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">{t('matchAnalysis.skillsToImprove') || 'KỸ NĂNG CẦN BỔ SUNG / GỢI Ý'}</h3>
               <div className="flex flex-wrap gap-2 mb-3">
                 {analysis.missingSkillsDetails?.critical?.map((s: string, i: number) => (
-                  <span key={`crit-${i}`} className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 text-sm font-semibold rounded-full" title="Bắt buộc theo JD">
+                  <span key={`crit-${i}`} className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 text-sm font-semibold rounded-full" title={t('matchAnalysis.mandatoryByJd') || "Bắt buộc theo JD"}>
                     {s}
                   </span>
                 ))}
                 {analysis.missingSkillsDetails?.niceToHave?.map((s: string, i: number) => (
-                  <span key={`nth-${i}`} className="px-3 py-1 bg-yellow-50 text-yellow-700 border border-yellow-200 text-sm font-semibold rounded-full" title="Nice-to-have">
+                  <span key={`nth-${i}`} className="px-3 py-1 bg-yellow-50 text-yellow-700 border border-yellow-200 text-sm font-semibold rounded-full" title={t('matchAnalysis.niceToHave') || "Nice-to-have"}>
                     {s}
                   </span>
                 ))}
@@ -124,9 +124,9 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
                 ))}
               </div>
               <div className="flex gap-4 text-xs font-medium text-zinc-500">
-                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> Bắt buộc theo JD</div>
-                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-500" /> Nice-to-have</div>
-                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" /> Gợi ý thêm từ AI</div>
+                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> {t('matchAnalysis.mandatoryByJd') || 'Bắt buộc theo JD'}</div>
+                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-500" /> {t('matchAnalysis.niceToHave') || 'Nice-to-have'}</div>
+                <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" /> {t('matchAnalysis.aiSuggestions') || 'Gợi ý thêm từ AI'}</div>
               </div>
             </div>
           )}
@@ -136,7 +136,7 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
           {/* AI Feedback */}
           {analysis.structuredFeedback && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">NHẬN XÉT TỪ AI</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">{t('matchAnalysis.aiFeedback') || 'NHẬN XÉT TỪ AI'}</h3>
               <div className="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4 text-sm font-medium text-zinc-800 italic rounded-r-lg">
                 {analysis.structuredFeedback.summary}
               </div>
@@ -159,7 +159,7 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
           {/* Fallback for legacy feedback */}
           {!analysis.structuredFeedback && analysis.feedback && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">NHẬN XÉT TỪ AI</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">{t('matchAnalysis.aiFeedback') || 'NHẬN XÉT TỪ AI'}</h3>
               <p className="text-sm text-zinc-700 leading-relaxed bg-zinc-50 p-4 border border-zinc-200 rounded-lg">
                 {analysis.feedback}
               </p>
@@ -170,7 +170,7 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
         {/* Footer */}
         <div className="p-4 border-t border-zinc-200 bg-zinc-50 flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 border border-zinc-300 rounded-lg text-sm font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors">
-            Đóng
+            {t('matchAnalysis.close') || 'Đóng'}
           </button>
           <button 
             onClick={onRescore} 
@@ -178,7 +178,7 @@ export function MatchAnalysisModal({ analysis, onClose, onRescore, isRescoring, 
             className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-200 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
           >
             {isRescoring ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-            Tính lại ATS
+            {t('builder.recalculateATS') || 'Tính lại ATS'}
           </button>
         </div>
       </div>

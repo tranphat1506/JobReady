@@ -216,15 +216,13 @@ export const generateCvWorker = inngest.createFunction(
         finalResumeId = resumeData.id;
       }
 
-      // Determine version number
-      let nextVersion = 1;
-      if (idToUpdate) {
-        const { count: vCount } = await supabase
-          .from('resume_versions')
-          .select('*', { count: 'exact', head: true })
-          .eq('resume_id', finalResumeId);
-        if (vCount !== null) nextVersion = vCount + 1;
-      }
+      // Determine version number and overwrite instead of creating new
+      const { data: existingVersion } = await supabase
+        .from('resume_versions')
+        .select('id')
+        .eq('resume_id', finalResumeId)
+        .limit(1)
+        .maybeSingle();
 
       // Extract match analysis if present
       let matchAnalysis = null;
@@ -237,20 +235,32 @@ export const generateCvWorker = inngest.createFunction(
         delete contentToSave.matchAnalysis;
       }
 
-      // Create version
-      const { data: versionData, error: versionError } = await supabase
-        .from("resume_versions")
-        .insert({
-          resume_id: finalResumeId,
-          version_number: nextVersion,
-          content: contentToSave,
-          score: score,
-          match_analysis: matchAnalysis
-        })
-        .select("id")
-        .single();
+      if (existingVersion) {
+        // Update existing version
+        const { error: versionError } = await supabase
+          .from("resume_versions")
+          .update({
+            content: contentToSave,
+            score: score,
+            match_analysis: matchAnalysis
+          })
+          .eq('id', existingVersion.id);
 
-      if (versionError) throw versionError;
+        if (versionError) throw versionError;
+      } else {
+        // Create version
+        const { error: versionError } = await supabase
+          .from("resume_versions")
+          .insert({
+            resume_id: finalResumeId,
+            version_number: 1,
+            content: contentToSave,
+            score: score,
+            match_analysis: matchAnalysis
+          });
+
+        if (versionError) throw versionError;
+      }
 
       return finalResumeId;
     };

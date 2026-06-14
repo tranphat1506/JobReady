@@ -296,7 +296,7 @@ export function Step5ReviewEdit({
                   onClick={handleRescore}
                   disabled={isRescoring}
                   className="p-1.5 text-zinc-400 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50"
-                  title="Tính lại ATS"
+                  title={t('builder.recalculateATS') || 'Tính lại ATS'}
                 >
                   <RefreshCw className={`w-4 h-4 ${isRescoring ? 'animate-spin' : ''}`} />
                 </button>
@@ -531,10 +531,10 @@ export function Step5ReviewEdit({
                     <span className="font-bold text-sm text-zinc-900 flex items-center gap-2">
                       {t('builder.version') || 'Phiên bản'} {v.version_number}
                       {v.match_analysis?.isRescore && (
-                        <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] uppercase font-bold">Re-score</span>
+                        <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] uppercase font-bold">{t('builder.rescoreLabel') || 'Re-score'}</span>
                       )}
                       {!v.match_analysis?.isRescore && v.version_number === 1 && (
-                        <span className="px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] uppercase font-bold">Generate</span>
+                        <span className="px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] uppercase font-bold">{t('builder.generateLabel') || 'Generate'}</span>
                       )}
                     </span>
                     <div className="text-xs text-zinc-500 mt-1">

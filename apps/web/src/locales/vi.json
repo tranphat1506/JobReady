@@ -505,7 +505,14 @@
     "saveSuccess": "Đã lưu tài liệu vào Quản lý File!",
     "saveToDashboard": "Lưu",
     "saveError": "Lỗi khi lưu tài liệu",
-    "backgroundError": "Có lỗi xảy ra trong quá trình xử lý nền."
+    "backgroundError": "Có lỗi xảy ra trong quá trình xử lý nền.",
+    "saveFirstToRescore": "Vui lòng lưu CV trước khi tính lại điểm",
+    "rescoreStarted": "Đang tính lại điểm ATS. Vui lòng đợi vài giây rồi làm mới trang...",
+    "rescoreError": "Lỗi khi tính điểm",
+    "recalculateATS": "Tính lại ATS",
+    "rescoreLabel": "Re-score",
+    "generateLabel": "Generate",
+    "analysisTitle": "PHÂN TÍCH ĐỘ PHÙ HỢP"
   },
   "files": {
     "title": "Quản lý tài liệu",
@@ -584,7 +591,8 @@
         "parse_master_profile_api_error": "Lỗi API Trích xuất hồ sơ",
         "PURCHASE_SLOT": "Mua thêm Slot",
         "REFUND": "Hoàn tiền",
-        "PENDING_RESERVATION": "Đang xử lý"
+        "PENDING_RESERVATION": "Đang xử lý",
+        "rescore_cv": "Tính lại điểm ATS"
       },
       "columns": {
         "task": "Tác vụ",
@@ -635,7 +643,10 @@
         "MSG_PARSE_PROFILE_RESERVE": "Giữ chỗ Credits trích xuất Hồ sơ...",
         "MSG_PARSE_PROFILE_SUCCESS": "Dùng AI trích xuất Master Profile",
         "MSG_PARSE_PROFILE_REFUND": "Hoàn tiền do lỗi trích xuất",
-        "default": "Giao dịch hệ thống"
+        "default": "Giao dịch hệ thống",
+        "MSG_RESCORE_CV_RESERVE": "Giữ chỗ Credits để tính lại ATS...",
+        "MSG_RESCORE_CV_SUCCESS": "Dùng AI tính lại điểm ATS",
+        "MSG_RESCORE_CV_REFUND": "Hoàn tiền do lỗi tính lại điểm"
       }
     },
     "billing": {
@@ -660,16 +671,39 @@
   },
   "upgradeModal": {
     "title": "Hết không gian lưu trữ",
-      "description": "Tài khoản của bạn đã đạt giới hạn lưu trữ tối đa cho phép. Để tiếp tục lưu tài liệu này, bạn có thể mua thêm chỗ trống hoặc nâng cấp tài khoản.",
-      "benefit1": "Mở rộng vĩnh viễn không gian lưu trữ cho tài khoản của bạn.",
-      "benefit2": "Lưu lại mọi phiên bản tài liệu một cách an toàn.",
-      "benefit3": "Chỉnh sửa và xuất bản tài liệu không giới hạn số lần.",
-      "buySlotCV": "Mua 1 Slot CV (50 Credits)",
-      "buySlotCL": "Mua 1 Slot Cover Letter (30 Credits)",
-      "processing": "Đang xử lý...",
-      "buySuccess": "Mua thành công 1 chỗ trống",
-      "error": "Không đủ Credits hoặc có lỗi xảy ra",
-      "upgradePlan": "Xem các Gói Nâng Cấp",
+    "description": "Tài khoản của bạn đã đạt giới hạn lưu trữ tối đa cho phép. Để tiếp tục lưu tài liệu này, bạn có thể mua thêm chỗ trống hoặc nâng cấp tài khoản.",
+    "benefit1": "Mở rộng vĩnh viễn không gian lưu trữ cho tài khoản của bạn.",
+    "benefit2": "Lưu lại mọi phiên bản tài liệu một cách an toàn.",
+    "benefit3": "Chỉnh sửa và xuất bản tài liệu không giới hạn số lần.",
+    "buySlotCV": "Mua 1 Slot CV (50 Credits)",
+    "buySlotCL": "Mua 1 Slot Cover Letter (30 Credits)",
+    "processing": "Đang xử lý...",
+    "buySuccess": "Mua thành công 1 chỗ trống",
+    "error": "Không đủ Credits hoặc có lỗi xảy ra",
+    "upgradePlan": "Xem các Gói Nâng Cấp",
     "later": "Để sau"
+  },
+  "matchAnalysis": {
+    "jdMatchReport": "JD Match Report",
+    "atsScore": "Điểm ATS",
+    "status": "Trạng thái",
+    "passed": "Đạt yêu cầu",
+    "failed": "Chưa đạt",
+    "analyzedPosition": "Vị trí phân tích",
+    "unspecified": "Chưa xác định",
+    "matchedKeywords": "Từ khóa khớp",
+    "missingSkills": "Kỹ năng thiếu",
+    "critical": "quan trọng",
+    "scoreByCriteria": "ĐIỂM THEO TIÊU CHÍ",
+    "technicalSkills": "Kỹ năng kỹ thuật",
+    "experience": "Kinh nghiệm",
+    "keywordsLanguage": "Từ khóa & ngôn ngữ",
+    "educationCertifications": "Học vấn & chứng chỉ",
+    "skillsToImprove": "KỸ NĂNG CẦN BỔ SUNG / GỢI Ý",
+    "mandatoryByJd": "Bắt buộc theo JD",
+    "niceToHave": "Nice-to-have",
+    "aiSuggestions": "Gợi ý thêm từ AI",
+    "aiFeedback": "NHẬN XÉT TỪ AI",
+    "close": "Đóng"
   }
 }

@@ -3,6 +3,7 @@
 import { inngest } from '@/inngest/client';
 import { createClient } from '@/utils/supabase/server';
 import { ErrorCodes } from '@/lib/constants/errors';
+import { LedgerEvent } from '@/lib/constants/events';
 
 export async function triggerRescore(
   resumeId: string,
@@ -38,6 +39,20 @@ export async function triggerRescore(
     if (jd) jobDescription = jd.content;
   }
 
+  // Reserve AI credits
+  const { data: logId, error: reserveError } = await supabase.rpc('reserve_ai_credits', {
+    p_user_id: user.id,
+    p_cost: 0, // Rescore does not cost credits currently, but we track tokens
+    p_action_type: 'rescore_cv',
+    p_metadata: { resume_id: resumeId, target_language: targetLanguage },
+    p_message_code: LedgerEvent.RESCORE_CV_RESERVE
+  });
+
+  if (reserveError || !logId) {
+    console.error('Reserve error:', reserveError);
+    throw new Error(`Could not initialize AI tracking log: ${reserveError?.message || 'No logId'}`);
+  }
+
   await inngest.send({
     name: 'cv/rescore',
     data: {
@@ -46,6 +61,7 @@ export async function triggerRescore(
       jobDescription,
       cvContent,
       targetLanguage,
+      logId,
     },
   });
 
